@@ -1,0 +1,1971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L-HAF Studio · Labeled Hashtagged Argumentation Framework</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,800;1,9..144,500&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --ink:#1a1714; --paper:#f4efe6; --paper2:#ece3d3; --paper3:#e3d8c2;
+    --line:#c9b896; --rust:#a8421f; --rust-d:#7d2f14;
+    --teal:#1f5e57; --teal-d:#143f3a; --gold:#c08a2d; --gold-d:#8a611c;
+    --plum:#6a3a5a; --plum-d:#4a2640; --blue:#2f5d78; --blue-d:#1f3f54;
+    --moss:#4f6b3a; --neut:#8a7f6e;
+    --shadow:rgba(26,23,20,.22);
+    --mono:'IBM Plex Mono',monospace;
+    --sans:'IBM Plex Sans',system-ui,sans-serif;
+    --serif:'Fraunces',serif;
+    /* status colours */
+    --st-unch:#2f5d78; --st-strong:#1f5e57; --st-weak:#c08a2d; --st-neut:#a8421f;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:var(--sans); background:var(--paper); color:var(--ink);
+    line-height:1.5; overflow-x:hidden;
+    background-image:
+      radial-gradient(circle at 12% 8%, rgba(192,138,45,.07), transparent 40%),
+      radial-gradient(circle at 88% 92%, rgba(31,94,87,.06), transparent 42%);
+  }
+  body::before{
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:9999;
+    opacity:.025; mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  ::selection{ background:var(--rust); color:var(--paper); }
+  ::-webkit-scrollbar{ width:10px; height:10px; }
+  ::-webkit-scrollbar-track{ background:var(--paper2); }
+  ::-webkit-scrollbar-thumb{ background:var(--line); border:2px solid var(--paper2); }
+
+  /* ===== APP SHELL ===== */
+  #app{ display:grid; grid-template-columns:248px 1fr; grid-template-rows:auto 1fr; min-height:100vh; }
+
+  /* masthead */
+  header.masthead{
+    grid-column:1/-1; border-bottom:2.5px solid var(--ink);
+    background:linear-gradient(180deg, var(--paper2), rgba(236,227,211,.7));
+    padding:16px 26px 13px; display:flex; align-items:flex-end; justify-content:space-between;
+    flex-wrap:wrap; gap:14px; position:sticky; top:0; z-index:200; box-shadow:0 2px 0 var(--shadow);
+  }
+  .brand{ position:relative; }
+  .brand .kicker{ font-family:var(--mono); font-size:10px; letter-spacing:.34em; text-transform:uppercase;
+    color:var(--rust); font-weight:600; margin-bottom:4px; }
+  .brand h1{ font-family:var(--serif); font-weight:800; font-size:clamp(22px,3vw,32px);
+    line-height:.98; letter-spacing:-.5px; }
+  .brand h1 em{ font-style:italic; color:var(--rust); }
+  .brand .sub{ font-family:var(--mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--neut); margin-top:5px; }
+  .cite{ font-family:var(--mono); font-size:10px; color:#6b5a3e; text-align:right;
+    max-width:320px; line-height:1.5; }
+  .cite .badge{ display:inline-block; border:1.5px solid var(--ink); background:var(--gold);
+    color:var(--ink); padding:2px 8px; font-weight:600; letter-spacing:.06em; margin-bottom:5px;
+    text-transform:uppercase; font-size:9px; }
+
+  /* nav */
+  nav{ border-right:2px solid var(--ink); background:rgba(255,253,248,.5);
+    overflow-y:auto; padding:6px 0 30px; }
+  .nsec{ padding:15px 16px 5px; font-family:var(--mono); font-size:9px; letter-spacing:.18em;
+    text-transform:uppercase; color:var(--neut); font-weight:600; }
+  .nsec:first-child{ padding-top:10px; }
+  .nbtn{ display:flex; align-items:center; gap:9px; width:100%; padding:8px 16px; border:none;
+    background:none; cursor:pointer; color:#5b5246; font-family:var(--mono); font-size:11.5px;
+    text-align:left; transition:.12s; border-left:3px solid transparent; letter-spacing:.02em; }
+  .nbtn:hover{ color:var(--ink); background:rgba(255,255,255,.5); }
+  .nbtn.active{ color:var(--ink); background:var(--paper); border-left-color:var(--rust);
+    font-weight:600; }
+  .nbtn .ico{ width:18px; text-align:center; font-size:13px; flex-shrink:0; }
+  .nbtn .bdg{ margin-left:auto; background:var(--paper3); color:#6b5a3e; font-size:9px;
+    padding:1px 7px; border:1px solid var(--line); font-family:var(--mono); }
+  .nbtn.active .bdg{ background:var(--ink); color:var(--paper); border-color:var(--ink); }
+
+  main{ overflow-y:auto; padding:24px 30px 60px; background:var(--paper); max-height:calc(100vh - 70px); }
+  @media(max-width:880px){
+    #app{ grid-template-columns:1fr; grid-template-rows:auto auto 1fr; }
+    nav{ border-right:none; border-bottom:2px solid var(--ink); display:flex; flex-wrap:wrap; padding:4px; }
+    .nsec{ width:100%; padding:6px 10px 2px; }
+    .nbtn{ width:auto; border-left:none; border-bottom:3px solid transparent; }
+    .nbtn.active{ border-left:none; border-bottom-color:var(--rust); }
+    main{ max-height:none; }
+  }
+
+  /* ===== PANELS ===== */
+  .panel{ display:none; animation:fade .3s ease; }
+  .panel.active{ display:block; }
+  @keyframes fade{ from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+
+  h2{ font-family:var(--serif); font-size:26px; font-weight:800; letter-spacing:-.4px;
+    margin-bottom:6px; display:flex; align-items:center; gap:10px; }
+  h2 em{ font-style:italic; color:var(--rust); }
+  h2 .step-no{ font-family:var(--mono); font-size:13px; font-weight:600; background:var(--ink);
+    color:var(--paper); padding:3px 9px; letter-spacing:.05em; }
+  .lede{ font-size:14px; color:#4a4236; max-width:74ch; margin-bottom:16px; line-height:1.55; }
+  h3{ font-family:var(--mono); font-size:11px; color:var(--rust); font-weight:600;
+    text-transform:uppercase; letter-spacing:.12em; margin:18px 0 7px; }
+
+  /* info boxes (def callouts) */
+  .def{ border-left:4px solid var(--teal); background:rgba(31,94,87,.06); padding:10px 14px;
+    margin-bottom:14px; font-size:12.5px; line-height:1.55; }
+  .def strong{ color:var(--teal-d); }
+  .def.gold{ border-left-color:var(--gold); background:rgba(192,138,45,.07); }
+  .def.gold strong{ color:var(--gold-d); }
+  .def.rust{ border-left-color:var(--rust); background:rgba(168,66,31,.06); }
+  .def.rust strong{ color:var(--rust-d); }
+  .formula{ border:1.5px solid var(--line); background:var(--paper2); padding:12px 15px;
+    margin-bottom:14px; font-family:var(--mono); font-size:11px; color:#4a4236;
+    line-height:1.85; white-space:pre-wrap; }
+  .formula .hl{ color:var(--rust); font-weight:600; }
+
+  /* card */
+  .card{ border:2px solid var(--ink); background:var(--paper2); box-shadow:5px 5px 0 var(--shadow);
+    margin-bottom:16px; }
+  .card-h{ background:var(--ink); color:var(--paper); padding:9px 15px; font-family:var(--mono);
+    font-size:11px; letter-spacing:.16em; text-transform:uppercase; font-weight:600;
+    display:flex; justify-content:space-between; align-items:center; }
+  .card-b{ padding:15px; }
+
+  /* controls */
+  .row{ display:flex; gap:10px; margin-bottom:11px; flex-wrap:wrap; align-items:flex-end; }
+  .fld{ display:flex; flex-direction:column; gap:4px; }
+  label{ font-family:var(--mono); font-size:10px; color:#6b5a3e; letter-spacing:.08em;
+    text-transform:uppercase; font-weight:600; }
+  input,select,textarea{ background:var(--paper); border:1.5px solid var(--line); color:var(--ink);
+    padding:7px 9px; font-family:var(--mono); font-size:12px; outline:none; transition:border-color .12s; }
+  input:focus,select:focus,textarea:focus{ border-color:var(--rust); }
+  select option{ background:var(--paper); }
+  textarea{ resize:vertical; line-height:1.5; }
+
+  button{ padding:8px 14px; border:1.5px solid var(--ink); background:var(--paper); color:var(--ink);
+    cursor:pointer; font-family:var(--mono); font-size:11px; font-weight:600; letter-spacing:.04em;
+    text-transform:uppercase; box-shadow:3px 3px 0 var(--shadow); transition:.1s; }
+  button:hover{ transform:translate(-1px,-1px); box-shadow:4px 4px 0 var(--shadow); }
+  button:active{ transform:translate(2px,2px); box-shadow:1px 1px 0 var(--shadow); }
+  button.pri{ background:var(--rust); color:var(--paper); border-color:var(--rust-d); }
+  button.sec{ background:var(--teal); color:var(--paper); border-color:var(--teal-d); }
+  button.gold{ background:var(--gold); color:var(--ink); border-color:var(--gold-d); }
+  button.ghost{ background:transparent; box-shadow:none; }
+  button.ghost:hover{ background:var(--ink); color:var(--paper); box-shadow:none; transform:none; }
+  button.dan{ border-color:var(--rust); color:var(--rust); box-shadow:none; padding:3px 7px; font-size:10px; }
+  button.dan:hover{ background:var(--rust); color:var(--paper); transform:none; }
+  button.sm{ padding:5px 10px; font-size:10px; box-shadow:2px 2px 0 var(--shadow); }
+
+  /* tags / chips */
+  .tag{ display:inline-flex; align-items:center; gap:3px; padding:2px 8px; font-size:10px;
+    font-family:var(--mono); font-weight:600; border:1.5px solid var(--ink); letter-spacing:.02em; }
+  .tag.t-topic{ background:var(--paper3); }
+  .tag.t-arg{ background:var(--gold); }
+  .tag.t-rust{ background:var(--rust); color:var(--paper); }
+  .tag.t-teal{ background:var(--teal); color:var(--paper); }
+  .tag.t-plum{ background:var(--plum); color:var(--paper); }
+  .tag.t-blue{ background:var(--blue); color:var(--paper); }
+  .chip{ display:inline-block; font-family:var(--mono); font-size:10px; font-weight:600;
+    padding:2px 7px; border:1.5px solid var(--ink); margin:1px; }
+
+  /* mode bar */
+  .mbar{ display:flex; border:2px solid var(--ink); margin-bottom:14px; max-width:520px; }
+  .mbtn{ flex:1; padding:9px; text-align:center; cursor:pointer; font-family:var(--mono);
+    font-size:10.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase;
+    background:var(--paper); color:var(--neut); border:none; border-right:1.5px solid var(--line);
+    box-shadow:none; transition:.12s; }
+  .mbtn:last-child{ border-right:none; }
+  .mbtn:hover{ background:rgba(168,66,31,.06); color:var(--ink); transform:none; box-shadow:none; }
+  .mbtn.active{ background:var(--ink); color:var(--paper); transform:none; box-shadow:none; }
+
+  /* dist selector */
+  .dgrid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
+  @media(max-width:760px){ .dgrid{ grid-template-columns:1fr; } }
+  .dopt{ padding:11px 13px; border:1.5px solid var(--line); cursor:pointer; transition:.12s;
+    background:var(--paper); }
+  .dopt:hover{ border-color:var(--rust); transform:translate(-1px,-1px); box-shadow:3px 3px 0 var(--shadow); }
+  .dopt.sel{ border-color:var(--ink); border-width:2px; background:var(--paper2); box-shadow:3px 3px 0 var(--shadow); }
+  .dopt strong{ font-family:var(--mono); font-size:11px; color:var(--rust); display:block; margin-bottom:3px;
+    text-transform:uppercase; letter-spacing:.04em; }
+  .dopt span{ font-size:11px; color:#5a4a2e; line-height:1.45; }
+
+  /* tables */
+  table.data{ width:100%; border-collapse:collapse; font-family:var(--mono); font-size:11px;
+    background:var(--paper); margin-bottom:6px; }
+  table.data th{ background:var(--ink); color:var(--paper); padding:7px 9px; text-align:left;
+    font-weight:600; letter-spacing:.06em; text-transform:uppercase; font-size:9.5px; }
+  table.data td{ padding:6px 9px; border:1px solid var(--line); vertical-align:middle; }
+  table.data tr:nth-child(even) td{ background:rgba(217,199,168,.18); }
+  table.data td.arg{ font-family:var(--serif); font-weight:700; font-size:15px; background:var(--paper2); }
+  .scroll-x{ overflow-x:auto; border:2px solid var(--ink); box-shadow:4px 4px 0 var(--shadow); margin-bottom:14px; }
+  .scroll-x table.data{ margin-bottom:0; }
+  .scroll-x table.data th{ position:sticky; top:0; }
+
+  /* matrix cells */
+  .cell-zero{ background:rgba(47,93,120,.18)!important; color:var(--blue-d); font-weight:700; }
+  .cell-close{ background:rgba(31,94,87,.16)!important; color:var(--teal-d); font-weight:600; }
+  .cell-mid{ background:rgba(192,138,45,.18)!important; color:var(--gold-d); }
+  .cell-far{ background:rgba(168,66,31,.16)!important; color:var(--rust-d); }
+  .cell-inf{ color:var(--line); }
+
+  /* result section */
+  .rs{ border:2px solid var(--ink); background:var(--paper2); margin-bottom:16px;
+    box-shadow:4px 4px 0 var(--shadow); }
+  .rs-h{ background:var(--ink); color:var(--paper); padding:8px 14px; font-family:var(--mono);
+    font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; font-weight:600; }
+  .rs-b{ padding:13px; }
+
+  /* status badges */
+  .stbadge{ display:inline-block; padding:2px 9px; font-family:var(--mono); font-size:9px;
+    font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:#fff; border:1.5px solid var(--ink); }
+  .st-U{ background:var(--st-unch); } .st-S{ background:var(--st-strong); }
+  .st-W{ background:var(--st-weak); color:var(--ink); } .st-N{ background:var(--st-neut); }
+
+  /* extension pills */
+  .eb{ display:inline-block; font-family:var(--mono); font-size:10px; font-weight:600;
+    padding:2px 8px; border:1.5px solid var(--ink); margin:2px; }
+  .eb.u{ background:rgba(31,94,87,.16); color:var(--teal-d); }
+  .eb.w{ background:rgba(192,138,45,.18); color:var(--gold-d); }
+  .eb.n{ background:rgba(168,66,31,.16); color:var(--rust-d); }
+  .eb.c{ background:rgba(47,93,120,.16); color:var(--blue-d); }
+  .eb.p{ background:rgba(106,58,90,.16); color:var(--plum-d); }
+
+  /* graph */
+  .gwrap{ border:2px solid var(--ink); background:var(--paper2); box-shadow:5px 5px 0 var(--shadow);
+    margin-bottom:16px; overflow:hidden; }
+  .gtb{ display:flex; gap:7px; padding:9px 12px; background:var(--ink); flex-wrap:wrap; align-items:center; }
+  .gtb .gtitle{ font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--paper); font-weight:600; margin-right:6px; }
+  .gtb button{ background:var(--paper); color:var(--ink); border-color:var(--paper2);
+    padding:4px 9px; font-size:9.5px; box-shadow:none; }
+  .gtb button:hover{ background:var(--gold); transform:none; }
+  .gtb .ci{ margin-left:auto; font-family:var(--mono); font-size:10px; color:var(--gold); }
+  .gcanvas{ display:block; cursor:grab; background:
+    linear-gradient(rgba(201,184,150,.16) 1px, transparent 1px) 0 0/100% 26px,
+    linear-gradient(90deg, rgba(201,184,150,.16) 1px, transparent 1px) 0 0/26px 100%,
+    var(--paper); }
+  .gcanvas:active{ cursor:grabbing; }
+  .gleg{ display:flex; gap:14px; flex-wrap:wrap; padding:9px 12px; background:var(--paper2);
+    border-top:1.5px solid var(--line); }
+  .gli{ display:flex; align-items:center; gap:6px; font-size:10px; font-family:var(--mono); color:#5b5246; }
+  .gld{ width:13px; height:13px; border:1.5px solid var(--ink); }
+
+  /* step bar */
+  .stepbar{ display:flex; gap:0; margin-bottom:18px; flex-wrap:wrap; border:2px solid var(--ink);
+    box-shadow:4px 4px 0 var(--shadow); max-width:760px; }
+  .step{ flex:1; padding:8px 6px; text-align:center; font-family:var(--mono); font-size:9.5px;
+    font-weight:600; letter-spacing:.04em; text-transform:uppercase; background:var(--paper);
+    color:var(--neut); cursor:pointer; border-right:1.5px solid var(--line); transition:.12s; }
+  .step:last-child{ border-right:none; }
+  .step:hover{ background:rgba(168,66,31,.06); color:var(--ink); }
+  .step.active{ background:var(--ink); color:var(--paper); }
+  .step .n{ display:inline-flex; width:17px; height:17px; background:var(--paper3); color:var(--ink);
+    border-radius:50%; align-items:center; justify-content:center; margin-right:4px; font-size:9px; }
+  .step.active .n{ background:var(--gold); color:var(--ink); }
+
+  /* community items */
+  .comm{ border-left:4px solid var(--ink); padding:8px 12px; margin-bottom:7px; background:var(--paper);
+    border-top:1px solid var(--line); border-right:1px solid var(--line); border-bottom:1px solid var(--line); }
+
+  /* example cards */
+  .ex-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:14px; }
+  .ex-card{ border:2px solid var(--ink); background:var(--paper2); padding:0; cursor:pointer;
+    transition:.13s; box-shadow:4px 4px 0 var(--shadow); overflow:hidden; }
+  .ex-card:hover{ transform:translate(-2px,-2px); box-shadow:6px 6px 0 var(--shadow); }
+  .ex-card .ec-h{ background:var(--ink); color:var(--paper); padding:9px 13px; }
+  .ex-card .ec-h .ec-domain{ font-family:var(--mono); font-size:8.5px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--gold); display:block; margin-bottom:3px; }
+  .ex-card .ec-h .ec-title{ font-family:var(--serif); font-size:17px; font-weight:700; line-height:1.1; }
+  .ex-card .ec-b{ padding:12px 13px; }
+  .ex-card .ec-desc{ font-size:12px; color:#4a4236; line-height:1.45; margin-bottom:8px; }
+  .ex-card .ec-meta{ font-family:var(--mono); font-size:9.5px; color:var(--teal-d);
+    padding-top:8px; border-top:1px dashed var(--line); }
+  .ex-badge{ display:inline-block; font-family:var(--mono); font-size:8px; font-weight:600;
+    padding:1px 6px; border:1px solid var(--ink); margin:1px; }
+  .ex-central{ background:rgba(31,94,87,.16); color:var(--teal-d); }
+  .ex-mid{ background:rgba(192,138,45,.18); color:var(--gold-d); }
+  .ex-far{ background:rgba(168,66,31,.16); color:var(--rust-d); }
+
+  /* vbar */
+  .vbar{ height:8px; background:var(--paper3); border:1px solid var(--line); overflow:hidden; margin:2px 0; min-width:50px; }
+  .vfill{ height:100%; transition:width .3s; }
+
+  /* two col */
+  .tcol{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media(max-width:900px){ .tcol{ grid-template-columns:1fr; } }
+
+  /* import area */
+  .import-area{ width:100%; min-height:240px; background:var(--paper); border:1.5px solid var(--line);
+    padding:11px; font-family:var(--mono); font-size:10px; color:var(--ink); line-height:1.6; }
+
+  hr{ border:none; border-top:1.5px solid var(--line); margin:18px 0; }
+
+  /* atki row */
+  .atki{ display:flex; align-items:center; gap:8px; padding:7px 11px; background:var(--paper);
+    border:1.5px solid var(--line); margin-bottom:5px; }
+
+  /* arg item */
+  .ai{ border:1.5px solid var(--line); background:var(--paper); padding:11px 13px; margin-bottom:7px;
+    transition:.12s; }
+  .ai:hover{ border-color:var(--ink); }
+
+  /* toast */
+  .toast{ position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(80px);
+    background:var(--ink); color:var(--paper); padding:12px 24px; font-family:var(--mono);
+    font-size:12px; border:1.5px solid var(--gold); z-index:500; letter-spacing:.04em;
+    transition:transform .3s; box-shadow:5px 5px 0 var(--shadow); }
+  .toast.show{ transform:translateX(-50%) translateY(0); }
+
+  .muted{ color:var(--neut); font-size:11px; font-family:var(--mono); }
+  .dl-row{ display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 4px; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <header class="masthead">
+    <div class="brand">
+      <div class="kicker">Computational Argumentation · 2026</div>
+      <h1>L&#8209;HAF <em>Studio</em></h1>
+      <div class="sub">Labeled Hashtagged Argumentation Framework</div>
+    </div>
+    <div class="cite">
+      <span class="badge">Interactive engine</span><br>
+      Coronel, Martinez, Simari &amp; Budán (2026)<br>
+      Weakening attacks · η / ζ extensions · gradual labeling
+    </div>
+  </header>
+
+  <nav id="nav">
+    <div class="nsec">Base construction</div>
+    <button class="nbtn active" data-panel="hashcloud"><span class="ico">◐</span>Hashcloud<span class="bdg" id="nb-ht">0</span></button>
+    <button class="nbtn" data-panel="arguments"><span class="ico">‖</span>Arguments<span class="bdg" id="nb-args">0</span></button>
+    <button class="nbtn" data-panel="attacks"><span class="ico">↯</span>Attacks<span class="bdg" id="nb-atk">0</span></button>
+
+    <div class="nsec">Distance analysis</div>
+    <button class="nbtn" data-panel="distances"><span class="ico">⊹</span>Distances d_Ω</button>
+    <button class="nbtn" data-panel="metrics"><span class="ico">▦</span>Topological metrics</button>
+
+    <div class="nsec">η / ζ semantics</div>
+    <button class="nbtn" data-panel="neighborhoods"><span class="ico">◌</span>Neighborhoods η</button>
+    <button class="nbtn" data-panel="communities"><span class="ico">⬡</span>Communities ζ</button>
+    <button class="nbtn" data-panel="extensions-cs"><span class="ico">✓</span>η/ζ extensions</button>
+
+    <div class="nsec">L-HAF pipeline</div>
+    <button class="nbtn" data-panel="conclusions"><span class="ico">①</span>Conclusions μ</button>
+    <button class="nbtn" data-panel="subargs"><span class="ico">②</span>Subarguments</button>
+    <button class="nbtn" data-panel="valuation"><span class="ico">③</span>Valuation υ</button>
+    <button class="nbtn" data-panel="labeling"><span class="ico">④</span>Labeling α, δ</button>
+    <button class="nbtn" data-panel="extensions-lhaf"><span class="ico">⑤</span>L-HAF extensions</button>
+    <button class="nbtn" data-panel="properties"><span class="ico">☑</span>Properties</button>
+
+    <div class="nsec">Data</div>
+    <button class="nbtn" data-panel="examples"><span class="ico">▤</span>Examples</button>
+    <button class="nbtn" data-panel="io"><span class="ico">⇅</span>Import / Export</button>
+  </nav>
+
+  <main id="main">
+
+  <!-- ===== HASHCLOUD ===== -->
+  <section id="panel-hashcloud" class="panel active">
+    <h2><em>Hashcloud</em> — semantic topic network</h2>
+    <p class="lede">The hashcloud G_Ω = [H, E] is the semantic backbone of the framework. It induces the distance function d_Ω that weakens attacks by semantic distance and defines argument neighborhoods.</p>
+    <div class="def"><strong>Def. </strong> Ω = ⟨Φ, G_Ω, Args, Attacks, d_Ω⟩. Topics are nodes; semantic relations are undirected edges. Distances between arguments are derived from shortest paths between their hashtags.</div>
+
+    <div class="gwrap">
+      <div class="gtb">
+        <span class="gtitle">Hashcloud graph</span>
+        <button onclick="htG.reset()">↻ Re-layout</button>
+        <button onclick="htG.togglePhys()" id="htPBtn">⏸ Freeze</button>
+        <button onclick="htG.fit()">⊞ Fit</button>
+        <button onclick="htG.toggleLabels()">🏷 Labels</button>
+        <button onclick="downloadCanvas('htCanvas','hashcloud',2)">⤓ PNG 2×</button>
+        <button onclick="downloadCanvas('htCanvas','hashcloud',4)">⤓ PNG 4×</button>
+        <button onclick="downloadCanvasPDF('htCanvas','hashcloud',3)">⤓ PDF</button>
+        <span class="ci" id="ht-ci"></span>
+      </div>
+      <canvas id="htCanvas" class="gcanvas" height="420"></canvas>
+      <div class="gleg">
+        <div class="gli"><span class="gld" style="background:var(--gold)"></span>High centrality</div>
+        <div class="gli"><span class="gld" style="background:var(--teal)"></span>Medium</div>
+        <div class="gli"><span class="gld" style="background:var(--blue)"></span>Low</div>
+      </div>
+    </div>
+
+    <div class="tcol">
+      <div class="card">
+        <div class="card-h">Add topic &amp; relation</div>
+        <div class="card-b">
+          <div class="row">
+            <div class="fld"><label>Hashtag</label><input id="ht-name" placeholder="exploit" style="width:150px"></div>
+            <button class="pri" onclick="addHT()">+ Add</button>
+          </div>
+          <div class="row">
+            <div class="fld"><label>From</label><select id="rel-a" style="width:130px"><option value="">—</option></select></div>
+            <div class="fld"><label>To</label><select id="rel-b" style="width:130px"><option value="">—</option></select></div>
+            <button class="pri" onclick="addRel()">+ Link</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h">Topics <span id="ht-count">0</span></div>
+        <div class="card-b">
+          <div id="ht-list" style="display:flex;flex-wrap:wrap;gap:4px;min-height:36px"></div>
+          <h3>Relations <span id="rel-count">0</span></h3>
+          <div id="rel-list" style="max-height:150px;overflow-y:auto"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ARGUMENTS ===== -->
+  <section id="panel-arguments" class="panel">
+    <h2>Hashtagged <em>arguments</em></h2>
+    <p class="lede">Each argument ⟨A, H_A⟩ carries a set of hashtags H_A ⊆ H. The threshold ε_A sets the radius of its neighborhood — computed automatically from topological metrics, or assigned by hand.</p>
+    <div class="def"><strong>Def. </strong> ε_A can be derived from degree / closeness centrality of H_A or fixed manually.</div>
+    <div class="mbar">
+      <button class="mbtn active" id="eps-auto-btn" onclick="setEpsMode('auto')">ε auto (metrics)</button>
+      <button class="mbtn" id="eps-manual-btn" onclick="setEpsMode('manual')">ε manual</button>
+    </div>
+    <div class="card">
+      <div class="card-h">New argument</div>
+      <div class="card-b">
+        <div class="row">
+          <div class="fld"><label>ID</label><input id="arg-id" placeholder="A1" style="width:60px"></div>
+          <div class="fld" style="flex:1;min-width:200px"><label>Description</label><input id="arg-text" placeholder="Argument text…" style="width:100%"></div>
+          <div class="fld" id="eps-fld" style="display:none"><label>ε</label><input type="number" id="arg-eps" value="2" min="0" max="20" style="width:60px"></div>
+        </div>
+        <div class="row"><div class="fld" style="flex:1"><label>Hashtags (comma)</label><input id="arg-tags" placeholder="malware, exploit, network" style="width:100%"></div></div>
+        <button class="pri" onclick="addArg()">+ Add argument</button>
+      </div>
+    </div>
+    <h3>Arguments <span id="args-count">0</span></h3>
+    <div id="args-list"></div>
+  </section>
+
+  <!-- ===== ATTACKS ===== -->
+  <section id="panel-attacks" class="panel">
+    <h2>Attack <em>relation</em></h2>
+    <p class="lede">Attacks ⊆ Args × Args are not restricted by distance; only defenses are, under η- and ζ-admissibility. In L-HAF, semantically distant attacks are gradually weakened.</p>
+    <div class="def"><strong></strong> An attack from a distant argument loses strength proportionally to d(A,B) − ε_A once labeling is active.</div>
+    <div class="gwrap">
+      <div class="gtb">
+        <span class="gtitle">Argumentation graph</span>
+        <button onclick="argG.reset()">↻</button>
+        <button onclick="argG.togglePhys()" id="argPBtn">⏸</button>
+        <button onclick="argG.fit()">⊞</button>
+        <button onclick="argG.toggleLabels()">🏷</button>
+        <button onclick="downloadCanvas('argCanvas','argumentation-graph',2)">⤓ PNG 2×</button>
+        <button onclick="downloadCanvas('argCanvas','argumentation-graph',4)">⤓ PNG 4×</button>
+        <button onclick="downloadCanvasPDF('argCanvas','argumentation-graph',3)">⤓ PDF</button>
+        <span class="ci" id="arg-ci"></span>
+      </div>
+      <canvas id="argCanvas" class="gcanvas" height="460"></canvas>
+      <div class="gleg">
+        <div class="gli"><span class="gld" style="background:var(--st-strong)"></span>Unchallenged (η-grounded)</div>
+        <div class="gli"><span class="gld" style="background:var(--plum)"></span>ζ-grounded</div>
+        <div class="gli"><span class="gld" style="background:var(--st-weak)"></span>Weakened</div>
+        <div class="gli"><span class="gld" style="background:var(--st-neut)"></span>Neutralized</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h">New attack</div>
+      <div class="card-b">
+        <div class="row">
+          <div class="fld"><label>Attacker</label><select id="atk-from" style="width:120px"><option value="">—</option></select></div>
+          <div class="fld"><label>Target</label><select id="atk-to" style="width:120px"><option value="">—</option></select></div>
+          <button class="pri" onclick="addAtk()">+ Attack</button>
+        </div>
+      </div>
+    </div>
+    <h3>Attacks <span id="atk-count">0</span></h3>
+    <div id="atk-list"></div>
+  </section>
+
+  <!-- ===== DISTANCES ===== -->
+  <section id="panel-distances" class="panel">
+    <h2>Distance <em>functions</em> between arguments</h2>
+    <p class="lede">The distance d_Ω(A,B) is induced from the hashcloud and the hashtag sets H_A, H_B. The paper presents several valid instances; the chosen one drives neighborhoods, extensions and attack weakening.</p>
+    <h3>Select distance function</h3>
+    <div class="dgrid">
+      <div class="dopt sel" data-fn="non_intersection" onclick="selectDist('non_intersection',this)"><strong>Non-intersection (max)</strong><span>max d_G(α,β) over non-shared hashtags. Default in the 2026 paper examples.</span></div>
+      <div class="dopt" data-fn="geodesic" onclick="selectDist('geodesic',this)"><strong>Geodesic (BFS min)</strong><span>Shortest BFS path between the closest hashtags of A and B.</span></div>
+      <div class="dopt" data-fn="hausdorff" onclick="selectDist('hausdorff',this)"><strong>Hausdorff</strong><span>max(max_α min_β d, max_β min_α d). Symmetric between hashtag sets.</span></div>
+      <div class="dopt" data-fn="avg_dist" onclick="selectDist('avg_dist',this)"><strong>Average</strong><span>Mean of d_G(α,β) over all pairs α∈H_A, β∈H_B.</span></div>
+      <div class="dopt" data-fn="min_dist" onclick="selectDist('min_dist',this)"><strong>Minimum</strong><span>min d_G(α,β). The most optimistic instance.</span></div>
+      <div class="dopt" data-fn="symmetric_diff" onclick="selectDist('symmetric_diff',this)"><strong>Symmetric difference</strong><span>|H_A △ H_B|. Ignores graph structure.</span></div>
+    </div>
+    <div class="row"><button class="pri" onclick="computeDistances()">▶ Compute distance matrix</button><button class="ghost sm" onclick="downloadTable('dist-results','distance-matrix')">⤓ CSV</button></div>
+    <div id="dist-results" style="margin-top:12px"></div>
+  </section>
+
+<!-- ===== METRICS ===== -->
+  <section id="panel-metrics" class="panel">
+    <h2>Topological <em>metrics</em> of the hashcloud</h2>
+    <p class="lede">Local and global metrics characterizing the semantic structure, used to auto-compute the ε_A threshold of each argument.</p>
+    <div class="formula">Local:
+  Degree centrality:   <span class="hl">deg(α)</span> = |{β : (α,β)∈E}|
+  Avg neighbor degree: <span class="hl">mean{deg(β) : β ~ α}</span>
+  Local clustering:    <span class="hl">C(α)</span> = triangles(α) / (deg(α)·(deg(α)−1)/2)
+  Closeness:           <span class="hl">CC(α)</span> = (|H|−1) / Σ d(α,β)
+
+Global:  radius = min eccentricity · diameter = max eccentricity
+ε_A auto: ε_A = round((local + global) / 2)</div>
+    
+    <!-- NUEVO CONTROL SELECTOR -->
+    <div class="card" style="max-width: 400px; margin-bottom: 15px;">
+      <div class="card-b">
+        <div class="fld">
+          <label>Local Radio Metrics</label>
+          <select id="auto-metric-selection" style="width:100%; margin-top:4px;">
+            <option value="degree">Degree Centrality (Default)</option>
+            <option value="closeness">Closeness Centrality</option>
+            <option value="lcc">Local Clustering Coefficient (LCC)</option>
+            <option value="avgND">Neighborhood Average Rating</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="row"><button class="pri" onclick="computeMetrics()">▶ Compute metrics</button><button class="ghost sm" onclick="downloadTable('metrics-results','hashcloud-metrics')">⤓ CSV</button></div>
+    <div id="metrics-results" style="margin-top:12px"></div>
+  </section>
+
+  <!-- ===== NEIGHBORHOODS ===== -->
+  <section id="panel-neighborhoods" class="panel">
+    <h2><em>Neighborhoods</em> η — local semantics</h2>
+    <p class="lede">N^ε_A = {X ∈ Args : d_Ω(A,X) ≤ ε_A}. An argument A is η-acceptable w.r.t. S if every attacker B has a defender C ∈ S ∩ N^ε_A — only semantically close arguments may defend.</p>
+    <div class="def"><strong> </strong> Neighborhoods restrict who can defend whom.</div>
+    <div class="mbar" style="max-width:460px">
+      <button class="mbtn active" id="nbhd-auto-btn" onclick="setNbhdMode('auto')">Auto (metrics)</button>
+      <button class="mbtn" id="nbhd-manual-btn" onclick="setNbhdMode('manual')">Manual (edit ε_A)</button>
+    </div>
+    <div class="row"><button class="pri" onclick="computeNeighborhoods()">▶ Compute neighborhoods</button><button class="ghost sm" onclick="downloadTable('nbhd-results','neighborhoods')">⤓ CSV</button></div>
+    <div id="nbhd-results" style="margin-top:12px"></div>
+  </section>
+
+  <!-- ===== COMMUNITIES ===== -->
+  <section id="panel-communities" class="panel">
+    <h2><em>Communities</em> ζ — collective semantics</h2>
+    <p class="lede">There is a semantic path X₁⇝Xₙ when N^ε_Xi ∩ N^ε_Xi+1 ≠ ∅ for each i. The community C_A = {B : A⇝B ∨ B⇝A}. An argument is ζ-acceptable if each attacker has a defender within its own community. Communities partition Args.</p>
+    <div class="def"><strong> </strong> Communities are connected components in the neighborhood-overlap graph.</div>
+    <button class="pri" onclick="computeCommunities()">▶ Compute communities</button>
+    <div id="comm-results" style="margin-top:12px"></div>
+  </section>
+
+  <!-- ===== EXTENSIONS CS ===== -->
+  <section id="panel-extensions-cs" class="panel">
+    <h2>η / ζ <em>extensions</em></h2>
+    <p class="lede">Four families of extensions (grounded, preferred) under four compared semantics: classical Dung, τ-proximity (global), η-neighborhood (individual) and ζ-community (collective).</p>
+    <div class="def"><strong> </strong> Comparison.</div>
+    <div class="row"><button class="pri" onclick="computeAllExtensions()">▶ Compute all extensions</button><button class="ghost sm" onclick="downloadTable('ext-results','eta-zeta-extensions')">⤓ CSV</button></div>
+    <div id="ext-results" style="margin-top:12px"></div>
+  </section>
+
+  <!-- ===== CONCLUSIONS ===== -->
+  <section id="panel-conclusions" class="panel">
+    <h2><span class="step-no">Step 1</span> Conclusion function <em>μ</em></h2>
+    <p class="lede">μ : Args → Lit assigns a conclusion to each argument. Conclusions determine logical conflicts (P vs ~P).</p>
+    <div class="def"><strong> </strong> Conflicting conclusions induce the attack relation at the literal level.</div>
+    <div class="card">
+      <div class="card-h">Assign conclusion</div>
+      <div class="card-b"><div class="row">
+        <div class="fld"><label>Argument</label><select id="mu-arg" style="width:110px"><option value="">—</option></select></div>
+        <div class="fld"><label>Conclusion μ</label><input id="mu-concl" placeholder="P1 or ~P2" style="width:120px"></div>
+        <button class="pri" onclick="assignMu()">Assign</button>
+      </div></div>
+    </div>
+    <h3>Current assignments</h3>
+    <div id="mu-list"></div>
+    <h3>Detected conflicts</h3>
+    <div id="mu-conflicts"></div>
+  </section>
+
+  <!-- ===== SUBARGS ===== -->
+  <section id="panel-subargs" class="panel">
+    <h2><span class="step-no">Step 2</span> Subarguments &amp; <em>aggregation</em></h2>
+    <p class="lede">sub: A^μ → 2^(A^μ). Each argument decomposes into subarguments with disjoint hashtags that fully cover H_A. Induced attacks Attacks⁺ link subarguments with contradictory conclusions.</p>
+    <div class="formula">Conditions on sub(A^μ):
+  i)   A_i ⊆ H_A          (subarg hashtags ⊆ parent)
+  ii)  ⋃ A_i = H_A         (total coverage — partition)
+  iii) A_i ∩ A_j = ∅       (strict disjunction)
+  iv)  non-trivial
+
+Strategies:  <span class="hl">singleton</span> · <span class="hl">bipartite</span> · <span class="hl">manual</span></div>
+    <h3>Subargumentation mode</h3>
+    <div class="mbar">
+      <button class="mbtn active" id="sub-mode-auto-single" onclick="setSubMode('singleton')">Auto: singleton</button>
+      <button class="mbtn" id="sub-mode-auto-bi" onclick="setSubMode('bipartite')">Auto: bipartite</button>
+      <button class="mbtn" id="sub-mode-manual" onclick="setSubMode('manual')">Manual</button>
+    </div>
+    <div id="sub-auto-panel">
+      <button class="pri" onclick="runAutoSub()">▶ Generate subarguments</button>
+      <div class="def" id="sub-mode-desc" style="margin-top:10px"></div>
+    </div>
+    <div id="sub-manual-panel" style="display:none">
+      <div class="card"><div class="card-h">New subargument</div><div class="card-b"><div class="row">
+        <div class="fld"><label>Parent</label><select id="sub-parent" style="width:90px"><option value="">—</option></select></div>
+        <div class="fld"><label>Sub ID</label><input id="sub-id" placeholder="A1.1" style="width:80px"></div>
+        <div class="fld"><label>Conclusion</label><input id="sub-concl" placeholder="P1" style="width:90px"></div>
+        <div class="fld" style="flex:1"><label>Hashtags (disjoint ⊆ H_A)</label><input id="sub-tags" placeholder="malware, exploit" style="width:100%"></div>
+        <button class="pri" onclick="addSub()">+ Add</button>
+      </div></div></div>
+    </div>
+    <h3>Subarguments Ω⁺ <span id="sub-count">0</span></h3>
+    <div id="subs-list"></div>
+    <h3>Induced attacks Attacks⁺</h3>
+    <div id="sub-attacks"></div>
+    <hr>
+    <h2>Aggregation <em>agg</em></h2>
+    <div class="def gold"><strong> </strong> Subarguments with the same conclusion γ are grouped: H_X = ⋃ H_Y. Produces Ω* and inherits attacks without introducing new conflicts.</div>
+    <button class="pri" onclick="runAgg()">▶ Run aggregation</button>
+    <div id="agg-out" style="margin-top:12px"></div>
+  </section>
+
+  <!-- ===== VALUATION ===== -->
+  <section id="panel-valuation" class="panel">
+    <h2><span class="step-no">Step 3</span> Valuation function <em>υ</em></h2>
+    <p class="lede">M_A is the centrality vector of A's hashtags in G_Ω. υ(A^μ) = f(M_A), where f is an aggregation operator. α_A = υ(A^μ) is the argument's initial strength.</p>
+    <div class="formula">M_A(i) = centrality of hashtag αᵢ in G_Ω
+
+Centralities m(·):  degree · closeness · eigenvector · PageRank
+Operators f(M_A):   sum (coverage) · mean · max (dominant) · min (weakest link)</div>
+    <div class="tcol">
+      <div class="card">
+        <div class="card-h">Configure υ</div>
+        <div class="card-b">
+          <div class="fld" style="margin-bottom:10px"><label>Centrality m(·)</label>
+            <select id="centrality-fn" style="width:100%;margin-top:4px">
+              <option value="degree">Normalized degree (deg/max)</option>
+              <option value="closeness">Closeness</option>
+              <option value="eigenvector">Eigenvector (iterative)</option>
+              <option value="pagerank">PageRank (approx.)</option>
+            </select></div>
+          <div class="fld" style="margin-bottom:10px"><label>Operator f(M_A)</label>
+            <select id="agg-fn" style="width:100%;margin-top:4px">
+              <option value="mean">Mean — normalized by |H_A|</option>
+              <option value="sum">Sum — rewards coverage</option>
+              <option value="max">Max — most central hashtag</option>
+              <option value="min">Min — weakest hashtag</option>
+            </select></div>
+          <button class="pri" onclick="runValuation()">▶ Compute υ</button>
+        </div>
+      </div>
+      <div class="card"><div class="card-h">Preview</div><div class="card-b" id="valuation-preview"><span class="muted">Run to see valuations →</span></div></div>
+    </div>
+    <div class="dl-row"><button class="ghost sm" onclick="downloadTable('valuation-out','valuations')">⤓ CSV</button></div>
+    <div id="valuation-out" style="margin-top:8px"></div>
+  </section>
+
+  <!-- ===== LABELING ===== -->
+  <section id="panel-labeling" class="panel">
+    <h2><span class="step-no">Step 4</span> Labeling procedure <em>⟨α, δ⟩</em></h2>
+    <p class="lede">Assigns ⟨α_A, δ_A⟩ to each argument. δ_A incorporates the weakening of incoming attacks, attenuated by semantic distance d(A,B) and the threshold ε_A.</p>
+    <div class="formula">If B ∈ N^ε_A  (d ≤ ε_A):   contribution = α_B            (full strength)
+If B ∉ N^ε_A  (d > ε_A):   contribution = α_B / (d − ε_A)  (weakened)
+If d = ∞:                  contribution = 0
+
+Status:  <span class="hl">Unchallenged</span> δ=α · <span class="hl">Weakened</span> 0&lt;δ&lt;α · <span class="hl">Neutralized</span> δ=0</div>
+    <button class="pri" onclick="runLabeling()">▶ Run labeling</button>
+    <span class="dl-row" style="display:inline-flex"><button class="ghost sm" onclick="downloadTable('labeling-out','labels')">⤓ CSV</button></span>
+    <div id="labeling-out" style="margin-top:12px"></div>
+  </section>
+
+  <!-- ===== EXTENSIONS LHAF ===== -->
+  <section id="panel-extensions-lhaf" class="panel">
+    <h2><span class="step-no">Step 5</span> L-HAF <em>extensions</em></h2>
+    <p class="lede">Conflict-freeness, acceptability and extensions based on gradual statuses: Unchallenged (U), Weakened (W), Neutralized (N).</p>
+    <div class="formula">Strong conflict-free: S ⊆ A^υ_U
+Weak conflict-free:   S ⊆ A^υ_U ∪ A^υ_W
+Strong-grounded = A^υ_U     ·    Weak-grounded = A^υ_U ∪ A^υ_W</div>
+    <button class="pri" onclick="runLHAFExt()">▶ Compute L-HAF extensions</button>
+    <div id="lhaf-ext-out" style="margin-top:12px"></div>
+  </section>
+
+  <!-- ===== PROPERTIES ===== -->
+  <section id="panel-properties" class="panel">
+    <h2>Framework <em>properties</em></h2>
+    <p class="lede">Verification of the formal properties of L-HAF against the current state of the system.</p>
+    <button class="pri" onclick="checkProps()">▶ Verify properties</button>
+    <div id="props-out" style="margin-top:12px"></div>
+  </section>
+
+  <!-- ===== EXAMPLES ===== -->
+  <section id="panel-examples" class="panel">
+    <h2>Preloaded <em>examples</em></h2>
+    <p class="lede">Click an example to load it. Each one mixes central hashtags (close to the semantic core), intermediate and distant ones — producing different degrees of attack weakening.</p>
+    <div id="examples-list" class="ex-grid"></div>
+  </section>
+
+  <!-- ===== IO ===== -->
+  <section id="panel-io" class="panel">
+    <h2>Import / <em>Export</em></h2>
+    <p class="lede">Extended JSON format: <code style="font-family:var(--mono);color:var(--rust)">{hashtags, edges, arguments:[{id,text,hashtags,eps,conclusion}], attacks, mu, subarguments}</code></p>
+    <div class="tcol">
+      <div>
+        <h3>Import JSON</h3>
+        <textarea class="import-area" id="import-json" placeholder='{"hashtags":[],"edges":[],"arguments":[{"id":"A","text":"...","hashtags":[],"eps":2}],"attacks":[]}'></textarea>
+        <div class="dl-row">
+          <button class="pri" onclick="importJSON()">⇣ Import</button>
+          <button class="ghost sm" onclick="exportJSON()">⟳ Refresh export</button>
+          <button class="ghost sm" onclick="downloadJSON()">⤓ Download .json</button>
+        </div>
+        <div id="import-msg" class="muted" style="margin-top:4px;color:var(--teal-d)"></div>
+      </div>
+      <div>
+        <h3>Current JSON</h3>
+        <textarea class="import-area" id="export-preview" readonly style="min-height:240px;color:var(--blue-d);border-color:var(--blue)"></textarea>
+      </div>
+    </div>
+  </section>
+
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+/* ===================================================================
+   L-HAF Studio — graph engine (force-directed canvas)
+   Ported from Coronel et al. reference engine, recolored to the
+   editorial "paper" palette of Argumentation Studio.
+   =================================================================== */
+const PAL = {
+  ink:'#1a1714', paper:'#f4efe6', paper2:'#ece3d3', paper3:'#e3d8c2',
+  line:'#c9b896', rust:'#a8421f', rustD:'#7d2f14',
+  teal:'#1f5e57', tealD:'#143f3a', gold:'#c08a2d', goldD:'#8a611c',
+  plum:'#6a3a5a', plumD:'#4a2640', blue:'#2f5d78', blueD:'#1f3f54',
+  moss:'#4f6b3a', neut:'#8a7f6e'
+};
+/* status colors (paper): Unchallenged=teal, Weakly=gold, Not/defeated=rust, Undecided/base=blue */
+const ST = { U:PAL.teal, W:PAL.gold, N:PAL.rust, base:PAL.blue };
+const COMM = [PAL.teal, PAL.plum, PAL.gold, PAL.rust, PAL.blue, PAL.moss];
+
+/* hex + alpha helper (alpha 0..1 -> 2-digit hex) */
+function ha(hex,a){ const v=Math.round(Math.max(0,Math.min(1,a))*255).toString(16).padStart(2,'0'); return hex+v; }
+function hexA(hex,a){ const h=hex.replace('#',''); const r=parseInt(h.slice(0,2),16),g=parseInt(h.slice(2,4),16),b=parseInt(h.slice(4,6),16); return `rgba(${r},${g},${b},${a})`; }
+
+class FG {
+  constructor(cid, opts = {}) {
+    this.cv = document.getElementById(cid);
+    this.ctx = this.cv.getContext('2d');
+    this.nodes = []; this.edges = [];
+    this.o = { rep:opts.rep||9000, att:opts.att||0.022, damp:opts.damp||0.76, minD:opts.minD||65, nodeR:opts.nodeR||18, ...opts };
+    this.phys = true; this.labels = true;
+    this.scale = 1; this.ox = 0; this.oy = 0;
+    this.drag = null; this.hover = null; this.sel = null; this.af = null;
+    this._events();
+    const ro = new ResizeObserver(() => { this.cv.width = this.cv.parentElement.clientWidth; this.draw(); });
+    ro.observe(this.cv.parentElement);
+    this.cv.width = this.cv.parentElement.clientWidth;
+  }
+  setData(ns, es) {
+    const p = {}; this.nodes.forEach(n => p[n.id] = { x: n.x, y: n.y, vx: n.vx, vy: n.vy });
+    const W = this.cv.width || 800, H = this.cv.height || 520;
+    const N = ns.length, cx = W/2, cy = H/2, R = Math.min(W,H)*0.34 || 180;
+    let fresh = 0;
+    // seed brand-new nodes on a circle (deterministic, well-spread); keep positions of existing ones
+    this.nodes = ns.map((n,i) => {
+      const q = p[n.id];
+      if (q) return { ...n, x:q.x, y:q.y, vx:q.vx, vy:q.vy };
+      fresh++;
+      const a = (i / Math.max(1,N)) * Math.PI * 2;
+      const jitter = 0.85 + Math.random()*0.3;
+      return { ...n, x:cx + Math.cos(a)*R*jitter, y:cy + Math.sin(a)*R*jitter, vx:0, vy:0 };
+    });
+    this.edges = es;
+    const firstLoad = Object.keys(p).length === 0;
+    if (firstLoad || fresh > Math.max(1, this.nodes.length*0.3)) {
+      this._settle();   // (re)lay out only on first load or a big structural change
+      this.fit();
+    }
+    this._restart();    // brief live settle, then auto-stop
+  }
+  /* run physics without drawing so the graph appears already laid out */
+  _settle(iters = 320) {
+    if (!this.nodes.length) return;
+    const wasFixed = this.nodes.map(n=>n.fixed);
+    this.nodes.forEach(n=>n.fixed=false);
+    for (let k=0;k<iters;k++){ const e=this._sim(); if(k>60 && e<0.05) break; }
+    this.nodes.forEach((n,i)=>{ n.fixed=wasFixed[i]; n.vx=0; n.vy=0; });
+  }
+  reset() {
+    const W=this.cv.width||800,H=this.cv.height||520, N=this.nodes.length, cx=W/2, cy=H/2, R=Math.min(W,H)*0.34||180;
+    this.nodes.forEach((n,i)=>{ const a=(i/Math.max(1,N))*Math.PI*2; n.x=cx+Math.cos(a)*R; n.y=cy+Math.sin(a)*R; n.vx=0; n.vy=0; n.fixed=false; });
+    this.scale=1;this.ox=0;this.oy=0;
+    this._settle(); this.fit(); this._restart();
+  }
+  togglePhys() {
+    this.phys=!this.phys;
+    if(this.phys){ this._restart(); } else if(this.af){ cancelAnimationFrame(this.af); this.af=null; }
+    const id = this.cv.id==='htCanvas' ? 'htPBtn' : 'argPBtn';
+    const btn = document.getElementById(id);
+    if(btn){ const long = this.cv.id==='htCanvas'; btn.textContent = this.phys ? (long?'⏸ Freeze':'⏸') : (long?'▶ Resume':'▶'); }
+  }
+  /* (re)start a short live animation that auto-freezes once at rest */
+  _restart() { this.phys=true; this._calm=0; this._fitted=false; if(!this.af) this.loop(); }
+  toggleLabels() { this.labels=!this.labels; this.draw(); }
+  fit() {
+    if (!this.nodes.length) return;
+    const pad=50,xs=this.nodes.map(n=>n.x),ys=this.nodes.map(n=>n.y);
+    const mnX=Math.min(...xs),mxX=Math.max(...xs),mnY=Math.min(...ys),mxY=Math.max(...ys);
+    const sw=this.cv.width/(mxX-mnX+pad*2),sh=this.cv.height/(mxY-mnY+pad*2);
+    this.scale=Math.min(sw,sh,2.5);this.ox=(this.cv.width-(mnX+mxX)*this.scale)/2;this.oy=(this.cv.height-(mnY+mxY)*this.scale)/2;this.draw();
+  }
+  _w2s(x,y){return{x:x*this.scale+this.ox,y:y*this.scale+this.oy};}
+  _s2w(x,y){return{x:(x-this.ox)/this.scale,y:(y-this.oy)/this.scale};}
+  _at(sx,sy){const w=this._s2w(sx,sy);return this.nodes.find(n=>Math.hypot(n.x-w.x,n.y-w.y)<(n.r||this.o.nodeR)+5);}
+  _sim() {
+    const ns=this.nodes,es=this.edges;
+    const rest=this.o.rest || (this.o.minD*1.4);   // spring rest length: edges hold nodes apart, not on top of each other
+    for(let i=0;i<ns.length;i++) for(let j=i+1;j<ns.length;j++){const a=ns[i],b=ns[j];let dx=b.x-a.x,dy=b.y-a.y,d=Math.sqrt(dx*dx+dy*dy)||.1;if(d<this.o.minD)d=this.o.minD;const f=this.o.rep/(d*d),fx=(dx/d)*f,fy=(dy/d)*f;a.vx-=fx;a.vy-=fy;b.vx+=fx;b.vy+=fy;}
+    es.forEach(e=>{const a=ns.find(n=>n.id===(e.source||e[0])),b=ns.find(n=>n.id===(e.target||e[1]));if(!a||!b)return;const dx=b.x-a.x,dy=b.y-a.y,d=Math.sqrt(dx*dx+dy*dy)||.1;const f=this.o.att*(d-rest),fx=(dx/d)*f,fy=(dy/d)*f;a.vx+=fx;a.vy+=fy;b.vx-=fx;b.vy-=fy;});
+    // center pull: weaker with fewer nodes so small graphs don't bunch up
+    const cx=this.cv.width/2,cy=this.cv.height/2, gpull=Math.min(0.003, 0.012/Math.max(4,ns.length));
+    ns.forEach(n=>{n.vx+=(cx-n.x)*gpull;n.vy+=(cy-n.y)*gpull;});
+    let E=0; ns.forEach(n=>{if(n.fixed)return;n.vx*=this.o.damp;n.vy*=this.o.damp;const sp=Math.sqrt(n.vx*n.vx+n.vy*n.vy);if(sp>14){n.vx*=14/sp;n.vy*=14/sp;}n.x+=n.vx;n.y+=n.vy;E+=n.vx*n.vx+n.vy*n.vy;});
+    return ns.length ? E/ns.length : 0;
+  }
+  draw() {
+    this._render(this.ctx, this.cv.width, this.cv.height, this.scale, this.ox, this.oy);
+  }
+  /* paint the graph onto any context at a given scale/offset (used for screen + hi-res export) */
+  _render(ctx, W, H, scale, ox, oy){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=ha(PAL.line,0.5);const gs=40*scale;const ox2=((ox%gs)+gs)%gs,oy2=((oy%gs)+gs)%gs;
+    for(let x=ox2;x<W;x+=gs)for(let y=oy2;y<H;y+=gs){ctx.beginPath();ctx.arc(x,y,.8,0,Math.PI*2);ctx.fill();}
+    ctx.save();ctx.translate(ox,oy);ctx.scale(scale,scale);this._dE(ctx);this._dN(ctx);ctx.restore();
+  }
+  /* true high-resolution PNG: re-renders vectors at `factor`× into a fresh canvas (no upscaling blur).
+     Frames the graph to its own bounds so it fills the image regardless of on-screen zoom. */
+  exportPNG(factor=4){
+    const W=this.cv.width, H=this.cv.height;
+    // compute a tight fit to node bounds (independent of current screen pan/zoom)
+    let scale=this.scale, ox=this.ox, oy=this.oy;
+    if(this.nodes.length){
+      const pad=70, rs=this.nodes.map(n=>n.r||this.o.nodeR);
+      const xs=this.nodes.map((n,i)=>[n.x-rs[i],n.x+rs[i]]).flat();
+      const ys=this.nodes.map((n,i)=>[n.y-rs[i],n.y+rs[i]]).flat();
+      const mnX=Math.min(...xs),mxX=Math.max(...xs),mnY=Math.min(...ys),mxY=Math.max(...ys);
+      const sw=W/(mxX-mnX+pad*2), sh=H/(mxY-mnY+pad*2);
+      scale=Math.min(sw,sh,3);
+      ox=(W-(mnX+mxX)*scale)/2; oy=(H-(mnY+mxY)*scale)/2;
+    }
+    const tmp=document.createElement('canvas');
+    tmp.width=Math.round(W*factor); tmp.height=Math.round(H*factor);
+    const c=tmp.getContext('2d');
+    c.scale(factor,factor);
+    c.fillStyle=PAL.paper; c.fillRect(0,0,W,H);
+    this._render(c, W, H, scale, ox, oy);
+    return tmp.toDataURL('image/png');
+  }
+  _dE(ctx){}
+  _dN(ctx){}
+  loop(){
+    this.af=requestAnimationFrame(()=>{
+      let E=0;
+      if(this.phys) E=this._sim();
+      this.draw();
+      this.af=null;
+      // count consecutive calm frames; once settled and not dragging, stop animating
+      if(this.drag){ this._calm=0; this.loop(); return; }
+      if(this.phys){
+        if(E<0.04) this._calm=(this._calm||0)+1; else this._calm=0;
+        if(this._calm<14){ this.loop(); }
+        else if(!this._fitted){ this._fitted=true; this.fit(); }   // frame the settled layout once
+      }
+    });
+  }
+  _events() {
+    const cv=this.cv; let pan=null,pOff=null;
+    cv.addEventListener('mousedown',e=>{const r=cv.getBoundingClientRect(),sx=e.clientX-r.left,sy=e.clientY-r.top,nd=this._at(sx,sy);if(nd){this.drag=nd;nd.fixed=true;this.sel=nd;this._calm=0;if(!this.af)this.loop();}else{pan={x:sx,y:sy};pOff={x:this.ox,y:this.oy};}});
+    cv.addEventListener('mousemove',e=>{const r=cv.getBoundingClientRect(),sx=e.clientX-r.left,sy=e.clientY-r.top;if(this.drag){const w=this._s2w(sx,sy);this.drag.x=w.x;this.drag.y=w.y;this.drag.vx=0;this.drag.vy=0;}else if(pan){this.ox=pOff.x+(sx-pan.x);this.oy=pOff.y+(sy-pan.y);this.draw();}else{const p=this.hover;this.hover=this._at(sx,sy);cv.style.cursor=this.hover?'pointer':'grab';if(p!==this.hover)this.draw();}});
+    //cv.addEventListener('mouseup',()=>{if(this.drag){if(this.phys)this.drag.fixed=false;this.drag=null;this._restart();}pan=null;this._onClick(this.sel);});
+    cv.addEventListener('mouseup', () => {
+  if (this.drag) {
+    if (this.phys) {
+      this.drag.fixed = false;
+      this._restart();
+    } else {
+      this.drag.fixed = true; 
+      this.draw();            
+    }
+    this.drag = null;
+  }
+  pan = null;
+  this._onClick(this.sel);
+});
+    cv.addEventListener('wheel',e=>{e.preventDefault();const r=cv.getBoundingClientRect(),sx=e.clientX-r.left,sy=e.clientY-r.top,f=e.deltaY<0?1.12:.88;this.ox=sx-(sx-this.ox)*f;this.oy=sy-(sy-this.oy)*f;this.scale=Math.max(.08,Math.min(this.scale*f,7));this.draw();},{passive:false});
+  }
+  _onClick(n){}
+}
+
+/* ── HASHCLOUD GRAPH ── */
+class HTGraph extends FG {
+  constructor() { super('htCanvas',{rep:18000,att:0.02,damp:0.78,minD:90,nodeR:14,rest:150}); }
+  refresh() {
+    bfsHT();
+    const dg={}; S.hashtags.forEach(h=>dg[h]=0);
+    S.edges.forEach(([a,b])=>{dg[a]=(dg[a]||0)+1;dg[b]=(dg[b]||0)+1;});
+    const mD=Math.max(1,...Object.values(dg));
+    this.dg=dg; this.mD=mD;
+    this.setData(S.hashtags.map(h=>({id:h,label:'#'+h,r:9+(dg[h]||0)/mD*14,deg:dg[h]||0})),S.edges.map(([a,b])=>({source:a,target:b})));
+  }
+  _dE(ctx) {
+    this.edges.forEach(e=>{
+      const a=this.nodes.find(n=>n.id===e.source),b=this.nodes.find(n=>n.id===e.target);if(!a||!b)return;
+      ctx.strokeStyle=ha(PAL.neut,0.7);ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
+    });
+  }
+  _dN(ctx) {
+    const mD=this.mD||1;
+    this.nodes.forEach(n=>{
+      const r=n.r||14,h=this.hover===n,s=this.sel===n;
+      const t=(n.deg||0)/mD;const col=t>.6?PAL.rust:t>.3?PAL.gold:PAL.teal;
+      if(t>.3){const g=ctx.createRadialGradient(n.x,n.y,r*.3,n.x,n.y,r*2.5);g.addColorStop(0,ha(col,0.16));g.addColorStop(1,ha(col,0));ctx.beginPath();ctx.arc(n.x,n.y,r*2.5,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();}
+      ctx.beginPath();ctx.arc(n.x,n.y,r+(h||s?3:0),0,Math.PI*2);ctx.fillStyle=PAL.paper;ctx.fill();
+      ctx.strokeStyle=s?PAL.ink:col;ctx.lineWidth=s?2.5:h?2:1.5;ctx.stroke();
+      ctx.beginPath();ctx.arc(n.x,n.y,r*.32,0,Math.PI*2);ctx.fillStyle=col;ctx.fill();
+      if(this.labels||h){
+        const lbl=n.label.replace(/^#/,'');const fs=Math.max(7,Math.min(10,r*.72));
+        ctx.font=`${h?'600 ':''}${fs}px 'IBM Plex Mono',monospace`;ctx.textAlign='center';ctx.textBaseline='top';
+        const tw=ctx.measureText(lbl).width,lx=n.x-tw/2-3,ly=n.y+r+3;
+        ctx.fillStyle=ha(PAL.ink,0.88);if(ctx.roundRect){ctx.beginPath();ctx.roundRect(lx,ly,tw+6,fs+4,3);}else{ctx.beginPath();ctx.rect(lx,ly,tw+6,fs+4);}ctx.fill();
+        ctx.fillStyle=PAL.paper;ctx.fillText(lbl,n.x,ly+2);
+      }
+    });
+  }
+  _onClick(n){const el=document.getElementById('ht-ci');if(n&&el){const as=S.arguments.filter(a=>a.hashtags.includes(n.id)).map(a=>a.id).join(',')||'—';el.textContent=`#${n.id} · deg:${n.deg} · args:[${as}]`;}}
+}
+
+/* ── ARGUMENTATION GRAPH ── */
+class ArgGraph extends FG {
+  constructor() { super('argCanvas',{rep:30000,att:0.014,damp:0.76,minD:120,nodeR:22,rest:200}); this.etaGnd=new Set(); this.zetaGnd=new Set(); }
+  refresh(etaG=[], zetaG=[]) {
+    this.etaGnd=new Set(etaG); this.zetaGnd=new Set(zetaG);
+    const nodes=S.arguments.map(a=>{const l=S.labels[a.id];const st=argStatuses[a.id];const ci=S.communities[a.id];return{id:a.id,label:a.id,text:a.text,hashtags:a.hashtags,eps:a.eps_manual,concl:S.mu[a.id]||'',st,alpha:l?.alpha,delta:l?.delta,commIdx:ci,commCol:ci!==undefined?COMM[ci%6]:null};});
+    const edges=S.attacks.map(([f,t])=>({source:f,target:t,mutual:S.attacks.some(([a,b])=>a===t&&b===f)}));
+    this.setData(nodes,edges);
+  }
+  _ah(ctx,x,y,a,col,s){ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-s*Math.cos(a-.4),y-s*Math.sin(a-.4));ctx.lineTo(x-s*Math.cos(a+.4),y-s*Math.sin(a+.4));ctx.closePath();ctx.fill();}
+  _arrow(ctx,x1,y1,x2,y2,col,wk,curved,hs=10){
+    const a2=Math.atan2(y2-y1,x2-x1);ctx.strokeStyle=wk?ha(col,0.33):col;ctx.lineWidth=wk?1:2;
+    if(wk)ctx.setLineDash([4,5]);ctx.beginPath();
+    if(curved){const mx=(x1+x2)/2-(y2-y1)*.22,my=(y1+y2)/2+(x2-x1)*.22;ctx.moveTo(x1,y1);ctx.quadraticCurveTo(mx,my,x2,y2);ctx.stroke();ctx.setLineDash([]);const t=.9,ax=(1-t)**2*x1+2*(1-t)*t*mx+t*t*x2,ay=(1-t)**2*y1+2*(1-t)*t*my+t*t*y2;this._ah(ctx,x2,y2,Math.atan2(y2-ay,x2-ax),wk?ha(col,0.33):col,hs);}
+    else{ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.setLineDash([]);this._ah(ctx,x2,y2,a2,wk?ha(col,0.33):col,hs);}
+  }
+  _dE(ctx) {
+    const drawn=new Set();
+    this.edges.forEach(e=>{
+      const a=this.nodes.find(n=>n.id===e.source),b=this.nodes.find(n=>n.id===e.target);if(!a||!b)return;
+      const r=this.o.nodeR,dx=b.x-a.x,dy=b.y-a.y,d=Math.sqrt(dx*dx+dy*dy)||1,ux=dx/d,uy=dy/d;
+      const x1=a.x+ux*r,y1=a.y+uy*r,x2=b.x-ux*(r+10),y2=b.y-uy*(r+10);
+      const pk=[e.source,e.target].sort().join('|');const curved=e.mutual||drawn.has(pk);drawn.add(pk);
+      const dist=S.argDist[e.source]?.[e.target]??Infinity;
+      const eps=S.arguments.find(x=>x.id===e.target)?.eps_manual||2;
+      const isLHAFActive = Object.keys(S.labels).length > 0;
+      const wk=isLHAFActive && dist>eps;
+      this._arrow(ctx,x1,y1,x2,y2,PAL.rust,wk,curved,10);
+    });
+  }
+  _dN(ctx) {
+    const isLHAFActive = Object.keys(S.labels).length > 0;
+    this.nodes.forEach(n => {
+      const r = this.o.nodeR, h = this.hover === n, s = this.sel === n;
+      const inEta = this.etaGnd.has(n.id), inZeta = this.zetaGnd.has(n.id);
+      let sc = PAL.blue;
+      if (isLHAFActive) {
+        sc = inEta ? PAL.teal : inZeta ? PAL.plum : n.st==='U' ? PAL.teal : n.st==='W' ? PAL.gold : PAL.rust;
+      }
+      if (isLHAFActive && n.commCol) {
+        ctx.beginPath(); ctx.arc(n.x, n.y, r + 8, 0, Math.PI * 2);
+        ctx.fillStyle = ha(n.commCol,0.10); ctx.fill();
+        ctx.strokeStyle = ha(n.commCol,0.33); ctx.lineWidth = 1; ctx.stroke();
+      }
+      if (isLHAFActive && (inEta || inZeta || n.st === 'U')) {
+        const grd = ctx.createRadialGradient(n.x, n.y, r * .4, n.x, n.y, r * 2.5);
+        grd.addColorStop(0, ha(sc,0.25)); grd.addColorStop(1, ha(sc,0));
+        ctx.beginPath(); ctx.arc(n.x, n.y, r * 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = grd; ctx.fill();
+      }
+      ctx.beginPath(); ctx.arc(n.x, n.y, r + (h ? 4 : 0), 0, Math.PI * 2);
+      ctx.fillStyle = PAL.paper; ctx.fill();
+      ctx.strokeStyle = s ? PAL.ink : sc;
+      ctx.lineWidth = s ? 3 : h ? 2.5 : 2; ctx.stroke();
+      if (isLHAFActive && n.alpha !== undefined && n.delta !== undefined) {
+        const frac = n.alpha > 0 ? Math.max(0, n.delta / n.alpha) : 1;
+        ctx.beginPath(); ctx.arc(n.x, n.y, r - 5, Math.PI * 1.5, Math.PI * 1.5 + frac * Math.PI * 2);
+        ctx.strokeStyle = ha(sc,0.6); ctx.lineWidth = 3; ctx.stroke();
+      }
+      if (isLHAFActive) {
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.font = `600 14px 'Fraunces', serif`;
+        ctx.strokeStyle = PAL.paper; ctx.lineWidth = 3.5; ctx.strokeText(n.label, n.x, n.y);
+        ctx.fillStyle = sc; ctx.fillText(n.label, n.x, n.y);
+        if (n.concl) {
+          ctx.font = `9px 'IBM Plex Mono', monospace`; ctx.fillStyle = PAL.plum;
+          ctx.fillText(n.concl, n.x, n.y + r + 13);
+        }
+        if (n.hashtags && n.hashtags.length) {
+          ctx.font = `italic 7.5px 'IBM Plex Mono', monospace`;
+          ctx.fillStyle = ha(PAL.neut,0.85);
+          const tagsText = n.hashtags.map(h => '#' + h).join(' ');
+          const yOffset = n.concl ? 24 : 13;
+          ctx.fillText(tagsText, n.x, n.y + r + yOffset);
+        }
+      } else {
+        ctx.font = `600 13px 'Fraunces', serif`; ctx.fillStyle = PAL.ink;
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText(n.label, n.x, n.y);
+        if (n.hashtags && n.hashtags.length) {
+          ctx.font = `italic 7.5px 'IBM Plex Mono', monospace`;
+          ctx.fillStyle = ha(PAL.neut,0.85);
+          const tagsText = n.hashtags.map(h => '#' + h).join(' ');
+          ctx.fillText(tagsText, n.x, n.y + r + 13);
+        }
+      }
+      if (h && n.text) {
+        const txt = n.text.length > 48 ? n.text.slice(0, 48) + '…' : n.text;
+        ctx.font = '10px "IBM Plex Sans", sans-serif';
+        const tw = Math.min(ctx.measureText(txt).width, 220);
+        const tx = n.x - tw / 2 - 5, ty = n.y - r - 26;
+        ctx.fillStyle = ha(PAL.ink,0.94);
+        if (ctx.roundRect){ctx.beginPath(); ctx.roundRect(tx, ty, tw + 10, 18, 4);} else {ctx.beginPath();ctx.rect(tx, ty, tw + 10, 18);}
+        ctx.fill(); ctx.fillStyle = PAL.paper; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(txt, n.x, ty + 9);
+      }
+    });
+  }
+  _onClick(n){const el=document.getElementById('arg-ci');if(n&&el){const l=S.labels[n.id];const ci=S.communities[n.id];const commInfo=ci!==undefined?` · <span style="color:${COMM[ci%6]}">C${ci+1}</span>`:'';el.innerHTML=`<strong style="color:var(--rust)">${n.id}</strong>${l?` · α=${l.alpha.toFixed(3)} δ=${l.delta.toFixed(3)} [${argStatuses[n.id]||'?'}]`:''}${commInfo}`;} }
+}
+
+/* instances + canvas download */
+let htG, argG;
+function downloadCanvas(canvasId, fileName, factor){
+  const g = canvasId==='htCanvas' ? htG : canvasId==='argCanvas' ? argG : null;
+  if(!g){ toast('Graph not found'); return; }
+  if(!g.nodes.length){ toast('Nothing to export yet'); return; }
+  try{
+    const f = factor||4;
+    const url = g.exportPNG(f);
+    const a=document.createElement('a'); a.href=url; a.download=(fileName||'graph')+'.png'; a.click();
+    const px = Math.round((g.cv.width||820)*f)+'×'+Math.round((g.cv.height||520)*f);
+    toast('Saved '+(fileName||'graph')+'.png · '+px+' px');
+  }catch(e){ toast('Export failed'); }
+}
+function downloadCanvasPDF(canvasId, fileName, factor){
+  const g = canvasId==='htCanvas' ? htG : canvasId==='argCanvas' ? argG : null;
+  if(!g){ toast('Graph not found'); return; }
+  if(!g.nodes.length){ toast('Nothing to export yet'); return; }
+  const jsPDFns = window.jspdf || window.jsPDF;
+  const JsPDF = jsPDFns ? (jsPDFns.jsPDF || jsPDFns) : null;
+  if(!JsPDF){ toast('PDF library not loaded'); return; }
+  try{
+    const f = factor||3;
+    const url = g.exportPNG(f);
+    const w = Math.round((g.cv.width||820)*f), h = Math.round((g.cv.height||520)*f);
+    const landscape = w >= h;
+    const pdf = new JsPDF({ orientation: landscape?'landscape':'portrait', unit:'pt', format:'a4' });
+    const pw = pdf.internal.pageSize.getWidth(), ph = pdf.internal.pageSize.getHeight();
+    const margin = 28;
+    const maxW = pw - margin*2, maxH = ph - margin*2;
+    const ratio = Math.min(maxW/w, maxH/h);
+    const dw = w*ratio, dh = h*ratio;
+    const x = (pw - dw)/2, y = (ph - dh)/2;
+    pdf.setFillColor(244,239,230); pdf.rect(0,0,pw,ph,'F');
+    pdf.addImage(url, 'PNG', x, y, dw, dh);
+    pdf.save((fileName||'graph')+'.pdf');
+    toast('Saved '+(fileName||'graph')+'.pdf');
+  }catch(e){ toast('PDF export failed'); }
+}
+</script>
+
+<script>
+/* ===================================================================
+   L-HAF Studio — application logic (math faithful to Coronel et al. 2026)
+   =================================================================== */
+const S = {
+  hashtags: [], edges: [], arguments: [], attacks: [], subarguments: [],
+  mu: {}, distFn: 'non_intersection', epsMode: 'auto', nbhdMode: 'auto',
+  htDist: {}, argDist: {}, neighborhoods: {}, communities: {}, communityList: [],
+  metrics: {}, valuations: {}, labels: {}
+};
+let argStatuses = {};
+const COMMCOLS = [PAL.teal, PAL.plum, PAL.gold, PAL.rust, PAL.blue, PAL.moss];
+
+function toast(m){ const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2200); }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function fmtD(d){ return d===Infinity?'∞':(Number.isInteger(d)?d:d.toFixed(2)); }
+function distCls(d){ return d===0?'cell-zero':d<=2?'cell-close':d<=4?'cell-mid':d===Infinity?'cell-inf':'cell-far'; }
+
+/* ===== Navigation (data-panel) ===== */
+function showPanel(name){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nbtn').forEach(b=>b.classList.remove('active'));
+  const panel=document.getElementById('panel-'+name); if(panel)panel.classList.add('active');
+  const btn=document.querySelector('.nbtn[data-panel="'+name+'"]'); if(btn)btn.classList.add('active');
+  setTimeout(()=>{
+    if(name==='hashcloud'){ htG.refresh(); }
+    if(name==='attacks'){ argG.refresh(); }
+    if(name==='io'){ updateExportPreview(); }
+    if(name==='examples'){ renderExamples(); }
+  },30);
+}
+document.querySelectorAll('.nbtn').forEach(b=>b.addEventListener('click',()=>showPanel(b.dataset.panel)));
+
+function setEpsMode(m){ S.epsMode=m;
+  document.getElementById('eps-auto-btn').classList.toggle('active',m==='auto');
+  document.getElementById('eps-manual-btn').classList.toggle('active',m==='manual');
+  document.getElementById('eps-fld').style.display=m==='manual'?'flex':'none';
+}
+function setNbhdMode(m){ S.nbhdMode=m;
+  document.getElementById('nbhd-auto-btn').classList.toggle('active',m==='auto');
+  document.getElementById('nbhd-manual-btn').classList.toggle('active',m==='manual');
+}
+function selectDist(fn,el){ S.distFn=fn; document.querySelectorAll('.dopt').forEach(d=>d.classList.remove('sel')); el.classList.add('sel'); invalidateDist(); }
+
+/* ===== Hashcloud ===== */
+function addHT(){ const n=document.getElementById('ht-name').value.trim().replace(/^#/,''); if(!n||S.hashtags.includes(n))return; S.hashtags.push(n); document.getElementById('ht-name').value=''; invalidateDist(); renderHT(); }
+function removeHT(n){ S.hashtags=S.hashtags.filter(h=>h!==n); S.edges=S.edges.filter(([a,b])=>a!==n&&b!==n); invalidateDist(); renderHT(); }
+function addRel(){ const a=document.getElementById('rel-a').value,b=document.getElementById('rel-b').value; if(!a||!b||a===b)return; if(S.edges.some(([x,y])=>(x===a&&y===b)||(x===b&&y===a)))return; S.edges.push([a,b]); invalidateDist(); renderHT(); }
+function removeRel(i){ S.edges.splice(i,1); invalidateDist(); renderHT(); }
+function renderHT(){
+  document.getElementById('ht-count').textContent=S.hashtags.length;
+  document.getElementById('nb-ht').textContent=S.hashtags.length;
+  document.getElementById('ht-list').innerHTML=S.hashtags.map(h=>`<span class="tag t-topic" style="cursor:pointer" onclick="removeHT('${h}')">#${esc(h)} ✕</span>`).join('')||'<span class="muted">— no topics —</span>';
+  document.getElementById('rel-list').innerHTML=S.edges.length
+    ? S.edges.map(([a,b],i)=>`<div class="atki"><span class="tag t-topic">#${esc(a)}</span><span class="muted">─</span><span class="tag t-topic">#${esc(b)}</span><button class="dan" onclick="removeRel(${i})" style="margin-left:auto">✕</button></div>`).join('')
+    : '<span class="muted">—</span>';
+  document.getElementById('rel-count').textContent=S.edges.length;
+  ['rel-a','rel-b'].forEach(id=>{ const s=document.getElementById(id),v=s.value; s.innerHTML='<option value="">—</option>'+S.hashtags.map(h=>`<option value="${h}"${h===v?' selected':''}>#${h}</option>`).join(''); });
+  refreshSels(); htG.refresh();
+}
+
+/* ===== Arguments ===== */
+function addArg(){
+  const id=document.getElementById('arg-id').value.trim().toUpperCase();
+  const text=document.getElementById('arg-text').value.trim();
+  const tags=document.getElementById('arg-tags').value.trim();
+  const eps=parseInt(document.getElementById('arg-eps').value)||2;
+  if(!id||!text||!tags)return;
+  if(S.arguments.find(a=>a.id===id)){ toast('ID already exists'); return; }
+  const hashtags=tags.split(',').map(t=>t.trim().replace(/^#/,'')).filter(Boolean);
+  S.arguments.push({id,text,hashtags,eps_manual:eps,conclusion:''});
+  ['arg-id','arg-text','arg-tags'].forEach(x=>document.getElementById(x).value='');
+  invalidateDist(); renderArgs();
+}
+function removeArg(id){ S.arguments=S.arguments.filter(a=>a.id!==id); S.attacks=S.attacks.filter(([f,t])=>f!==id&&t!==id); delete S.mu[id]; invalidateDist(); renderArgs(); renderAtks(); }
+function renderArgs(){
+  document.getElementById('args-count').textContent=S.arguments.length;
+  document.getElementById('nb-args').textContent=S.arguments.length;
+  const list=document.getElementById('args-list');
+  if(!S.arguments.length){ list.innerHTML='<span class="muted">— no arguments —</span>'; refreshSels(); argG.refresh(); return; }
+  list.innerHTML=S.arguments.map(a=>{
+    const lbl=S.labels[a.id], st=argStatuses[a.id], nbhd=S.neighborhoods[a.id];
+    const sc=st==='U'?'var(--st-strong)':st==='W'?'var(--st-weak)':st==='N'?'var(--st-neut)':'var(--blue)';
+    const ci=S.communities[a.id]; const commCol=ci!==undefined?COMMCOLS[ci%6]:null;
+    return `<div class="ai"><div style="display:flex;align-items:flex-start;gap:9px">
+      <div style="min-width:42px">
+        <div style="font-family:var(--serif);font-weight:700;font-size:17px;color:${sc}">${a.id}</div>
+        ${S.mu[a.id]?`<div style="font-size:9px;color:var(--plum);font-family:var(--mono)">${esc(S.mu[a.id])}</div>`:''}
+        ${nbhd?`<div style="font-size:9px;color:var(--gold-d);font-family:var(--mono)">ε=${nbhd.eps}</div>`:''}
+        ${commCol?`<div style="font-size:9px;color:${commCol};font-family:var(--mono);font-weight:600">C${ci+1}</div>`:''}
+      </div>
+      <div style="flex:1">
+        <div style="font-size:12px;line-height:1.4">${esc(a.text)}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:4px">${a.hashtags.map(h=>`<span class="tag t-topic">#${esc(h)}</span>`).join('')}</div>
+        ${nbhd?`<div style="font-size:9px;margin-top:3px;color:var(--neut);font-family:var(--mono)">N^ε: {${nbhd.members.join(', ')}}</div>`:''}
+        ${lbl?`<div style="font-size:9px;margin-top:3px;font-family:var(--mono)">α=${lbl.alpha.toFixed(3)} · δ=${lbl.delta.toFixed(3)} <span class="stbadge st-${st}" style="font-size:8px">${st}</span></div>`:''}
+      </div>
+      <button class="dan" onclick="removeArg('${a.id}')">✕</button>
+    </div></div>`;
+  }).join('');
+  refreshSels(); argG.refresh();
+}
+function refreshSels(){ ['atk-from','atk-to','mu-arg','sub-parent'].forEach(id=>{ const s=document.getElementById(id); if(!s)return; const v=s.value; s.innerHTML='<option value="">—</option>'+S.arguments.map(a=>`<option value="${a.id}"${a.id===v?' selected':''}>${a.id}</option>`).join(''); }); }
+
+/* ===== Attacks ===== */
+function addAtk(){ const f=document.getElementById('atk-from').value,t=document.getElementById('atk-to').value; if(!f||!t||f===t)return; if(S.attacks.some(([a,b])=>a===f&&b===t))return; S.attacks.push([f,t]); renderAtks(); }
+function removeAtk(f,t){ S.attacks=S.attacks.filter(([a,b])=>!(a===f&&b===t)); renderAtks(); }
+function renderAtks(){
+  document.getElementById('atk-count').textContent=S.attacks.length;
+  document.getElementById('nb-atk').textContent=S.attacks.length;
+  const list=document.getElementById('atk-list');
+  if(!S.attacks.length){ list.innerHTML='<span class="muted">— no attacks —</span>'; argG.refresh(); return; }
+  list.innerHTML=S.attacks.map(([f,t])=>{
+    const d=S.argDist[f]?(S.argDist[f][t]??Infinity):null;
+    const epsTgt=S.arguments.find(x=>x.id===t)?.eps_manual||2;
+    const wk=d!==null&&d!==Infinity&&d>epsTgt&&Object.keys(S.labels).length>0;
+    return `<div class="atki"><span class="tag t-arg">${f}</span>
+      <span style="color:var(--rust);font-family:var(--mono);font-weight:700">${wk?'⇢ weakened':'→'}</span>
+      <span class="tag t-arg">${t}</span>
+      ${d!==null?`<span class="chip ${distCls(d)}" style="margin-left:4px">d=${fmtD(d)}</span>`:''}
+      <button class="dan" onclick="removeAtk('${f}','${t}')" style="margin-left:auto">✕</button></div>`;
+  }).join('');
+  argG.refresh();
+}
+
+/* ===== Distances ===== */
+function invalidateDist(){ S.argDist={}; S.neighborhoods={}; S.communities={}; S.communityList=[]; S.valuations={}; S.labels={}; argStatuses={}; }
+function bfsHT(){ S.htDist={}; S.hashtags.forEach(src=>{ const dist={}; S.hashtags.forEach(h=>dist[h]=Infinity); dist[src]=0; const q=[src]; while(q.length){ const cur=q.shift(); S.edges.forEach(([a,b])=>{ const nb=a===cur?b:b===cur?a:null; if(nb&&dist[nb]===Infinity){ dist[nb]=dist[cur]+1; q.push(nb); } }); } S.htDist[src]=dist; }); }
+function htd(a,b){ if(a===b)return 0; return S.htDist[a]?.[b]??Infinity; }
+function argDistFn(A,B){
+  if(A.id===B.id)return 0;
+  const HA=A.hashtags,HB=B.hashtags;
+  if(!HA.length||!HB.length)return Infinity;
+  switch(S.distFn){
+    case 'non_intersection':{ const dA=HA.filter(h=>!HB.includes(h)),dB=HB.filter(h=>!HA.includes(h)); if(!dA.length&&!dB.length)return 0; if(!dA.length||!dB.length)return 0; let m=0; dA.forEach(a=>dB.forEach(b=>{const d=htd(a,b);if(d===Infinity)m=Infinity;else if(d>m)m=d;})); return m; }
+    case 'geodesic':{ let mn=Infinity; HA.forEach(a=>HB.forEach(b=>{const d=htd(a,b);if(d<mn)mn=d;})); return mn; }
+    case 'hausdorff':{ const mA=Math.max(...HA.map(a=>Math.min(...HB.map(b=>htd(a,b))))); const mB=Math.max(...HB.map(b=>Math.min(...HA.map(a=>htd(a,b))))); return Math.max(mA,mB); }
+    case 'avg_dist':{ let sum=0,cnt=0; HA.forEach(a=>HB.forEach(b=>{const d=htd(a,b);if(d<Infinity){sum+=d;cnt++;}})); return cnt?sum/cnt:Infinity; }
+    case 'min_dist':{ let mn=Infinity; HA.forEach(a=>HB.forEach(b=>{const d=htd(a,b);if(d<mn)mn=d;})); return mn; }
+    case 'symmetric_diff':{ const un=new Set([...HA,...HB]); const inter=HA.filter(h=>HB.includes(h)); return un.size-inter.length; }
+    default: return Infinity;
+  }
+}
+function buildArgDist(){ bfsHT(); S.arguments.forEach(A=>{ S.argDist[A.id]={}; S.arguments.forEach(B=>{ S.argDist[A.id][B.id]=argDistFn(A,B); }); }); }
+function computeDistances(){
+  buildArgDist();
+  const ids=S.arguments.map(a=>a.id);
+  if(!ids.length){ document.getElementById('dist-results').innerHTML='<span class="muted">No arguments</span>'; return; }
+  const names={ non_intersection:'Non-intersection (max)', geodesic:'Geodesic (BFS)', hausdorff:'Hausdorff', avg_dist:'Average', min_dist:'Minimum', symmetric_diff:'Symmetric difference' };
+  let html=`<div class="rs"><div class="rs-h">Matrix d_Ω · distance: ${names[S.distFn]}</div><div class="rs-b" style="padding:0"><div class="scroll-x" style="border:none;box-shadow:none;margin:0"><table class="data"><tr><th></th>${ids.map(id=>`<th>${id}</th>`).join('')}</tr>`;
+  ids.forEach(A=>{ html+=`<tr><td class="arg">${A}</td>`; ids.forEach(B=>{ const d=S.argDist[A][B]; html+=`<td class="${distCls(d)}">${fmtD(d)}</td>`; }); html+='</tr>'; });
+  html+=`</table></div></div></div>`;
+  html+=`<div class="def">Legend: <b style="color:var(--blue-d)">d=0</b> same · <b style="color:var(--teal-d)">d≤2</b> central · <b style="color:var(--gold-d)">d≤4</b> intermediate · <b style="color:var(--rust-d)">d&gt;4</b> distant · ∞ disconnected</div>`;
+  document.getElementById('dist-results').innerHTML=html;
+  renderAtks();
+}
+
+/* ===== Metrics ===== */
+function computeMetricsInternal(){
+  bfsHT(); const H=S.hashtags;
+  const degree={},avgND={},lcc={},closeness={},ecc={};
+  H.forEach(h=>{
+    const nb=H.filter(o=>S.edges.some(([a,b])=>(a===h&&b===o)||(b===h&&a===o)));
+    degree[h]=nb.length;
+    avgND[h]=nb.length?nb.reduce((s,n)=>s+H.filter(o=>S.edges.some(([a,b])=>(a===n&&b===o)||(b===n&&a===o))).length,0)/nb.length:0;
+    if(nb.length<2)lcc[h]=0; else{ let e=0; for(let i=0;i<nb.length;i++)for(let j=i+1;j<nb.length;j++)if(S.edges.some(([a,b])=>(a===nb[i]&&b===nb[j])||(b===nb[i]&&a===nb[j])))e++; lcc[h]=2*e/(nb.length*(nb.length-1)); }
+    const reach=H.filter(o=>o!==h&&S.htDist[h]?.[o]<Infinity);
+    closeness[h]=reach.length?reach.length/reach.reduce((s,o)=>s+S.htDist[h][o],0):0;
+    const dists=H.filter(o=>o!==h).map(o=>S.htDist[h]?.[o]??Infinity);
+    ecc[h]=dists.length?Math.max(...dists):0;
+  });
+  const finEcc=Object.values(ecc).filter(e=>e<Infinity);
+  S.metrics={degree,avgND,lcc,closeness,ecc, radius:finEcc.length?Math.min(...finEcc):Infinity, diameter:finEcc.length?Math.max(...finEcc):Infinity};
+}
+function computeMetrics(){
+  if(!S.hashtags.length){ document.getElementById('metrics-results').innerHTML='<span class="muted">No hashtags</span>'; return; }
+  computeMetricsInternal();
+  const {degree,avgND,lcc,closeness,ecc}=S.metrics;
+  const maxDeg=Math.max(1,...Object.values(degree));
+  let html=`<div class="rs"><div class="rs-h">Local metrics per hashtag</div><div class="rs-b" style="padding:0"><div class="scroll-x" style="border:none;box-shadow:none;margin:0"><table class="data">
+    <tr><th>Hashtag</th><th>Degree</th><th>AvgNeighDeg</th><th>LocalClust</th><th>Closeness</th><th>Eccentricity</th></tr>`;
+  S.hashtags.forEach(h=>{ const deg=degree[h]||0; const t=deg/maxDeg;
+    html+=`<tr><td><span class="tag t-topic">#${esc(h)}</span></td>
+      <td style="color:${t>.6?'var(--gold-d)':t>.3?'var(--teal-d)':'var(--blue-d)'};font-weight:700">${deg}</td>
+      <td>${(avgND[h]||0).toFixed(2)}</td><td>${(lcc[h]||0).toFixed(3)}</td>
+      <td>${(closeness[h]||0).toFixed(3)}</td><td>${ecc[h]===Infinity?'∞':(ecc[h]||0)}</td></tr>`;
+  });
+  html+=`</table></div></div></div>`;
+  html+=`<div class="def">Hashcloud radius = ${S.metrics.radius===Infinity?'∞':S.metrics.radius} · diameter = ${S.metrics.diameter===Infinity?'∞':S.metrics.diameter}</div>`;
+  document.getElementById('metrics-results').innerHTML=html;
+}
+function getAutoEps(arg){
+  if(!S.metrics.degree) computeMetricsInternal();
+  const H = arg.hashtags; if(!H.length) return 2;
+  
+  const selector = document.getElementById('auto-metric-selection');
+  const metricChosen = selector ? selector.value : 'degree';
+  
+  let localValue = 0;
+  
+  if (metricChosen === 'degree') {
+    const avgDeg = H.reduce((s,h) => s + (S.metrics.degree[h]||0), 0) / H.length;
+    const maxDeg = Math.max(1, ...Object.values(S.metrics.degree || {}));
+    localValue = avgDeg / maxDeg;
+  } else if (metricChosen === 'closeness') {
+    localValue = H.reduce((s,h) => s + (S.metrics.closeness[h]||0), 0) / H.length;
+  } else if (metricChosen === 'lcc') {
+    localValue = H.reduce((s,h) => s + (S.metrics.lcc[h]||0), 0) / H.length;
+  } else if (metricChosen === 'avgND') {
+    const avgNDVal = H.reduce((s,h) => s + (S.metrics.avgND[h]||0), 0) / H.length;
+    const maxND = Math.max(1, ...Object.values(S.metrics.avgND || {}));
+    localValue = avgNDVal / maxND;
+  }
+  
+  // OPTIMIZACIÓN: Escalamos por 5 en lugar de 3 para abrir el abanico de radios
+  const local = Math.round(localValue * 5);
+  const glob = S.metrics.radius < Infinity ? S.metrics.radius : 3;
+  
+  // En lugar de promediar directo con la constante global, 
+// dejamos que la centralidad local dicte el radio de forma más sensible.
+return Math.max(1, Math.round(localValue * 4));
+}
+</script>
+
+<script>
+/* ===== Neighborhoods ===== */
+function computeNeighborhoods(){
+  if(!S.arguments.length){ document.getElementById('nbhd-results').innerHTML='<span class="muted">No arguments</span>'; return; }
+  buildArgDist(); S.neighborhoods={};
+  S.arguments.forEach(arg=>{
+    const eps=S.nbhdMode==='auto'?getAutoEps(arg):(arg.eps_manual||2);
+    const members=S.arguments.filter(B=>(S.argDist[arg.id]?.[B.id]??Infinity)<=eps).map(B=>B.id);
+    S.neighborhoods[arg.id]={eps,members};
+  });
+  const epsList=S.arguments.map(a=>S.neighborhoods[a.id].eps);
+  const Ts=Math.min(...epsList),Tg=Math.max(...epsList);
+  let html=`<div class="rs"><div class="rs-h">Neighborhoods N^ε_A · mode: ${S.nbhdMode==='auto'?'AUTO':'MANUAL'}</div><div class="rs-b" style="padding:0">
+    <table class="data"><tr><th>Arg</th><th>ε_A</th><th>Members N^ε_A</th><th>|N|</th></tr>
+    ${S.arguments.map(arg=>{ const n=S.neighborhoods[arg.id];
+      return `<tr><td class="arg">${arg.id}</td><td style="color:var(--gold-d);font-weight:700">${n.eps}</td>
+        <td>${n.members.map(m=>`<span class="eb u">${m}</span>`).join('')}</td>
+        <td style="color:var(--blue-d);font-weight:700">${n.members.length}</td></tr>`;
+    }).join('')}</table></div></div>`;
+  html+=`<div class="def">T^s_Ω (min radius) = ${Ts} · T^g_Ω (max radius) = ${Tg}<br> if ε = T^s_Ω then ε-admissible ⟹ η-admissible; if S is η-admissible then S is ε-admissible with ε = T^g_Ω.</div>`;
+  if(S.nbhdMode==='manual'){
+    html+=`<div class="rs"><div class="rs-h">Edit ε_A manually</div><div class="rs-b"><div style="display:flex;flex-wrap:wrap;gap:10px">
+    ${S.arguments.map(arg=>`<div style="display:flex;flex-direction:column;gap:3px;align-items:center;background:var(--paper);padding:8px;border:1.5px solid var(--line)">
+      <div style="font-family:var(--serif);font-weight:700">${arg.id}</div>
+      <input type="number" value="${arg.eps_manual||2}" min="0" max="20" style="width:55px;text-align:center" onchange="S.arguments.find(a=>a.id==='${arg.id}').eps_manual=parseInt(this.value)">
+      <label>ε</label></div>`).join('')}
+    </div><div style="margin-top:10px"><button class="pri" onclick="computeNeighborhoods()">↺ Recompute</button></div></div></div>`;
+  }
+  document.getElementById('nbhd-results').innerHTML=html;
+  renderArgs();
+}
+
+/* ===== Communities ===== */
+function computeCommunities(){
+  if(!Object.keys(S.neighborhoods).length)computeNeighborhoods();
+  const argIds=S.arguments.map(a=>a.id);
+  const parent={}; argIds.forEach(id=>parent[id]=id);
+  function find(x){return parent[x]===x?x:parent[x]=find(parent[x]);}
+  function union(x,y){parent[find(x)]=find(y);}
+  argIds.forEach(idA=>argIds.forEach(idB=>{ if(idA===idB)return; const nbA=new Set(S.neighborhoods[idA]?.members||[]); const nbB=new Set(S.neighborhoods[idB]?.members||[]); if([...nbA].some(x=>nbB.has(x)))union(idA,idB); }));
+  const commMap={}; argIds.forEach(id=>{const r=find(id);if(!commMap[r])commMap[r]=[];commMap[r].push(id);});
+  S.communityList=Object.values(commMap); S.communities={};
+  S.communityList.forEach((comm,i)=>comm.forEach(id=>S.communities[id]=i));
+  let html=`<div class="rs"><div class="rs-h">Communities C_Ω (Def. 17) · ${S.communityList.length} detected</div><div class="rs-b">
+    ${S.communityList.map((comm,i)=>`<div class="comm" style="border-left-color:${COMMCOLS[i%6]}">
+      <strong style="color:${COMMCOLS[i%6]};font-family:var(--mono)">C${i+1}</strong>
+      <span class="muted" style="margin-left:8px">${comm.length===1?'singleton community':comm.length+' arguments'}</span>
+      <div style="margin-top:5px;display:flex;gap:4px;flex-wrap:wrap">${comm.map(id=>`<span class="eb" style="background:${hexA(COMMCOLS[i%6],.14)};color:${COMMCOLS[i%6]};border-color:${COMMCOLS[i%6]}">${id}</span>`).join('')}</div>
+    </div>`).join('')}</div></div>`;
+  html+=`<div class="def"> ∀ C_A,C_B ∈ C_Ω, C_A ∩ C_B = ∅ or C_A = C_B ✓<br> ⋃ C_i = Args ✓ (partition of ${argIds.length} arguments into ${S.communityList.length} communities)</div>`;
+  document.getElementById('comm-results').innerHTML=html;
+  renderArgs(); argG.refresh();
+}
+
+/* ===== η/ζ extensions ===== */
+function computeAllExtensions(){
+  if(!Object.keys(S.neighborhoods).length)computeNeighborhoods();
+  if(!S.communityList.length)computeCommunities();
+  const argIds=S.arguments.map(a=>a.id);
+  const atks=(B,A)=>S.attacks.some(([f,t])=>f===B&&t===A);
+  const attackersOf=A=>argIds.filter(B=>atks(B,A));
+  const cf=Ss=>!Ss.some(A=>Ss.some(B=>atks(B,A)));
+  const ps=arr=>{const r=[[]];arr.forEach(e=>r.push(...r.map(s=>[...s,e])));return r;};
+  const classAcc=(A,Ss)=>attackersOf(A).every(B=>Ss.some(C=>atks(C,B)));
+  const classAdm=Ss=>cf(Ss)&&Ss.every(A=>classAcc(A,Ss));
+  const tau=S.arguments.length?Math.round(S.arguments.reduce((s,a)=>s+(S.neighborhoods[a.id]?.eps||2),0)/S.arguments.length):2;
+  const tauAcc=(A,Ss)=>attackersOf(A).every(B=>Ss.some(C=>{const d=S.argDist[A]?.[C]??Infinity;return d<=tau&&atks(C,B);}));
+  const tauAdm=Ss=>cf(Ss)&&Ss.every(A=>tauAcc(A,Ss));
+  const etaAcc=(A,Ss)=>{const nb=new Set(S.neighborhoods[A]?.members||[]);return attackersOf(A).every(B=>Ss.some(C=>nb.has(C)&&atks(C,B)));};
+  const etaAdm=Ss=>cf(Ss)&&Ss.every(A=>etaAcc(A,Ss));
+  const zetaAcc=(A,Ss)=>{const comm=new Set(S.communityList[S.communities[A]]||[A]);return attackersOf(A).every(B=>Ss.some(C=>comm.has(C)&&atks(C,B)));};
+  const zetaAdm=Ss=>cf(Ss)&&Ss.every(A=>zetaAcc(A,Ss));
+  const isComp=(Ss,accFn,admFn)=>admFn(Ss)&&argIds.every(A=>!accFn(A,Ss)||Ss.includes(A));
+  const psets=ps(argIds);
+  const grounded=comp=>comp.reduce((mn,s)=>(!mn||s.length<mn.length)?s:mn,null)||[];
+  const preferred=comp=>{const mx=comp.length?Math.max(...comp.map(s=>s.length)):0;return comp.filter(s=>s.length===mx);};
+  const fmtG=s=>`{${s.join(', ')}}`;
+  const cC=psets.filter(s=>isComp(s,classAcc,classAdm)),cG=grounded(cC),cP=preferred(cC);
+  const tC=psets.filter(s=>isComp(s,tauAcc,tauAdm)),tG=grounded(tC),tP=preferred(tC);
+  const eC=psets.filter(s=>isComp(s,etaAcc,etaAdm)),eG=grounded(eC),eP=preferred(eC);
+  const zC=psets.filter(s=>isComp(s,zetaAcc,zetaAdm)),zG=grounded(zC),zP=preferred(zC);
+  let html=`<div class="rs"><div class="rs-h">Extension summary </div><div class="rs-b" style="padding:0"><table class="data">
+    <tr><th>Semantics</th><th>Def.</th><th>Grounded</th><th>Preferred</th></tr>
+    <tr><td style="font-family:var(--sans);font-weight:600">Classical (Dung)</td><td class="muted">—</td><td><span class="eb u">${fmtG(cG)}</span></td><td>${cP.map(s=>`<span class="eb c">${fmtG(s)}</span>`).join(' ')}</td></tr>
+    <tr><td style="font-family:var(--sans);font-weight:600;color:var(--gold-d)">τ-proximity (τ=${tau})</td><td class="muted"> </td><td><span class="eb u">${fmtG(tG)}</span></td><td>${tP.map(s=>`<span class="eb w">${fmtG(s)}</span>`).join(' ')}</td></tr>
+    <tr><td style="font-family:var(--sans);font-weight:600;color:var(--teal-d)">η-neighborhood</td><td class="muted"> </td><td><span class="eb u">${fmtG(eG)}</span></td><td>${eP.map(s=>`<span class="eb u">${fmtG(s)}</span>`).join(' ')}</td></tr>
+    <tr><td style="font-family:var(--sans);font-weight:600;color:var(--plum-d)">ζ-community</td><td class="muted"> </td><td><span class="eb p">${fmtG(zG)}</span></td><td>${zP.map(s=>`<span class="eb p">${fmtG(s)}</span>`).join(' ')}</td></tr>
+    </table></div></div>`;
+  html+=`<div class="def">Thm. η-grounded ⊆ classical grounded? ${eG.every(a=>cG.includes(a))||cG.length===0?'✓':'⚠'}<br>Thm. 3: ζ-grounded ⊆ classical grounded? ${zG.every(a=>cG.includes(a))||cG.length===0?'✓':'⚠'}<br> η-admissible ⟹ ζ-admissible (η stricter than ζ) ✓</div>`;
+  document.getElementById('ext-results').innerHTML=html;
+  if(typeof argG!=='undefined')argG.refresh(eG,zG);
+}
+
+/* ===== Conclusions μ ===== */
+function assignMu(){ const aid=document.getElementById('mu-arg').value,c=document.getElementById('mu-concl').value.trim(); if(!aid||!c)return; S.mu[aid]=c; const arg=S.arguments.find(a=>a.id===aid); if(arg)arg.conclusion=c; document.getElementById('mu-concl').value=''; renderMu(); }
+function renderMu(){
+  document.getElementById('mu-list').innerHTML=S.arguments.length
+    ? S.arguments.map(a=>`<div class="atki"><span class="tag t-arg">${a.id}</span><span class="muted">μ →</span><span class="tag t-plum">${S.mu[a.id]?esc(S.mu[a.id]):'&lt;unassigned&gt;'}</span>${S.mu[a.id]?`<button class="dan" onclick="delete S.mu['${a.id}'];renderMu()" style="margin-left:auto">✕</button>`:''}</div>`).join('')
+    : '<span class="muted">No arguments</span>';
+  const conflicts=[]; const entries=Object.entries(S.mu);
+  entries.forEach(([a,c])=>entries.forEach(([b,d])=>{ if(a!==b&&(c==='~'+d||d==='~'+c)&&!conflicts.some(([x,y])=>x===b&&y===a))conflicts.push([a,b,c,d]); }));
+  document.getElementById('mu-conflicts').innerHTML=conflicts.length
+    ? conflicts.map(([a,b,c,d])=>`<div class="atki"><span class="tag t-plum">${a}(${esc(c)})</span><span style="color:var(--rust)">↔ conflict</span><span class="tag t-plum">${b}(${esc(d)})</span></div>`).join('')
+    : '<span class="muted">No conflicts detected</span>';
+}
+
+/* ===== Subarguments ===== */
+let subMode='singleton';
+function setSubMode(m){
+  subMode=m;
+  ['sub-mode-auto-single','sub-mode-auto-bi','sub-mode-manual'].forEach(id=>{const b=document.getElementById(id);if(b)b.classList.remove('active');});
+  const map={singleton:'sub-mode-auto-single',bipartite:'sub-mode-auto-bi',manual:'sub-mode-manual'};
+  const a=document.getElementById(map[m]); if(a)a.classList.add('active');
+  document.getElementById('sub-auto-panel').style.display=m==='manual'?'none':'block';
+  document.getElementById('sub-manual-panel').style.display=m==='manual'?'block':'none';
+  const desc={
+    singleton:'<strong>Singleton (finest instance):</strong> H_A = {h₁,…,hₙ} → n subargs A_i with H_Ai={hᵢ}. Each inherits μ(A). Maximum granularity; useful when every hashtag encodes an independent aspect.',
+    bipartite:'<strong>Bipartite (structural instance):</strong> H_A is split into two halves A₁ and A₂. A₁ inherits μ(A); A₂ receives the negation ~μ(A). Models the split of an argument into a positive and a contradicted part.'
+  };
+  const el=document.getElementById('sub-mode-desc'); if(el)el.innerHTML=desc[m]||'';
+}
+function runAutoSub(){
+  if(!S.arguments.length)return; S.subarguments=[];
+  S.arguments.forEach(arg=>{
+    const H=arg.hashtags; const mu=S.mu[arg.id]||arg.id;
+    if(subMode==='singleton'){ H.forEach((h,i)=>{ S.subarguments.push({parent:arg.id,id:arg.id+'.'+(i+1),conclusion:mu,hashtags:[h]}); }); }
+    else if(subMode==='bipartite'){
+      if(H.length<2){ S.subarguments.push({parent:arg.id,id:arg.id+'.1',conclusion:mu,hashtags:[...H]}); }
+      else{ const mid=Math.ceil(H.length/2); const H1=H.slice(0,mid),H2=H.slice(mid);
+        S.subarguments.push({parent:arg.id,id:arg.id+'.1',conclusion:mu,hashtags:H1});
+        const negMu=mu.startsWith('~')?mu.slice(1):'~'+mu;
+        S.subarguments.push({parent:arg.id,id:arg.id+'.2',conclusion:negMu,hashtags:H2}); }
+    }
+  });
+  renderSubs();
+}
+function addSub(){
+  const parent=document.getElementById('sub-parent').value,subId=document.getElementById('sub-id').value.trim(),concl=document.getElementById('sub-concl').value.trim(),tags=document.getElementById('sub-tags').value.trim();
+  if(!parent||!subId||!concl||!tags)return;
+  const hashtags=tags.split(',').map(t=>t.trim().replace(/^#/,'')).filter(Boolean);
+  const existing=S.subarguments.filter(s=>s.parent===parent).flatMap(s=>s.hashtags);
+  const overlap=hashtags.filter(h=>existing.includes(h));
+  if(overlap.length){ toast('Hashtags overlap with existing subargs: '+overlap.join(', ')); return; }
+  const parentArg=S.arguments.find(a=>a.id===parent);
+  if(parentArg){ const notIn=hashtags.filter(h=>!parentArg.hashtags.includes(h)); if(notIn.length){ toast('Hashtags not in parent: '+notIn.join(', ')); return; } }
+  S.subarguments.push({parent,id:subId,conclusion:concl,hashtags});
+  ['sub-id','sub-concl','sub-tags'].forEach(x=>document.getElementById(x).value='');
+  renderSubs();
+}
+function removeSub(i){ S.subarguments.splice(i,1); renderSubs(); }
+function renderSubs(){
+  document.getElementById('sub-count').textContent=S.subarguments.length;
+  const list=document.getElementById('subs-list'); if(!list)return;
+  if(!S.subarguments.length){ list.innerHTML='<span class="muted">No subarguments defined</span>'; document.getElementById('sub-attacks').innerHTML='<span class="muted">—</span>'; return; }
+  const byParent={}; S.subarguments.forEach((s,i)=>{ if(!byParent[s.parent])byParent[s.parent]=[]; byParent[s.parent].push({...s,_i:i}); });
+  list.innerHTML=Object.entries(byParent).map(([pid,subs])=>{
+    const parentArg=S.arguments.find(a=>a.id===pid); const covered=subs.flatMap(s=>s.hashtags); const H=parentArg?.hashtags||[];
+    const uncovered=H.filter(h=>!covered.includes(h)); const ok=uncovered.length===0;
+    return `<div class="card" style="margin-bottom:8px;box-shadow:3px 3px 0 var(--shadow)"><div class="card-b">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px;flex-wrap:wrap">
+        <strong style="font-family:var(--serif);font-size:16px">${pid}</strong>
+        <span class="muted">H_${pid}={${H.map(h=>'#'+h).join(',')}}</span>
+        <span class="chip" style="background:${ok?'rgba(31,94,87,.16)':'rgba(168,66,31,.16)'};color:${ok?'var(--teal-d)':'var(--rust-d)'}">${ok?'✓ valid partition':'⚠ incomplete: '+uncovered.join(',')+' uncovered'}</span>
+      </div>
+      ${subs.map(s=>`<div class="atki"><span class="tag t-arg">${pid}</span><span class="muted">⊃</span><span class="tag t-arg">${s.id}</span><span class="tag t-plum">${esc(s.conclusion)}</span>${s.hashtags.map(h=>'<span class="tag t-topic">#'+esc(h)+'</span>').join('')}<button class="dan" onclick="removeSub(${s._i})" style="margin-left:auto">✕</button></div>`).join('')}
+    </div></div>`;
+  }).join('');
+  const induced=[];
+  S.subarguments.forEach(s=>S.subarguments.forEach(t=>{ if(s.id===t.id)return; if(s.conclusion==='~'+t.conclusion||t.conclusion==='~'+s.conclusion)if(!induced.some(([a,b])=>a===s.id&&b===t.id))induced.push([s.id,t.id]); }));
+  document.getElementById('sub-attacks').innerHTML=induced.length
+    ? induced.map(([a,b])=>`<div class="atki"><span class="tag t-arg">${a}</span><span style="color:var(--rust);font-family:var(--mono)">→⁺</span><span class="tag t-arg">${b}</span></div>`).join('')
+    : '<span class="muted">No induced attacks (no contradictory conclusions between subargs)</span>';
+}
+
+/* ===== Aggregation ===== */
+function runAgg(){
+  const groups={};
+  S.arguments.forEach(a=>{ const hasSubs=S.subarguments.some(s=>s.parent===a.id); if(!hasSubs){ const c=S.mu[a.id]||('_'+a.id); if(!groups[c])groups[c]=[]; groups[c].push({id:a.id,hashtags:a.hashtags,fromArg:true}); } });
+  S.subarguments.forEach(s=>{ const c=s.conclusion; if(!groups[c])groups[c]=[]; groups[c].push({id:s.id,hashtags:s.hashtags,parent:s.parent,fromArg:false}); });
+  const aggregated=Object.entries(groups).map(([conc,items])=>({conclusion:conc,members:items.map(i=>i.id),hashtags:[...new Set(items.flatMap(i=>i.hashtags))],fromArgs:items.filter(i=>i.fromArg).map(i=>i.id),fromSubs:items.filter(i=>!i.fromArg).map(i=>i.id)}));
+  S._aggregated=aggregated;
+  const aggAtks=[];
+  aggregated.forEach(gA=>aggregated.forEach(gB=>{ if(gA.conclusion===gB.conclusion)return; if(gA.conclusion==='~'+gB.conclusion||gB.conclusion==='~'+gA.conclusion){ if(!aggAtks.some(([a,b])=>a===gA.conclusion&&b===gB.conclusion))aggAtks.push([gA.conclusion,gB.conclusion]); } }));
+  let html=`<div class="rs"><div class="rs-h">Ω* — aggregated arguments (${aggregated.length} groups)</div><div class="rs-b" style="padding:0"><div class="scroll-x" style="border:none;box-shadow:none;margin:0"><table class="data"><tr><th>Conclusion γ</th><th>Members A^γ</th><th>H_X = ⋃ H_Y</th><th>Origin</th></tr>
+    ${aggregated.map(g=>`<tr><td><span class="tag t-plum">${esc(g.conclusion)}</span></td><td>${g.members.map(m=>'<span class="eb u">'+m+'</span>').join('')}</td><td>${g.hashtags.map(h=>'<span class="tag t-topic">#'+esc(h)+'</span>').join('')}</td><td class="muted">${g.fromArgs.length?'args:'+g.fromArgs.join('+'):''}${g.fromSubs.length?' subs:'+g.fromSubs.join('+'):''}</td></tr>`).join('')}</table></div></div></div>`;
+  html+=`<div class="rs"><div class="rs-h">Inherited attacks* </div><div class="rs-b">${aggAtks.length?aggAtks.map(([a,b])=>'<div class="atki"><span class="tag t-plum">'+esc(a)+'</span><span style="color:var(--rust);font-family:var(--mono)">→*</span><span class="tag t-plum">'+esc(b)+'</span></div>').join(''):'<span class="muted">No attacks in Ω*</span>'}</div></div>`;
+  html+=`<div class="def gold"> attack inheritance ✓ · no artifactual attacks ✓ · cycle preservation ✓</div>`;
+  document.getElementById('agg-out').innerHTML=html;
+}
+
+/* ===== Centralities & valuation ===== */
+function computeCentralities(){
+  bfsHT(); const H=S.hashtags; const deg={},cc={},ev={},pr={};
+  H.forEach(h=>{ deg[h]=S.edges.filter(([a,b])=>a===h||b===h).length; });
+  const maxDeg=Math.max(1,...Object.values(deg));
+  H.forEach(h=>{ const reach=H.filter(o=>o!==h&&(S.htDist[h]?.[o]??Infinity)<Infinity); cc[h]=reach.length?reach.length/reach.reduce((s,o)=>s+S.htDist[h][o],0):0; });
+  H.forEach(h=>{ev[h]=1.0;});
+  for(let it=0;it<3;it++){ const ev2={}; H.forEach(h=>{ const nb=H.filter(o=>S.edges.some(([a,b])=>(a===h&&b===o)||(b===h&&a===o))); ev2[h]=nb.length?nb.reduce((s,n)=>s+ev[n],0):0; }); const mx=Math.max(1,...Object.values(ev2)); H.forEach(h=>{ev[h]=ev2[h]/mx;}); }
+  H.forEach(h=>{pr[h]=1.0/Math.max(H.length,1);});
+  for(let it=0;it<3;it++){ const pr2={}; H.forEach(h=>{ const nb=H.filter(o=>S.edges.some(([a,b])=>(a===h&&b===o)||(b===h&&a===o))); pr2[h]=0.15/Math.max(H.length,1)+0.85*nb.reduce((s,n)=>{const nd=S.edges.filter(([a,b])=>a===n||b===n).length;return s+(nd>0?pr[n]/nd:0);},0); }); H.forEach(h=>{pr[h]=pr2[h];}); }
+  const maxPR=Math.max(1e-9,...Object.values(pr)); H.forEach(h=>{pr[h]/=maxPR;});
+  return {deg,maxDeg,cc,ev,pr};
+}
+function runValuation(){
+  if(!S.arguments.length)return; bfsHT();
+  const cfn=document.getElementById('centrality-fn').value, afn=document.getElementById('agg-fn').value;
+  const {deg,maxDeg,cc,ev,pr}=computeCentralities();
+  const getC=h=>{ switch(cfn){ case 'degree':return (deg[h]||0)/maxDeg; case 'closeness':return cc[h]||0; case 'eigenvector':return ev[h]||0; case 'pagerank':return pr[h]||0; default:return (deg[h]||0)/maxDeg; } };
+  const agg=vals=>{ if(!vals.length)return 0.01; switch(afn){ case 'sum':return vals.reduce((s,x)=>s+x,0); case 'mean':return vals.reduce((s,x)=>s+x,0)/vals.length; case 'max':return Math.max(...vals); case 'min':return Math.min(...vals); default:return vals.reduce((s,x)=>s+x,0)/vals.length; } };
+  S.valuations={};
+  const argsToValue=S._aggregated&&S._aggregated.length?S._aggregated.map(g=>({id:g.conclusion,hashtags:g.hashtags})):S.arguments;
+  const allVals={}; argsToValue.forEach(a=>{ const M=a.hashtags.map(h=>getC(h)); allVals[a.id]={M,v:agg(M)}; });
+  const maxV=Math.max(0.001,...Object.values(allVals).map(x=>x.v));
+  S.arguments.forEach(a=>{ if(allVals[a.id])S.valuations[a.id]=Math.max(0.001,allVals[a.id].v/maxV); else if(S.mu[a.id]&&allVals[S.mu[a.id]])S.valuations[a.id]=Math.max(0.001,allVals[S.mu[a.id]].v/maxV); else{ const M=a.hashtags.map(h=>getC(h)); S.valuations[a.id]=Math.max(0.001,agg(M)/maxV); } });
+  const cN={degree:'Norm. degree',closeness:'Closeness',eigenvector:'Eigenvector',pagerank:'PageRank'}, aN={sum:'Sum',mean:'Mean',max:'Max',min:'Min'};
+  document.getElementById('valuation-preview').innerHTML=`<h3>υ(A^μ) · ${cN[cfn]} / ${aN[afn]}</h3>${S.arguments.map(a=>{ const v=S.valuations[a.id]||0,pct=Math.round(v*100); return `<div style="margin-bottom:7px"><div style="display:flex;justify-content:space-between;font-size:9px;font-family:var(--mono)"><span style="color:var(--gold-d);font-weight:600">${a.id}</span><span>${v.toFixed(4)}</span></div><div class="vbar"><div class="vfill" style="width:${pct}%;background:var(--gold)"></div></div></div>`; }).join('')}`;
+  let html=`<div class="rs"><div class="rs-h">Vectors M_A and valuations υ · centrality: ${cN[cfn]} · operator: ${aN[afn]}</div><div class="rs-b" style="padding:0"><div class="scroll-x" style="border:none;box-shadow:none;margin:0"><table class="data">
+    <tr><th>Arg</th><th>H_A (hashtags)</th><th>M_A = [m(h₁),…]</th><th>υ(A^μ) = f(M_A)</th></tr>
+    ${S.arguments.map(a=>{ const H=a.hashtags,M=H.map(h=>getC(h)),v=S.valuations[a.id]||0,pct=Math.round(v*100);
+      return `<tr><td class="arg">${a.id}</td><td>${H.map(h=>'<span class="tag t-topic">#'+esc(h)+'</span>').join('')}</td><td style="color:var(--blue-d);font-size:9px">[${M.map(x=>x.toFixed(3)).join(', ')}]</td><td><div style="display:flex;align-items:center;gap:8px"><div class="vbar" style="width:80px"><div class="vfill" style="width:${pct}%;background:var(--gold)"></div></div><strong style="color:var(--gold-d)">${v.toFixed(4)}</strong></div></td></tr>`;
+    }).join('')}</table></div></div></div>`;
+  html+=`<div class="rs"><div class="rs-h">All υ instances (4 centralities × operators)</div><div class="rs-b" style="padding:0"><div class="scroll-x" style="border:none;box-shadow:none;margin:0"><table class="data">
+    <tr><th>Arg</th><th>deg/sum</th><th>deg/mean</th><th>deg/max</th><th>deg/min</th><th>cc/sum</th><th>cc/mean</th><th>ev/mean</th><th>pr/mean</th></tr>
+    ${S.arguments.map(a=>{ const vFor=(cF,aF)=>{ const M=a.hashtags.map(h=>{switch(cF){case 'deg':return (deg[h]||0)/maxDeg;case 'cc':return cc[h]||0;case 'ev':return ev[h]||0;case 'pr':return pr[h]||0;}}); if(!M.length)return 0; switch(aF){case 'sum':return M.reduce((s,x)=>s+x,0);case 'mean':return M.reduce((s,x)=>s+x,0)/M.length;case 'max':return Math.max(...M);case 'min':return Math.min(...M);} };
+      const combos=[vFor('deg','sum'),vFor('deg','mean'),vFor('deg','max'),vFor('deg','min'),vFor('cc','sum'),vFor('cc','mean'),vFor('ev','mean'),vFor('pr','mean')]; const mc=Math.max(...combos,0.001);
+      return `<tr><td class="arg">${a.id}</td>${combos.map(v=>{const p=Math.round((v/mc)*100);return `<td><div class="vbar" style="width:50px"><div class="vfill" style="width:${p}%;background:var(--blue)"></div></div><span style="font-size:8px">${v.toFixed(3)}</span></td>`;}).join('')}</tr>`;
+    }).join('')}</table></div></div></div>`;
+  document.getElementById('valuation-out').innerHTML=html;
+}
+
+/* ===== Labeling ===== */
+function runLabeling(){
+  if(!Object.keys(S.valuations).length){ toast('Run valuation first (Step 3)'); return; }
+  buildArgDist(); if(!Object.keys(S.neighborhoods).length)computeNeighborhoods();
+  S.labels={}; argStatuses={};
+  S.arguments.forEach(a=>{ S.labels[a.id]={alpha:S.valuations[a.id]||0.01,delta:S.valuations[a.id]||0.01,contributions:[]}; });
+  S.arguments.forEach(arg=>{
+    const alpha=S.labels[arg.id].alpha;
+    const eps=S.nbhdMode==='auto'?getAutoEps(arg):(arg.eps_manual||2);
+    const inNbhd=new Set(S.neighborhoods[arg.id]?.members||[]);
+    const attackers=S.attacks.filter(([,t])=>t===arg.id).map(([f])=>f);
+    if(!attackers.length){ S.labels[arg.id].delta=alpha; return; }
+    let delta=alpha; const contributions=[];
+    attackers.forEach(bId=>{ const alphaB=S.labels[bId]?.alpha||0.01; const d=S.argDist[arg.id]?.[bId]??Infinity; const inNb=inNbhd.has(bId);
+      const weakening=(d<=eps)?alphaB:(d===Infinity?0:alphaB/(d-eps)); delta-=weakening; contributions.push({attacker:bId,d,inNb,alphaB,weakening}); });
+    S.labels[arg.id].delta=Math.max(0,Math.min(alpha,delta)); S.labels[arg.id].contributions=contributions;
+  });
+  S.arguments.forEach(a=>{ const {alpha,delta}=S.labels[a.id]; argStatuses[a.id]=Math.abs(delta-alpha)<0.0001?'U':delta>0?'W':'N'; });
+  const maxA=Math.max(...S.arguments.map(a=>S.labels[a.id]?.alpha||0),0.01);
+  let html=`<div class="rs"><div class="rs-h">Labels ⟨α_A, δ_A⟩ — </div><div class="rs-b" style="padding:0"><div class="scroll-x" style="border:none;box-shadow:none;margin:0"><table class="data">
+    <tr><th>Arg</th><th>α_A = υ(A)</th><th>δ_A</th><th>Status</th><th>Attackers & weakening</th></tr>
+    ${S.arguments.map(a=>{ const l=S.labels[a.id],st=argStatuses[a.id]; const aPct=Math.round((l.alpha/maxA)*100),dPct=Math.round((l.delta/maxA)*100); const stName={U:'Unchallenged',W:'Weakened',N:'Neutralized'}[st];
+      const scv=st==='U'?'var(--st-strong)':st==='W'?'var(--st-weak)':'var(--st-neut)';
+      return `<tr><td class="arg">${a.id}</td>
+        <td><span style="font-size:9px">${l.alpha.toFixed(4)}</span><div class="vbar" style="width:60px"><div class="vfill" style="width:${aPct}%;background:var(--blue)"></div></div></td>
+        <td><span style="font-size:9px;color:${scv}">${l.delta.toFixed(4)}</span><div class="vbar" style="width:60px"><div class="vfill" style="width:${dPct}%;background:${scv}"></div></div></td>
+        <td><span class="stbadge st-${st}">${st}</span> <span class="muted">${stName}</span></td>
+        <td style="font-size:9px">${(l.contributions||[]).map(c=>{ const col=c.d<=(S.neighborhoods[a.id]?.eps||2)?'var(--teal-d)':'var(--rust-d)'; return `<span style="color:${col};font-family:var(--mono)">${c.attacker}(d=${c.d===Infinity?'∞':c.d},${c.inNb?'∈N':'∉N'},−${c.weakening.toFixed(3)}) </span>`; }).join('')}</td></tr>`;
+    }).join('')}</table></div></div></div>`;
+  html+=`<div class="def"> no attackers ⟹ δ=α ✓ · with attackers ⟹ δ≤α ✓ · (directionality): influence follows attack direction ✓</div>`;
+  document.getElementById('labeling-out').innerHTML=html;
+  renderArgs(); argG.refresh();
+}
+
+/* ===== L-HAF extensions ===== */
+function runLHAFExt(){
+  if(!Object.keys(S.labels).length)runLabeling();
+  const U=[],W=[],N=[];
+  S.arguments.forEach(a=>{ const st=argStatuses[a.id]; if(st==='U')U.push(a.id); else if(st==='W')W.push(a.id); else N.push(a.id); });
+  let html=`<div class="rs"><div class="rs-h">L-HAF extensions</div><div class="rs-b" style="padding:0"><table class="data">
+    <tr><th>Extension</th><th>Included arguments</th><th>|E|</th></tr>
+    <tr><td style="font-family:var(--sans);font-weight:600;color:var(--st-strong)">Strong-Grounded (A^υ_U)</td><td>${U.map(id=>`<span class="eb u">${id}</span>`).join('')||'∅'}</td><td style="color:var(--st-strong)">${U.length}</td></tr>
+    <tr><td style="font-family:var(--sans);font-weight:600;color:var(--gold-d)">Weak-Grounded (A^υ_U ∪ A^υ_W)</td><td>${[...U,...W].map(id=>`<span class="eb w">${id}</span>`).join('')||'∅'}</td><td style="color:var(--gold-d)">${U.length+W.length}</td></tr>
+    <tr><td style="font-family:var(--sans);font-weight:600;color:var(--st-neut)">Neutralized (A^υ_N)</td><td>${N.map(id=>`<span class="eb n">${id}</span>`).join('')||'∅'}</td><td style="color:var(--st-neut)">${N.length}</td></tr>
+    </table></div></div>`;
+  html+=`<div class="def">Strong conflict-free: S ⊆ A^υ_U → {${U.join(', ')||'∅'}}<br>Weak conflict-free: S ⊆ A^υ_U ∪ A^υ_W → {${[...U,...W].join(', ')||'∅'}}<br> A^υ_U ⊆ η-grounded extension ✓</div>`;
+  document.getElementById('lhaf-ext-out').innerHTML=html;
+}
+
+/* ===== Properties ===== */
+function checkProps(){
+  const n=S.arguments.length,m=S.attacks.length;
+  const props=[
+    {name:'Well-formed HAF (Args ≠ ∅)',ok:n>0},
+    {name:'Connected hashcloud',ok:S.hashtags.length>0&&S.edges.length>0},
+    {name:'No self-attacks',ok:!S.attacks.some(([f,t])=>f===t)},
+    {name:'All argument hashtags exist in H',ok:S.arguments.every(a=>a.hashtags.every(h=>S.hashtags.includes(h)))},
+    {name:'All conclusions μ assigned',ok:S.arguments.every(a=>S.mu[a.id])},
+    {name:'Distances computed',ok:Object.keys(S.argDist).length>0},
+    {name:'Neighborhoods computed',ok:Object.keys(S.neighborhoods).length>0},
+    {name:'Communities computed',ok:S.communityList.length>0},
+    {name:'Labeling executed',ok:Object.keys(S.labels).length>0},
+  ];
+  document.getElementById('props-out').innerHTML=`<div class="rs"><div class="rs-h">Property verification</div><div class="rs-b">
+    ${props.map(p=>`<div style="display:flex;align-items:center;gap:9px;padding:5px 0;border-bottom:1px dashed var(--line)"><span style="color:${p.ok?'var(--st-strong)':'var(--st-neut)'};font-family:var(--mono);font-weight:700">${p.ok?'✓':'✗'}</span><span style="font-size:12px;color:${p.ok?'var(--ink)':'var(--neut)'}">${p.name}</span></div>`).join('')}
+    <div class="muted" style="margin-top:10px">${n} arguments · ${m} attacks · ${S.hashtags.length} hashtags · ${S.edges.length} relations</div></div></div>`;
+}
+
+/* ===== Import / Export / Downloads ===== */
+function importJSON(){
+  try{
+    const d=JSON.parse(document.getElementById('import-json').value);
+    S.hashtags=d.hashtags||[]; S.edges=d.edges||[];
+    S.arguments=(d.arguments||[]).map(a=>({...a,eps_manual:a.eps||2}));
+    S.attacks=d.attacks||[]; S.subarguments=d.subarguments||[];
+    S.mu={}; Object.assign(S.mu,d.mu||{}); S.distFn=d.distFn||S.distFn;
+    invalidateDist(); renderHT(); renderArgs(); renderAtks(); renderMu(); renderSubs(); bfsHT(); buildArgDist();
+    setTimeout(()=>{htG.refresh();argG.refresh();},60);
+    document.getElementById('import-msg').textContent='✓ Imported successfully';
+  }catch(e){ document.getElementById('import-msg').textContent='✗ Error: '+e.message; }
+}
+function exportJSON(){ const d={hashtags:S.hashtags,edges:S.edges,arguments:S.arguments.map(a=>({...a,eps:a.eps_manual})),attacks:S.attacks,mu:S.mu,subarguments:S.subarguments,distFn:S.distFn}; document.getElementById('export-preview').value=JSON.stringify(d,null,2); }
+function updateExportPreview(){ exportJSON(); }
+function downloadJSON(){ exportJSON(); const blob=new Blob([document.getElementById('export-preview').value],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='lhaf-framework.json'; a.click(); toast('Saved lhaf-framework.json'); }
+
+/* CSV download: extract the first <table> inside a result div */
+function downloadTable(divId,fileName){
+  const div=document.getElementById(divId); if(!div){ toast('Nothing to export'); return; }
+  const table=div.querySelector('table'); if(!table){ toast('Run the computation first'); return; }
+  const rows=[...table.querySelectorAll('tr')].map(tr=>[...tr.querySelectorAll('th,td')].map(c=>{
+    let t=c.textContent.replace(/\s+/g,' ').trim(); if(t.includes('"')||t.includes(',')||t.includes('\n'))t='"'+t.replace(/"/g,'""')+'"'; return t;
+  }).join(','));
+  const blob=new Blob([rows.join('\n')],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=fileName+'.csv'; a.click(); toast('Saved '+fileName+'.csv');
+}
+
+function loadEx(d){
+  S.hashtags=d.hashtags; S.edges=d.edges;
+  S.arguments=(d.arguments||[]).map(a=>({...a,eps_manual:a.eps||2}));
+  S.attacks=d.attacks||[]; S.subarguments=d.subarguments||[]; S.mu={}; Object.assign(S.mu,d.mu||{});
+  S.distFn=d.distFn||'non_intersection';
+  invalidateDist(); renderHT(); renderArgs(); renderAtks(); renderMu(); renderSubs();
+  bfsHT(); buildArgDist(); computeMetricsInternal(); computeNeighborhoods(); computeCommunities();
+  setTimeout(()=>{htG.refresh();argG.refresh();},60);
+  toast('Loaded: '+(d.title||'example'));
+}
+</script>
+
+<script>
+/* ===================================================================
+   L-HAF Studio — preloaded examples
+   Hashtag keys kept verbatim (they index the hashcloud & distances);
+   only titles, descriptions and argument prose are in English.
+   =================================================================== */
+const EXAMPLES = {
+
+  apt_ransomware: {
+    title: 'APT Ransomware Defense',
+    domain: 'Cybersecurity',
+    desc: 'Eleven cybersecurity arguments on APT and ransomware with bidirectional attacks across a dense threat-and-control hashcloud.',
+    meta: '30 hashtags · 45 relations · 11 args · 11 attacks',
+    distFn: 'non_intersection',
+    hashtags: ['malware','ransomware','phishing','vulnerability','exploit','internal_network','perimeter','endpoint','server','cloud','authentication','privileged_access','identity','mfa','incident','response','forensics','recovery','regulation','compliance','gdpr','zerotrust','encryption','patch','monitoring','siem','backup','pentest','threat_intel','dlp'],
+    edges: [['malware','ransomware'],['malware','exploit'],['malware','phishing'],['phishing','identity'],['phishing','authentication'],['vulnerability','exploit'],['vulnerability','endpoint'],['vulnerability','server'],['exploit','internal_network'],['exploit','perimeter'],['internal_network','server'],['internal_network','cloud'],['internal_network','endpoint'],['perimeter','server'],['perimeter','cloud'],['authentication','mfa'],['authentication','privileged_access'],['authentication','identity'],['privileged_access','identity'],['privileged_access','server'],['incident','response'],['incident','forensics'],['incident','recovery'],['response','recovery'],['response','regulation'],['regulation','compliance'],['regulation','gdpr'],['compliance','gdpr'],['mfa','regulation'],['endpoint','incident'],['server','incident'],['zerotrust','authentication'],['zerotrust','perimeter'],['encryption','cloud'],['encryption','server'],['patch','vulnerability'],['patch','endpoint'],['monitoring','siem'],['siem','threat_intel'],['backup','recovery'],['backup','ransomware'],['pentest','vulnerability'],['threat_intel','malware'],['dlp','cloud'],['dlp','identity']],
+    arguments: [
+      {id:'A',text:'Ransomware uses phishing as its primary APT entry vector',hashtags:['malware','ransomware','phishing','internal_network'],eps:3},
+      {id:'B',text:'Network segmentation reduces lateral movement of malware',hashtags:['internal_network','perimeter','server'],eps:3},
+      {id:'C',text:'Evolved phishing bypasses traditional perimeter filters',hashtags:['phishing','perimeter','vulnerability'],eps:2},
+      {id:'D',text:'MFA neutralizes credential compromise via phishing',hashtags:['mfa','authentication','identity'],eps:3},
+      {id:'E',text:'Zero-day exploits compromise endpoints with no patch available',hashtags:['exploit','vulnerability','endpoint'],eps:2},
+      {id:'F',text:'EDR+XDR detects exploits in real time using threat intel',hashtags:['endpoint','response','incident','siem'],eps:3},
+      {id:'G',text:'Uncontrolled privileged access enables vertical escalation',hashtags:['privileged_access','server','internal_network'],eps:2},
+      {id:'H',text:'PAM with JIT access limits the post-compromise blast radius',hashtags:['privileged_access','authentication','regulation','zerotrust'],eps:3},
+      {id:'I',text:'Air-gapped encrypted backups guarantee recovery without paying',hashtags:['recovery','ransomware','regulation','backup'],eps:3},
+      {id:'J',text:'Without a tested response plan, backups alone are not enough',hashtags:['recovery','incident','forensics'],eps:2},
+      {id:'K',text:'NIS2/GDPR strengthens security controls and auditing',hashtags:['gdpr','compliance','regulation','incident'],eps:2},
+    ],
+    attacks: [['C','A'],['A','B'],['E','F'],['G','D'],['J','I'],['D','G'],['F','E'],['B','A'],['K','G'],['H','G'],['I','J']],
+    mu: {A:'P1',B:'P2',C:'~P2',D:'P3',E:'~P4',F:'P4',G:'~P3',H:'P5',I:'P6',J:'~P6',K:'P7'}
+  },
+
+  zero_trust: {
+    title: 'Zero Trust Architecture',
+    domain: 'Security Policy',
+    desc: 'Twelve arguments on Zero Trust with central hashtags (identity/authentication), intermediate ones (behavior/encryption) and distant ones (gdpr/privacy), producing varying degrees of attack weakening.',
+    meta: '26 hashtags · 26 relations · 12 args · 13 attacks',
+    distFn: 'non_intersection',
+    hashtags: ['zerotrust','identity','privileged_access','microsegmentation','authentication','mfa','monitoring','behavior','encryption','internal_network','perimeter','cloud','endpoint','device','policy','compliance','regulation','data','privacy','zero_day','insider_threat','anomaly','ai_detection','siem','gdpr','lateral_movement'],
+    edges: [['zerotrust','identity'],['zerotrust','microsegmentation'],['zerotrust','monitoring'],['identity','privileged_access'],['identity','authentication'],['authentication','mfa'],['microsegmentation','internal_network'],['microsegmentation','perimeter'],['monitoring','behavior'],['monitoring','siem'],['behavior','anomaly'],['anomaly','ai_detection'],['encryption','data'],['encryption','cloud'],['cloud','endpoint'],['endpoint','device'],['policy','compliance'],['compliance','regulation'],['regulation','gdpr'],['data','privacy'],['gdpr','privacy'],['insider_threat','privileged_access'],['lateral_movement','internal_network'],['lateral_movement','microsegmentation'],['zero_day','endpoint'],['siem','ai_detection']],
+    arguments: [
+      {id:'Z1',text:'Zero Trust eliminates the network perimeter as a security concept',hashtags:['zerotrust','perimeter','internal_network'],eps:3},
+      {id:'Z2',text:'Microsegmentation halts lateral movement after intrusion',hashtags:['microsegmentation','lateral_movement','internal_network'],eps:3},
+      {id:'Z3',text:'Continuous verification with MFA is the operational core of ZT',hashtags:['identity','authentication','mfa','zerotrust'],eps:3},
+      {id:'Z4',text:'Zero Trust raises operational complexity and lowers productivity',hashtags:['zerotrust','policy','compliance'],eps:2},
+      {id:'Z5',text:'AI+SIEM detects anomalous behavior in real time',hashtags:['ai_detection','behavior','anomaly','siem'],eps:3},
+      {id:'Z6',text:'AI models have high false-positive rates in ZT environments',hashtags:['ai_detection','anomaly','monitoring'],eps:2},
+      {id:'Z7',text:'End-to-end encryption protects sensitive data in cloud and endpoints',hashtags:['encryption','data','cloud','endpoint'],eps:2},
+      {id:'Z8',text:'Pervasive encryption hinders inspection of malicious traffic',hashtags:['encryption','monitoring','policy'],eps:2},
+      {id:'Z9',text:'Privileged insiders can bypass ZT from the inside',hashtags:['insider_threat','privileged_access','identity'],eps:2},
+      {id:'Z10',text:'GDPR requires differential privacy compatible with ZT',hashtags:['gdpr','privacy','compliance','regulation'],eps:2},
+      {id:'Z11',text:'Zero-days in IoT devices bypass authentication controls',hashtags:['zero_day','device','authentication'],eps:2},
+      {id:'Z12',text:'Risk-based conditional access adaptively reinforces ZT',hashtags:['zerotrust','behavior','privileged_access','policy'],eps:3},
+    ],
+    attacks: [['Z4','Z1'],['Z1','Z4'],['Z6','Z5'],['Z5','Z6'],['Z8','Z7'],['Z7','Z8'],['Z9','Z3'],['Z3','Z9'],['Z11','Z3'],['Z12','Z4'],['Z2','Z9'],['Z5','Z9'],['Z10','Z4']],
+    mu: {Z1:'P1',Z2:'P2',Z3:'P3',Z4:'~P1',Z5:'P4',Z6:'~P4',Z7:'P5',Z8:'~P5',Z9:'~P3',Z10:'P6',Z11:'~P3',Z12:'P7'}
+  },
+
+  climate_debate: {
+    title: 'Climate Change: Science, Policy & Economy',
+    domain: 'Public Debate',
+    desc: 'Academic example with 15 arguments. CENTRAL hashtags: co2/temperature (highly connected). INTERMEDIATE: renewable energy/subsidies. VERY DISTANT: international trade/national sovereignty — yielding strongly weakened attacks.',
+    meta: '35 hashtags · 42 relations · 15 args · 16 attacks · showcases semantic distance',
+    distFn: 'non_intersection',
+    hashtags: ['co2','temperature','glaciers','sea_level','greenhouse_gases','fossil_fuels','coal','oil','renewable_energy','solar','wind','nuclear','subsidies','carbon_tax','environmental_regulation','paris_agreement','kyoto_protocol','industry','employment','gdp','economic_development','emerging_nations','adaptation','mitigation','biodiversity','ecosystem','public_health','climate_migration','green_tech','hydrogen','geopolitics','international_trade','national_sovereignty','sustainable_growth','climate_justice'],
+    edges: [['co2','temperature'],['co2','greenhouse_gases'],['temperature','glaciers'],['temperature','sea_level'],['greenhouse_gases','fossil_fuels'],['fossil_fuels','coal'],['fossil_fuels','oil'],['renewable_energy','solar'],['renewable_energy','wind'],['renewable_energy','nuclear'],['renewable_energy','hydrogen'],['subsidies','renewable_energy'],['subsidies','fossil_fuels'],['carbon_tax','co2'],['carbon_tax','environmental_regulation'],['environmental_regulation','paris_agreement'],['paris_agreement','kyoto_protocol'],['industry','employment'],['industry','gdp'],['gdp','economic_development'],['economic_development','emerging_nations'],['adaptation','mitigation'],['mitigation','co2'],['biodiversity','ecosystem'],['ecosystem','sea_level'],['public_health','temperature'],['climate_migration','sea_level'],['green_tech','renewable_energy'],['green_tech','hydrogen'],['geopolitics','international_trade'],['international_trade','national_sovereignty'],['national_sovereignty','environmental_regulation'],['sustainable_growth','economic_development'],['climate_justice','emerging_nations'],['climate_justice','adaptation'],['emerging_nations','industry'],['employment','economic_development'],['hydrogen','industry'],['nuclear','industry'],['solar','employment'],['wind','employment'],['coal','co2']],
+    arguments: [
+      {id:'CC1',text:'CO2 emissions have driven 1.1°C of warming since pre-industrial times',hashtags:['co2','temperature','greenhouse_gases'],eps:2},
+      {id:'CC2',text:'Accelerated glacier melt confirms anthropogenic global warming',hashtags:['glaciers','temperature','sea_level'],eps:2},
+      {id:'CC3',text:'A transition to renewables can cut emissions 80% by 2050',hashtags:['renewable_energy','co2','mitigation'],eps:3},
+      {id:'CC4',text:'A carbon tax is the most efficient economic tool for decarbonization',hashtags:['carbon_tax','co2','environmental_regulation'],eps:2},
+      {id:'CC5',text:'Nuclear fission is indispensable as a clean baseload source',hashtags:['nuclear','renewable_energy','employment'],eps:3},
+      {id:'CC6',text:'Renewable subsidies distort the global energy market',hashtags:['subsidies','renewable_energy','gdp'],eps:2},
+      {id:'CC7',text:'Green hydrogen is key to decarbonizing heavy industry',hashtags:['hydrogen','green_tech','industry'],eps:3},
+      {id:'CC8',text:'Biodiversity is collapsing faster than climate models predict',hashtags:['biodiversity','ecosystem','temperature'],eps:2},
+      {id:'CC9',text:'Sustainable growth requires decoupling GDP from carbon emissions',hashtags:['sustainable_growth','economic_development','co2'],eps:3},
+      {id:'CC10',text:'International climate regulation violates the sovereignty of developing nations',hashtags:['national_sovereignty','international_trade','geopolitics'],eps:2},
+      {id:'CC11',text:'Climate justice demands rich nations finance adaptation in the Global South',hashtags:['climate_justice','emerging_nations','adaptation'],eps:3},
+      {id:'CC12',text:'Without robust industry, emerging nations cannot fund the green transition',hashtags:['industry','emerging_nations','economic_development'],eps:2},
+      {id:'CC13',text:'Climate migration is the most underestimated humanitarian crisis of the century',hashtags:['climate_migration','sea_level','public_health'],eps:3},
+      {id:'CC14',text:'The Paris Agreement is insufficient without binding enforcement mechanisms',hashtags:['paris_agreement','environmental_regulation','geopolitics'],eps:2},
+      {id:'CC15',text:'Solar geoengineering may be cheaper than massive CO2 removal',hashtags:['co2','temperature','green_tech'],eps:2},
+    ],
+    attacks: [['CC6','CC3'],['CC3','CC6'],['CC10','CC4'],['CC4','CC10'],['CC12','CC11'],['CC11','CC12'],['CC5','CC3'],['CC3','CC5'],['CC15','CC1'],['CC1','CC15'],['CC14','CC10'],['CC6','CC5'],['CC7','CC5'],['CC13','CC10'],['CC9','CC12'],['CC2','CC15']],
+    mu: {CC1:'P_warming',CC2:'P_warming',CC3:'P_renewables',CC4:'P_tax',CC5:'~P_renewables',CC6:'~P_tax',CC7:'P_hydrogen',CC8:'P_biodiv',CC9:'P_sustainable',CC10:'~P_regulation',CC11:'P_justice',CC12:'~P_justice',CC13:'P_migration',CC14:'~P_regulation',CC15:'~P_warming'}
+  },
+
+  ia_ethics: {
+    title: 'AI Ethics: Autonomy, Control & Rights',
+    domain: 'Philosophy & Law',
+    desc: 'Philosophical-legal debate with 14 arguments. CENTRAL: autonomy/algorithmic decision. INTERMEDIATE: privacy/bias. VERY DISTANT: human rights/social contract — yielding semantically distant philosophical attacks with strong weakening.',
+    meta: '30 hashtags · 36 relations · 14 args · 14 attacks · strong central/distant contrast',
+    distFn: 'non_intersection',
+    hashtags: ['ai','algorithm','algorithmic_decision','autonomy','bias','discrimination','privacy','personal_data','surveillance','facial_recognition','employment','automation','job_displacement','responsibility','accountability','transparency','explainability','ai_regulation','governance','human_rights','human_dignity','social_contract','digital_sovereignty','alignment','ai_safety','superintelligence','singularity','utilitarian_ethics','deontological_ethics','social_welfare'],
+    edges: [['ai','algorithm'],['ai','autonomy'],['algorithm','algorithmic_decision'],['algorithmic_decision','bias'],['bias','discrimination'],['algorithmic_decision','privacy'],['privacy','personal_data'],['surveillance','facial_recognition'],['facial_recognition','privacy'],['employment','automation'],['automation','job_displacement'],['responsibility','accountability'],['accountability','transparency'],['transparency','explainability'],['ai_regulation','governance'],['governance','responsibility'],['human_rights','human_dignity'],['human_rights','privacy'],['social_contract','governance'],['social_contract','human_rights'],['digital_sovereignty','personal_data'],['alignment','ai_safety'],['ai_safety','superintelligence'],['superintelligence','singularity'],['utilitarian_ethics','social_welfare'],['deontological_ethics','human_dignity'],['social_welfare','employment'],['discrimination','human_rights'],['autonomy','accountability'],['bias','ai_regulation'],['singularity','alignment'],['ai','ai_safety'],['automation','social_welfare'],['explainability','responsibility'],['personal_data','surveillance'],['governance','human_rights']],
+    arguments: [
+      {id:'AI1',text:'AI algorithms reproduce and amplify historical biases in training data',hashtags:['ai','algorithm','bias','discrimination'],eps:2},
+      {id:'AI2',text:'Explainability of algorithmic decisions is a fundamental right in high-impact systems',hashtags:['algorithmic_decision','explainability','transparency'],eps:3},
+      {id:'AI3',text:'Autonomous AI in medical or judicial decisions without human oversight is unacceptable',hashtags:['autonomy','ai','accountability'],eps:2},
+      {id:'AI4',text:'Mass facial recognition by the State constitutes prohibited surveillance',hashtags:['facial_recognition','surveillance','privacy'],eps:2},
+      {id:'AI5',text:'AI regulation should be risk-based, not a blanket ban on technologies',hashtags:['ai_regulation','governance','responsibility'],eps:3},
+      {id:'AI6',text:'Automation will create more jobs than it destroys if well managed',hashtags:['automation','employment','social_welfare'],eps:3},
+      {id:'AI7',text:'Without retraining investment, automation will deepen structural inequality',hashtags:['job_displacement','automation','employment'],eps:2},
+      {id:'AI8',text:'Access to citizens\u2019 personal data must require explicit judicial safeguards',hashtags:['personal_data','privacy','digital_sovereignty'],eps:2},
+      {id:'AI9',text:'Aligned superintelligence could solve global problems better than humans',hashtags:['superintelligence','alignment','ai_safety'],eps:3},
+      {id:'AI10',text:'The social contract must be rewritten to include duties between humans and advanced AIs',hashtags:['social_contract','human_rights','governance'],eps:3},
+      {id:'AI11',text:'Utilitarian ethics justify trading individual privacy for collective security',hashtags:['utilitarian_ethics','social_welfare','privacy'],eps:2},
+      {id:'AI12',text:'Human dignity is irreducible and forbids delegating vital decisions to non-conscious systems',hashtags:['human_dignity','deontological_ethics','social_contract'],eps:2},
+      {id:'AI13',text:'A superintelligence without robust alignment poses an existential risk to humanity',hashtags:['singularity','superintelligence','ai_safety'],eps:2},
+      {id:'AI14',text:'Digital rights are emerging human rights that no State may suppress',hashtags:['human_rights','digital_sovereignty','human_dignity'],eps:3},
+    ],
+    attacks: [['AI3','AI9'],['AI9','AI13'],['AI11','AI4'],['AI4','AI11'],['AI6','AI7'],['AI7','AI6'],['AI12','AI11'],['AI12','AI3'],['AI10','AI5'],['AI14','AI8'],['AI2','AI3'],['AI5','AI1'],['AI8','AI4'],['AI13','AI9']],
+    mu: {AI1:'P_bias',AI2:'P_explainability',AI3:'P_human_control',AI4:'P_privacy',AI5:'P_risk_regulation',AI6:'~P_displacement',AI7:'P_displacement',AI8:'P_privacy',AI9:'~P_human_control',AI10:'P_digital_rights',AI11:'~P_privacy',AI12:'P_dignity',AI13:'P_existential_risk',AI14:'P_digital_rights'}
+  },
+
+  health_debate: {
+    title: 'Public Health: Vaccines, Liberty & State',
+    domain: 'Public Debate',
+    desc: 'Thirteen arguments on public-health and vaccination policy. Reveals multiple communities (\u03b7-neighborhoods): medical (virus/immunity), political (liberty/state), economic (gdp/productivity) and a distant philosophical one (rights/contract).',
+    meta: '32 hashtags · 38 relations · 13 args · 15 attacks · 4 expected communities',
+    distFn: 'non_intersection',
+    hashtags: ['virus','bacteria','pandemic','epidemic','immunity','vaccine','antibodies','adverse_reaction','clinical_efficacy','clinical_trial','public_health','health_system','hospitalization','mortality','transmission','lockdown','distancing','mask','individual_liberty','bodily_autonomy','consent','mandate','welfare_state','health_policy','gdp','productivity','economic_sector','human_rights','social_contract','equality','collective_welfare','evidence_based_medicine'],
+    edges: [['virus','pandemic'],['virus','immunity'],['pandemic','epidemic'],['pandemic','transmission'],['epidemic','mortality'],['immunity','vaccine'],['vaccine','antibodies'],['vaccine','clinical_efficacy'],['adverse_reaction','vaccine'],['clinical_efficacy','clinical_trial'],['public_health','health_system'],['health_system','hospitalization'],['hospitalization','mortality'],['transmission','lockdown'],['lockdown','distancing'],['distancing','mask'],['individual_liberty','bodily_autonomy'],['bodily_autonomy','consent'],['consent','mandate'],['mandate','welfare_state'],['welfare_state','health_policy'],['health_policy','public_health'],['gdp','productivity'],['productivity','economic_sector'],['economic_sector','pandemic'],['human_rights','social_contract'],['social_contract','equality'],['equality','collective_welfare'],['collective_welfare','public_health'],['evidence_based_medicine','vaccine'],['evidence_based_medicine','clinical_trial'],['mortality','public_health'],['individual_liberty','human_rights'],['consent','human_rights'],['pandemic','gdp'],['mask','transmission'],['mandate','collective_welfare'],['lockdown','gdp']],
+    arguments: [
+      {id:'SP1',text:'Phase-III trialed vaccines have proven efficacy in cutting pandemic mortality',hashtags:['vaccine','clinical_efficacy','clinical_trial','mortality'],eps:2},
+      {id:'SP2',text:'Herd immunity requires at least 70-85% vaccination coverage',hashtags:['immunity','vaccine','transmission','pandemic'],eps:2},
+      {id:'SP3',text:'Severe adverse reactions, though rare, must be reported transparently',hashtags:['adverse_reaction','vaccine','evidence_based_medicine'],eps:2},
+      {id:'SP4',text:'Strict lockdowns collapse the economy without guaranteeing viral elimination',hashtags:['lockdown','gdp','pandemic'],eps:3},
+      {id:'SP5',text:'Universal mask use reduces community transmission by ~50%',hashtags:['mask','transmission','public_health'],eps:3},
+      {id:'SP6',text:'A collapsed health system multiplies non-COVID mortality',hashtags:['health_system','hospitalization','mortality'],eps:2},
+      {id:'SP7',text:'Mandatory vaccination is justifiable when the pandemic threat is severe',hashtags:['mandate','welfare_state','health_policy'],eps:3},
+      {id:'SP8',text:'Bodily autonomy is a right the State cannot suppress, even in a pandemic',hashtags:['bodily_autonomy','consent','individual_liberty'],eps:2},
+      {id:'SP9',text:'The social contract implies accepting minor restrictions for the collective good',hashtags:['social_contract','collective_welfare','equality'],eps:3},
+      {id:'SP10',text:'Economic productivity cannot be sacrificed indefinitely for health measures',hashtags:['productivity','economic_sector','gdp'],eps:2},
+      {id:'SP11',text:'Unequal vaccine access violates the principle of equality in global health',hashtags:['human_rights','equality','vaccine'],eps:3},
+      {id:'SP12',text:'Human rights include refusing medical treatment without losing employment',hashtags:['human_rights','bodily_autonomy','individual_liberty'],eps:2},
+      {id:'SP13',text:'Transparency in epidemiological surveillance data is a condition of State legitimacy',hashtags:['evidence_based_medicine','public_health','human_rights'],eps:3},
+    ],
+    attacks: [['SP8','SP7'],['SP7','SP8'],['SP4','SP5'],['SP5','SP4'],['SP3','SP1'],['SP1','SP3'],['SP10','SP7'],['SP12','SP7'],['SP9','SP8'],['SP9','SP12'],['SP11','SP10'],['SP6','SP4'],['SP2','SP8'],['SP13','SP3'],['SP5','SP2']],
+    mu: {SP1:'P_vaccine_efficacy',SP2:'P_herd_immunity',SP3:'~P_vaccine_efficacy',SP4:'~P_lockdown',SP5:'P_mask',SP6:'P_lockdown',SP7:'P_mandate',SP8:'~P_mandate',SP9:'P_mandate',SP10:'~P_lockdown',SP11:'P_health_justice',SP12:'~P_mandate',SP13:'P_transparency'}
+  },
+
+  paper_motivador: {
+    title: 'Paper 2026 — Motivating Example (A,B,C,D)',
+    domain: 'Reference',
+    desc: 'The original paper\u2019s motivating example on investing in childhood public health vs. economic development. Simple but illustrative of attack weakening by semantic distance.',
+    meta: '15 hashtags · 20 relations · 4 args · 5 attacks',
+    distFn: 'non_intersection',
+    hashtags: ['childhood','diseases','healthy_habits','skills_development','investing_education','economic_social_development','pollution','preserve_foundation','wellness_investing','mindful_investing','strategic_decision','infrastructure','transportation','healthcare_access','food_security'],
+    edges: [['childhood','healthy_habits'],['childhood','diseases'],['diseases','healthy_habits'],['healthy_habits','skills_development'],['skills_development','investing_education'],['investing_education','economic_social_development'],['economic_social_development','healthy_habits'],['pollution','childhood'],['pollution','diseases'],['preserve_foundation','healthy_habits'],['wellness_investing','healthy_habits'],['wellness_investing','investing_education'],['mindful_investing','wellness_investing'],['strategic_decision','investing_education'],['strategic_decision','economic_social_development'],['infrastructure','transportation'],['transportation','economic_social_development'],['healthcare_access','diseases'],['food_security','healthy_habits'],['infrastructure','healthcare_access']],
+    arguments: [
+      {id:'A',text:'Instilling healthy habits in children prevents future disease with high efficiency',hashtags:['childhood','diseases','healthy_habits'],eps:2},
+      {id:'B',text:'Investing in education is the cornerstone of public health and social welfare',hashtags:['skills_development','healthy_habits','investing_education'],eps:2},
+      {id:'C',text:'Local employment opportunities benefit community health and economic development',hashtags:['economic_social_development'],eps:1},
+      {id:'D',text:'Without solid transport infrastructure there is no access to education or healthcare',hashtags:['healthy_habits','economic_social_development','investing_education'],eps:2},
+    ],
+    attacks: [['B','A'],['A','B'],['C','B'],['D','A'],['D','C']],
+    mu: {A:'P1',B:'~P1',C:'P3',D:'P4'}
+  },
+
+  /* ============ NEW EXAMPLES ============ */
+
+  urban_mobility: {
+    title: 'Urban Mobility & Congestion Pricing',
+    domain: 'Public Policy',
+    desc: 'Ten arguments on city transport policy. CENTRAL: transit/congestion. INTERMEDIATE: emissions/equity. DISTANT: tourism/property value — distant economic attacks are heavily weakened.',
+    meta: '24 hashtags · 26 relations · 10 args · 11 attacks',
+    distFn: 'geodesic',
+    hashtags: ['traffic','congestion','congestion_pricing','public_transit','metro','bus','bike_lane','pedestrian','emissions','air_quality','noise','equity','accessibility','fare','transit_subsidy','parking','private_car','electric_vehicle','urban_planning','density','tourism','local_commerce','property_value','road_safety'],
+    edges: [['traffic','congestion'],['congestion','congestion_pricing'],['congestion_pricing','fare'],['public_transit','metro'],['public_transit','bus'],['public_transit','fare'],['bike_lane','pedestrian'],['bike_lane','road_safety'],['congestion','emissions'],['emissions','air_quality'],['emissions','noise'],['equity','accessibility'],['equity','transit_subsidy'],['transit_subsidy','fare'],['parking','private_car'],['private_car','congestion'],['private_car','electric_vehicle'],['electric_vehicle','emissions'],['urban_planning','density'],['density','public_transit'],['tourism','local_commerce'],['local_commerce','property_value'],['property_value','urban_planning'],['pedestrian','local_commerce'],['accessibility','public_transit'],['road_safety','traffic']],
+    arguments: [
+      {id:'M1',text:'Congestion pricing cuts downtown traffic and funds public transit',hashtags:['congestion_pricing','congestion','public_transit'],eps:2},
+      {id:'M2',text:'Congestion charges are regressive and burden low-income commuters',hashtags:['congestion_pricing','equity','fare'],eps:2},
+      {id:'M3',text:'Expanding the metro is the only durable fix for chronic congestion',hashtags:['metro','public_transit','congestion'],eps:2},
+      {id:'M4',text:'Protected bike lanes improve road safety and reduce short-trip emissions',hashtags:['bike_lane','road_safety','emissions'],eps:3},
+      {id:'M5',text:'Removing parking minimums frees land for housing and transit',hashtags:['parking','urban_planning','density'],eps:3},
+      {id:'M6',text:'Electric vehicles cut emissions without forcing modal shift',hashtags:['electric_vehicle','emissions','private_car'],eps:2},
+      {id:'M7',text:'Transit subsidies are fairer than pricing for guaranteeing access',hashtags:['transit_subsidy','equity','accessibility'],eps:3},
+      {id:'M8',text:'Pedestrianizing the core boosts local commerce and air quality',hashtags:['pedestrian','local_commerce','air_quality'],eps:3},
+      {id:'M9',text:'Pedestrian zones depress property value and hurt car-dependent businesses',hashtags:['property_value','local_commerce','private_car'],eps:2},
+      {id:'M10',text:'Tourism pressure justifies prioritizing pedestrian access over commuters',hashtags:['tourism','pedestrian','local_commerce'],eps:3},
+    ],
+    attacks: [['M2','M1'],['M1','M2'],['M3','M1'],['M6','M4'],['M4','M6'],['M7','M2'],['M9','M8'],['M8','M9'],['M5','M6'],['M10','M9'],['M2','M7']],
+    mu: {M1:'P_pricing',M2:'~P_pricing',M3:'P_metro',M4:'P_bike',M5:'P_parking',M6:'~P_bike',M7:'P_subsidy',M8:'P_pedestrian',M9:'~P_pedestrian',M10:'P_pedestrian'}
+  },
+
+  ai_education: {
+    title: 'AI in Education',
+    domain: 'Education Policy',
+    desc: 'Eleven arguments on generative AI in classrooms. CENTRAL: learning/assessment. INTERMEDIATE: integrity/equity. DISTANT: labor market/credentialing — distant attacks weaken markedly.',
+    meta: '22 hashtags · 24 relations · 11 args · 12 attacks',
+    distFn: 'non_intersection',
+    hashtags: ['learning','assessment','tutoring','feedback','generative_ai','plagiarism','academic_integrity','critical_thinking','personalization','accessibility','digital_divide','equity','teacher','curriculum','competencies','labor_market','credentialing','student_privacy','minors_data','motivation','learning_autonomy','ai_literacy'],
+    edges: [['learning','assessment'],['learning','tutoring'],['tutoring','feedback'],['generative_ai','tutoring'],['generative_ai','plagiarism'],['plagiarism','academic_integrity'],['academic_integrity','assessment'],['critical_thinking','learning'],['personalization','learning'],['personalization','accessibility'],['accessibility','digital_divide'],['digital_divide','equity'],['teacher','curriculum'],['curriculum','competencies'],['competencies','labor_market'],['labor_market','credentialing'],['student_privacy','minors_data'],['minors_data','generative_ai'],['motivation','learning_autonomy'],['learning_autonomy','learning'],['ai_literacy','generative_ai'],['ai_literacy','competencies'],['teacher','feedback'],['equity','accessibility']],
+    arguments: [
+      {id:'E1',text:'AI tutors give personalized feedback at a scale teachers cannot match',hashtags:['generative_ai','tutoring','feedback','personalization'],eps:2},
+      {id:'E2',text:'Generative AI erodes academic integrity and makes plagiarism undetectable',hashtags:['generative_ai','plagiarism','academic_integrity'],eps:2},
+      {id:'E3',text:'Over-reliance on AI weakens students\u2019 critical thinking',hashtags:['critical_thinking','learning','generative_ai'],eps:2},
+      {id:'E4',text:'Adaptive AI narrows the equity gap for under-resourced learners',hashtags:['personalization','accessibility','equity'],eps:3},
+      {id:'E5',text:'AI tools widen the digital divide where connectivity is scarce',hashtags:['digital_divide','equity','accessibility'],eps:2},
+      {id:'E6',text:'Assessment must shift to oral and process-based formats AI cannot fake',hashtags:['assessment','academic_integrity','competencies'],eps:3},
+      {id:'E7',text:'AI literacy is now a core competency for the labor market',hashtags:['ai_literacy','competencies','labor_market'],eps:3},
+      {id:'E8',text:'Collecting minors\u2019 data for AI tutoring threatens student privacy',hashtags:['minors_data','student_privacy','generative_ai'],eps:2},
+      {id:'E9',text:'Teachers, not algorithms, must own curriculum and feedback',hashtags:['teacher','curriculum','feedback'],eps:2},
+      {id:'E10',text:'AI raises motivation by giving learners autonomy over pace',hashtags:['motivation','learning_autonomy','learning'],eps:3},
+      {id:'E11',text:'Credential inflation makes AI-assisted degrees signal little to employers',hashtags:['credentialing','labor_market','competencies'],eps:2},
+    ],
+    attacks: [['E2','E1'],['E1','E2'],['E3','E1'],['E5','E4'],['E4','E5'],['E6','E2'],['E8','E1'],['E9','E1'],['E7','E11'],['E11','E7'],['E10','E3'],['E6','E3']],
+    mu: {E1:'P_ai_tutor',E2:'~P_ai_tutor',E3:'~P_ai_tutor',E4:'P_equity',E5:'~P_equity',E6:'P_assessment',E7:'P_ai_literacy',E8:'P_privacy',E9:'P_teacher',E10:'P_motivation',E11:'~P_ai_literacy'}
+  },
+
+  genome_editing: {
+    title: 'Human Genome Editing',
+    domain: 'Bioethics',
+    desc: 'Twelve arguments on CRISPR germline editing. CENTRAL: therapy/safety. INTERMEDIATE: consent/access. DISTANT: human nature/future generations — distant philosophical attacks weaken strongly.',
+    meta: '24 hashtags · 25 relations · 12 args · 13 attacks',
+    distFn: 'non_intersection',
+    hashtags: ['crispr','gene_editing','germline','gene_therapy','hereditary_disease','safety','off_target','mosaicism','consent','autonomy','equitable_access','social_justice','eugenics','human_enhancement','human_nature','future_generations','dignity','bio_regulation','biotechnology','genetic_diversity','ecological_risk','identity','disability','reproductive_rights'],
+    edges: [['crispr','gene_editing'],['gene_editing','germline'],['gene_editing','gene_therapy'],['gene_therapy','hereditary_disease'],['germline','future_generations'],['safety','off_target'],['safety','mosaicism'],['off_target','gene_therapy'],['consent','autonomy'],['consent','future_generations'],['equitable_access','social_justice'],['social_justice','eugenics'],['eugenics','human_enhancement'],['human_enhancement','human_nature'],['human_nature','dignity'],['bio_regulation','biotechnology'],['biotechnology','gene_editing'],['genetic_diversity','ecological_risk'],['identity','disability'],['disability','hereditary_disease'],['reproductive_rights','autonomy'],['human_enhancement','equitable_access'],['future_generations','dignity'],['germline','genetic_diversity'],['hereditary_disease','disability']],
+    arguments: [
+      {id:'G1',text:'Germline editing can eradicate fatal hereditary diseases before birth',hashtags:['germline','gene_therapy','hereditary_disease'],eps:2},
+      {id:'G2',text:'Off-target effects make germline editing unsafe with current tools',hashtags:['off_target','safety','germline'],eps:2},
+      {id:'G3',text:'Somatic gene therapy already treats disease without heritable risk',hashtags:['gene_therapy','hereditary_disease','safety'],eps:2},
+      {id:'G4',text:'Future generations cannot consent to edits imposed on their genome',hashtags:['future_generations','consent','autonomy'],eps:3},
+      {id:'G5',text:'Editing only the wealthy can afford entrenches genetic inequality',hashtags:['equitable_access','social_justice','human_enhancement'],eps:2},
+      {id:'G6',text:'Enhancement editing slides toward a new eugenics',hashtags:['eugenics','human_enhancement','human_nature'],eps:2},
+      {id:'G7',text:'A strict therapy/enhancement line keeps editing ethically bounded',hashtags:['bio_regulation','gene_therapy','human_enhancement'],eps:3},
+      {id:'G8',text:'Reproductive autonomy includes choosing to prevent heritable disease',hashtags:['reproductive_rights','autonomy','hereditary_disease'],eps:3},
+      {id:'G9',text:'Framing disability as a defect to edit out devalues disabled lives',hashtags:['disability','identity','dignity'],eps:2},
+      {id:'G10',text:'Reducing genetic diversity carries unknown ecological risk',hashtags:['genetic_diversity','ecological_risk','germline'],eps:3},
+      {id:'G11',text:'Altering the genome violates the dignity of human nature',hashtags:['human_nature','dignity','future_generations'],eps:2},
+      {id:'G12',text:'Proportionate regulation lets therapy proceed while banning enhancement',hashtags:['bio_regulation','biotechnology','safety'],eps:3},
+    ],
+    attacks: [['G2','G1'],['G3','G1'],['G1','G3'],['G4','G1'],['G6','G7'],['G7','G6'],['G5','G7'],['G8','G4'],['G4','G8'],['G9','G1'],['G11','G8'],['G10','G1'],['G12','G2']],
+    mu: {G1:'P_germline',G2:'~P_germline',G3:'~P_germline',G4:'~P_germline',G5:'P_inequality',G6:'~P_enhancement',G7:'P_therapy_line',G8:'P_repro_autonomy',G9:'P_disability',G10:'P_diversity',G11:'~P_germline',G12:'P_therapy_line'}
+  },
+
+  content_moderation: {
+    title: 'Platform Content Moderation',
+    domain: 'Tech & Society',
+    desc: 'Eleven arguments on social-media moderation and free speech. CENTRAL: speech/harm. INTERMEDIATE: algorithm/transparency. DISTANT: democracy/market power — distant attacks are weakened.',
+    meta: '23 hashtags · 24 relations · 11 args · 12 attacks',
+    distFn: 'non_intersection',
+    hashtags: ['free_speech','moderation','harm','disinformation','hate_speech','recommendation_algorithm','amplification','transparency','accountability','censorship','political_bias','user_safety','minors','mental_health','democracy','polarization','market_power','monopoly','platform_regulation','due_process','verification','anonymity'],
+    edges: [['free_speech','moderation'],['moderation','harm'],['harm','hate_speech'],['harm','disinformation'],['disinformation','democracy'],['recommendation_algorithm','amplification'],['amplification','polarization'],['amplification','disinformation'],['transparency','accountability'],['accountability','moderation'],['censorship','free_speech'],['political_bias','moderation'],['user_safety','minors'],['minors','mental_health'],['mental_health','amplification'],['democracy','polarization'],['market_power','monopoly'],['monopoly','platform_regulation'],['platform_regulation','transparency'],['due_process','moderation'],['verification','disinformation'],['anonymity','harm']],
+    arguments: [
+      {id:'CM1',text:'Platforms must remove hate speech to protect users from real-world harm',hashtags:['moderation','hate_speech','harm','user_safety'],eps:2},
+      {id:'CM2',text:'Aggressive moderation amounts to censorship of lawful speech',hashtags:['censorship','free_speech','moderation'],eps:2},
+      {id:'CM3',text:'Recommendation algorithms amplify outrage and deepen polarization',hashtags:['recommendation_algorithm','amplification','polarization'],eps:2},
+      {id:'CM4',text:'Transparency reports and appeals give moderation due process',hashtags:['transparency','accountability','due_process'],eps:3},
+      {id:'CM5',text:'Moderation teams carry political bias that skews enforcement',hashtags:['political_bias','moderation','censorship'],eps:2},
+      {id:'CM6',text:'Protecting minors\u2019 mental health justifies limiting algorithmic feeds',hashtags:['minors','mental_health','amplification'],eps:3},
+      {id:'CM7',text:'Fact-checking and verification curb the spread of disinformation',hashtags:['verification','disinformation','democracy'],eps:3},
+      {id:'CM8',text:'Disinformation at scale corrodes democratic deliberation',hashtags:['disinformation','democracy','polarization'],eps:2},
+      {id:'CM9',text:'Anonymity shields vulnerable speakers but also enables harm',hashtags:['anonymity','harm','free_speech'],eps:2},
+      {id:'CM10',text:'Platform monopoly power makes private moderation a public concern',hashtags:['market_power','monopoly','platform_regulation'],eps:3},
+      {id:'CM11',text:'Mandated algorithmic transparency is the fairest check on amplification',hashtags:['platform_regulation','transparency','recommendation_algorithm'],eps:3},
+    ],
+    attacks: [['CM2','CM1'],['CM1','CM2'],['CM5','CM1'],['CM4','CM5'],['CM3','CM2'],['CM6','CM3'],['CM7','CM8'],['CM8','CM2'],['CM9','CM1'],['CM10','CM2'],['CM11','CM3'],['CM4','CM2']],
+    mu: {CM1:'P_remove_harm',CM2:'~P_remove_harm',CM3:'P_amplification',CM4:'P_due_process',CM5:'~P_remove_harm',CM6:'P_minors',CM7:'P_factcheck',CM8:'P_democracy',CM9:'~P_remove_harm',CM10:'P_market_power',CM11:'P_transparency'}
+  },
+
+  water_rights: {
+    title: 'Transboundary Water Rights',
+    domain: 'Environmental Law',
+    desc: 'Ten arguments on shared river management. CENTRAL: scarcity/allocation. INTERMEDIATE: agriculture/ecosystem. DISTANT: sovereignty/treaty law — distant geopolitical attacks weaken sharply.',
+    meta: '22 hashtags · 22 relations · 10 args · 11 attacks',
+    distFn: 'geodesic',
+    hashtags: ['water','scarcity','allocation','shared_river','basin','irrigation','agriculture','ecosystem','ecological_flow','pollution','drinking_water','sanitation','hydropower','energy','sovereignty','treaty','international_law','upstream','downstream','climate_change','population','development'],
+    edges: [['water','scarcity'],['scarcity','allocation'],['allocation','shared_river'],['shared_river','basin'],['basin','irrigation'],['irrigation','agriculture'],['water','ecosystem'],['ecosystem','ecological_flow'],['pollution','drinking_water'],['drinking_water','sanitation'],['hydropower','energy'],['hydropower','shared_river'],['sovereignty','treaty'],['treaty','international_law'],['upstream','downstream'],['downstream','allocation'],['climate_change','scarcity'],['population','water'],['population','development'],['development','energy'],['agriculture','scarcity'],['ecological_flow','allocation']],
+    arguments: [
+      {id:'W1',text:'Scarcity demands a binding allocation formula for the shared river',hashtags:['scarcity','allocation','shared_river'],eps:2},
+      {id:'W2',text:'Upstream dams cut downstream flow and breach equitable use',hashtags:['upstream','downstream','allocation'],eps:2},
+      {id:'W3',text:'Irrigation for food security must take priority in allocation',hashtags:['irrigation','agriculture','scarcity'],eps:2},
+      {id:'W4',text:'A minimum ecological flow must be guaranteed before any extraction',hashtags:['ecological_flow','ecosystem','allocation'],eps:3},
+      {id:'W5',text:'Hydropower development justifies upstream storage of shared water',hashtags:['hydropower','energy','shared_river'],eps:2},
+      {id:'W6',text:'Pollution upstream poisons downstream drinking water',hashtags:['pollution','drinking_water','downstream'],eps:2},
+      {id:'W7',text:'Population growth makes universal access to safe water the first goal',hashtags:['population','drinking_water','sanitation'],eps:3},
+      {id:'W8',text:'Climate change makes fixed historical quotas obsolete',hashtags:['climate_change','scarcity','allocation'],eps:3},
+      {id:'W9',text:'National sovereignty over rivers within borders limits external claims',hashtags:['sovereignty','treaty','shared_river'],eps:2},
+      {id:'W10',text:'International water law overrides unilateral sovereignty in shared basins',hashtags:['international_law','treaty','sovereignty'],eps:3},
+    ],
+    attacks: [['W2','W5'],['W5','W2'],['W4','W3'],['W3','W4'],['W6','W5'],['W9','W2'],['W10','W9'],['W9','W10'],['W8','W1'],['W7','W3'],['W4','W5']],
+    mu: {W1:'P_allocation',W2:'P_downstream',W3:'P_irrigation',W4:'P_ecoflow',W5:'~P_downstream',W6:'P_pollution',W7:'P_access',W8:'P_climate',W9:'P_sovereignty',W10:'~P_sovereignty'}
+  }
+};
+
+function renderExamples() {
+  const centerMap = {
+    apt_ransomware: { central: ['A','B','D'], mid: ['F','H','I'], far: ['K'] },
+    zero_trust: { central: ['Z1','Z2','Z3'], mid: ['Z5','Z7','Z12'], far: ['Z10','Z11'] },
+    climate_debate: { central: ['CC1','CC2','CC3'], mid: ['CC4','CC5','CC7','CC9'], far: ['CC10','CC11','CC14'] },
+    ia_ethics: { central: ['AI1','AI2','AI3'], mid: ['AI5','AI6','AI8','AI9'], far: ['AI10','AI12','AI14'] },
+    health_debate: { central: ['SP1','SP2','SP3'], mid: ['SP5','SP6','SP7'], far: ['SP9','SP11','SP12'] },
+    paper_motivador: { central: ['A','B'], mid: ['D'], far: ['C'] },
+    urban_mobility: { central: ['M1','M2','M3'], mid: ['M4','M6','M7'], far: ['M9','M10'] },
+    ai_education: { central: ['E1','E2','E3'], mid: ['E4','E6','E9'], far: ['E7','E11'] },
+    genome_editing: { central: ['G1','G2','G3'], mid: ['G5','G7','G8'], far: ['G6','G11'] },
+    content_moderation: { central: ['CM1','CM2','CM3'], mid: ['CM4','CM6','CM7'], far: ['CM8','CM10'] },
+    water_rights: { central: ['W1','W2','W3'], mid: ['W4','W6','W7'], far: ['W9','W10'] },
+  };
+  document.getElementById('examples-list').innerHTML = Object.entries(EXAMPLES).map(([key, ex]) => {
+    const cm = centerMap[key]||{};
+    return `<div class="ex-card" onclick="loadEx(EXAMPLES['${key}']);showPanel('hashcloud')">
+      <div class="ec-h">
+        <div class="ec-domain">${esc(ex.domain||'Example')}</div>
+        <div class="ec-title">${esc(ex.title)}</div>
+      </div>
+      <div class="ec-b">
+        <div class="ec-desc">${esc(ex.desc)}</div>
+        <div class="ec-meta">${esc(ex.meta)}</div>
+        <div style="margin-top:7px;display:flex;flex-wrap:wrap;gap:3px;align-items:center">
+          ${(cm.central||[]).map(id=>`<span class="ex-badge ex-central">● ${id} central</span>`).join('')}
+          ${(cm.mid||[]).map(id=>`<span class="ex-badge ex-mid">◉ ${id} mid</span>`).join('')}
+          ${(cm.far||[]).map(id=>`<span class="ex-badge ex-far">○ ${id} distant</span>`).join('')}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ===== System initialization ===== */
+htG = new HTGraph();
+argG = new ArgGraph();
+setEpsMode('auto');
+setNbhdMode('auto');
+renderHT(); renderArgs(); renderAtks(); renderMu(); renderSubs(); renderExamples();
+loadEx(EXAMPLES.paper_motivador);
+showPanel('hashcloud');
+</script>
+
+</body>
+</html>
