@@ -314,6 +314,65 @@
 
   .muted{ color:var(--neut); font-size:11px; font-family:var(--mono); }
   .dl-row{ display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 4px; }
+
+  /* ===== guided mode ===== */
+  #guide{ position:fixed; right:18px; bottom:18px; width:min(440px,calc(100vw - 36px)); max-height:78vh; overflow:auto; z-index:500;
+    background:var(--paper); border:2.5px solid var(--ink); box-shadow:6px 6px 0 var(--shadow); display:none; }
+  #guide.on{ display:block; }
+  #guide .gh{ display:flex; align-items:center; gap:8px; padding:8px 12px; background:var(--ink); color:var(--paper); font-family:var(--mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; position:sticky; top:0; }
+  #guide .gh b{ flex:1; }
+  #guide .gh button{ background:none; border:1px solid var(--paper); color:var(--paper); cursor:pointer; padding:1px 7px; font-family:var(--mono); }
+  #guide .gbar{ height:5px; background:var(--paper3); } #guide .gbar i{ display:block; height:100%; background:var(--rust); transition:.2s; }
+  #guide .gb{ padding:12px 14px; font-size:13px; line-height:1.5; }
+  #guide .gb h4{ font-family:var(--serif); font-size:18px; margin:0 0 6px; } #guide .gb h4 em{ color:var(--rust); }
+  #guide .gnow{ background:var(--paper2); border-left:4px solid var(--teal); padding:7px 10px; margin:8px 0; font-size:12px; }
+  #guide .gf{ display:flex; gap:8px; padding:10px 14px; border-top:1.5px solid var(--line); flex-wrap:wrap; }
+  #guide .gf .sp{ flex:1; }
+  #guide.min .gb,#guide.min .gf{ display:none; }
+  #guide .dots{ display:flex; gap:4px; flex-wrap:wrap; margin-bottom:8px; }
+  #guide .dots span{ width:22px; height:22px; border:1.5px solid var(--line); font:600 10px var(--mono); display:flex; align-items:center; justify-content:center; cursor:pointer; }
+  #guide .dots span.cur{ background:var(--rust); color:var(--paper); border-color:var(--rust); } #guide .dots span.dn{ background:var(--teal); color:var(--paper); border-color:var(--teal); }
+  .epsbox{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; background:var(--paper2); border:1.5px solid var(--line); padding:10px; margin-bottom:12px; }
+  .epsbox input[type=range]{ width:200px; -webkit-appearance:none; appearance:none; height:10px; padding:0; margin:0 4px; border:1.5px solid var(--ink); border-radius:0; cursor:pointer;
+    background:linear-gradient(to right,var(--rust) 0,var(--rust) calc(var(--q,0)*(100% - 20px) + 10px),var(--paper3) calc(var(--q,0)*(100% - 20px) + 10px),var(--paper3) 100%); }
+  .epsbox input[type=range]::-webkit-slider-thumb{ -webkit-appearance:none; appearance:none; width:20px; height:20px; background:var(--ink); border:2px solid var(--rust); border-radius:0; cursor:pointer; }
+  .epsbox input[type=range]::-moz-range-thumb{ width:16px; height:16px; background:var(--ink); border:2px solid var(--rust); border-radius:0; cursor:pointer; }
+  .epsbox input[type=range]::-moz-range-track{ background:transparent; }
+  .epscell{ display:flex; flex-direction:column; align-items:center; gap:3px; background:var(--paper); padding:6px 8px; border:1.5px solid var(--line); }
+  .epscell input{ width:52px; text-align:center; } .epscell label{ text-transform:none; }
+  .hl{ outline:3px solid var(--rust); outline-offset:2px; }
+
+  /* ===== wizard (guided) mode ===== */
+  #wiz-bar,#wiz-intro,#wiz-foot{ display:none; }
+  body.guided #nav{ display:none; }
+  body.guided #app{ grid-template-columns:1fr; }
+  body.guided #guide{ display:none!important; }
+  #guide{ display:none!important; }
+  body.guided #wiz-bar{ display:flex; align-self:start; align-items:center; grid-column:1/-1; gap:4px; padding:8px 18px; background:var(--paper2); border-bottom:2px solid var(--ink); overflow-x:auto; position:sticky; top:var(--mh,90px); z-index:150; }
+  #wiz-bar .chip{ flex:0 0 auto; display:flex; align-items:center; gap:6px; padding:5px 11px; border:1.5px solid var(--line); background:var(--paper); cursor:pointer; font:600 11px var(--mono); letter-spacing:.05em; text-transform:uppercase; white-space:nowrap; }
+  #wiz-bar .chip b{ display:inline-flex; width:19px; height:19px; align-items:center; justify-content:center; border-radius:50%; background:var(--paper3); font-size:10px; }
+  #wiz-bar .chip.dn b{ background:var(--teal); color:var(--paper); } #wiz-bar .chip.cur{ background:var(--ink); color:var(--paper); border-color:var(--ink); } #wiz-bar .chip.cur b{ background:var(--rust); color:var(--paper); }
+  body.guided #wiz-intro{ display:block; max-width:1040px; margin:0 0 18px; background:var(--paper2); border:2px solid var(--ink); border-left:8px solid var(--rust); padding:16px 20px; box-shadow:4px 4px 0 var(--shadow); }
+  #wiz-intro .k{ font:600 10px var(--mono); letter-spacing:.2em; text-transform:uppercase; color:var(--rust); }
+  #wiz-intro h2{ margin:2px 0 6px!important; } #wiz-intro p{ font-size:14px; line-height:1.6; max-width:820px; }
+  #wiz-intro .now{ margin-top:8px; padding:7px 10px; background:var(--paper); border-left:4px solid var(--teal); font-size:12.5px; }
+  #wiz-intro .todo{ margin-top:8px; font-size:13px; } #wiz-intro .todo b{ color:var(--rust-d); }
+  #wiz-intro .warn{ margin-top:8px; padding:7px 10px; background:#f6e3d8; border-left:4px solid var(--rust); font-size:12.5px; }
+  #wiz-intro table.sm{ border-collapse:collapse; margin-top:10px; font-size:12px; } #wiz-intro table.sm th,#wiz-intro table.sm td{ padding:3px 10px; border-bottom:1px solid var(--line); text-align:left; font-family:var(--mono); }
+  body.guided #wiz-foot{ display:flex; gap:10px; align-items:center; position:fixed; left:0; right:0; bottom:0; z-index:300; background:var(--paper); border-top:2.5px solid var(--ink); padding:10px 22px; box-shadow:0 -3px 0 var(--shadow); }
+  #wiz-foot .sp{ flex:1; } #wiz-foot button.big{ padding:10px 22px; font-size:13px; }
+  body.guided main#main{ padding-bottom:96px; }
+  body.guided .panel>h2, body.guided .panel>.lede, body.guided .panel>.def, body.guided .panel .formula, body.guided .adv, body.guided .panel>.dl-row{ display:none; }
+  body.guided #panel-start>h2,body.guided #panel-start>.lede{ display:block; }
+  body.guided #panel-arguments .mbar, body.guided #panel-neighborhoods .mbar, body.guided #panel-neighborhoods>.row{ display:none; }
+  .start-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; max-width:900px; margin-top:16px; }
+  .scard{ border:2px solid var(--ink); background:var(--paper2); padding:18px 20px; box-shadow:4px 4px 0 var(--shadow); } .scard.main{ cursor:pointer; background:var(--paper); } .scard.main:hover{ transform:translate(-1px,-1px); box-shadow:6px 6px 0 var(--shadow); }
+  .scard .si{ font-size:26px; color:var(--rust); } .scard h3{ margin:4px 0 4px; } .scard p{ font-size:13px; margin-bottom:10px; }
+  .tagpick{ padding:3px 9px; border:1.5px solid var(--line); background:var(--paper); cursor:pointer; font:12px var(--mono); } .tagpick.on{ background:var(--teal); color:var(--paper); border-color:var(--teal); }
+  details.advbox{ margin:12px 0; border:1.5px dashed var(--line); padding:8px 12px; } details.advbox summary{ cursor:pointer; font:600 11px var(--mono); text-transform:uppercase; letter-spacing:.1em; color:var(--rust-d); }
+  .shake{ animation:shk .3s; } @keyframes shk{ 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
+  .rp-opt{ display:block; padding:5px 0; font-size:13px; cursor:pointer; } .rp-opt input{ width:auto; margin-right:8px; vertical-align:middle; }
+  .gr{ text-transform:none !important; }
 </style>
 </head>
 <body>
@@ -326,13 +385,18 @@
       <div class="sub">Labeled Hashtagged Argumentation Framework</div>
     </div>
     <div class="cite">
+      <button class="ghost sm" id="mode-btn" onclick="setGuided(!isGuided())" style="margin-bottom:6px">Expert mode</button><br>
       <span class="badge">Interactive engine</span><br>
       Coronel, Martinez, Simari &amp; Budán (2026)<br>
       Weakening attacks · η / ζ extensions · gradual labeling
     </div>
   </header>
 
+  <div id="wiz-bar"></div>
   <nav id="nav">
+    <div class="nsec">Guide</div>
+    <button class="nbtn" id="guide-btn" onclick="setGuided(true)"><span class="ico">➜</span>Back to guided mode</button>
+    <button class="nbtn" data-panel="start"><span class="ico">⌂</span>Start screen</button>
     <div class="nsec">Base construction</div>
     <button class="nbtn active" data-panel="hashcloud"><span class="ico">◐</span>Hashcloud<span class="bdg" id="nb-ht">0</span></button>
     <button class="nbtn" data-panel="arguments"><span class="ico">‖</span>Arguments<span class="bdg" id="nb-args">0</span></button>
@@ -351,7 +415,7 @@
     <button class="nbtn" data-panel="conclusions"><span class="ico">①</span>Conclusions μ</button>
     <button class="nbtn" data-panel="subargs"><span class="ico">②</span>Subarguments</button>
     <button class="nbtn" data-panel="valuation"><span class="ico">③</span>Valuation υ</button>
-    <button class="nbtn" data-panel="labeling"><span class="ico">④</span>Labeling α, δ</button>
+    <button class="nbtn" data-panel="labeling"><span class="ico">④</span>Labeling σ, δ</button>
     <button class="nbtn" data-panel="extensions-lhaf"><span class="ico">⑤</span>L-HAF extensions</button>
     <button class="nbtn" data-panel="properties"><span class="ico">☑</span>Properties</button>
 
@@ -361,9 +425,22 @@
   </nav>
 
   <main id="main">
+  <div id="wiz-intro"></div>
+
+  <!-- ===== START ===== -->
+  <section id="panel-start" class="panel active">
+    <h2>Welcome to <em>L-HAF Studio</em></h2>
+    <p class="lede">Build an argumentation framework with hashtags and see how attacks are weakened by semantic distance. The Studio will walk you through every step.</p>
+    <div class="start-grid">
+      <div class="scard main" onclick="wizBuild()"><div class="si">✎</div><h3>Build my own framework</h3><p>Guided, from scratch: topics → arguments → attacks → analysis.</p><span class="pri" style="display:inline-block;padding:8px 14px">Start building ▶</span></div>
+      <div class="scard"><div class="si">⇣</div><h3>Import a framework</h3><p>Load a JSON file exported from the Studio.</p><input type="file" id="wz-file" accept=".json,application/json" onchange="wizImport(this)"></div>
+    </div>
+    <h3 style="margin-top:22px">…or learn with an example <span class="muted" style="font-weight:400">(the Studio guides you through the analysis)</span></h3>
+    <div id="start-examples" class="ex-grid"></div>
+  </section>
 
   <!-- ===== HASHCLOUD ===== -->
-  <section id="panel-hashcloud" class="panel active">
+  <section id="panel-hashcloud" class="panel">
     <h2><em>Hashcloud</em> — semantic topic network</h2>
     <p class="lede">The hashcloud G_Ω = [H, E] is the semantic backbone of the framework. It induces the distance function d_Ω that weakens attacks by semantic distance and defines argument neighborhoods.</p>
     <div class="def"><strong>Def. </strong> Ω = ⟨Φ, G_Ω, Args, Attacks, d_Ω⟩. Topics are nodes; semantic relations are undirected edges. Distances between arguments are derived from shortest paths between their hashtags.</div>
@@ -431,7 +508,8 @@
           <div class="fld" style="flex:1;min-width:200px"><label>Description</label><input id="arg-text" placeholder="Argument text…" style="width:100%"></div>
           <div class="fld" id="eps-fld" style="display:none"><label>ε</label><input type="number" id="arg-eps" value="2" min="0" max="20" style="width:60px"></div>
         </div>
-        <div class="row"><div class="fld" style="flex:1"><label>Hashtags (comma)</label><input id="arg-tags" placeholder="malware, exploit, network" style="width:100%"></div></div>
+        <div class="row"><div class="fld" style="flex:1"><label>Hashtags — click to select, or type (comma separated)</label><input id="arg-tags" placeholder="malware, exploit, network" style="width:100%" oninput="renderTagPicker()"></div></div>
+        <div id="tag-picker" style="display:flex;flex-wrap:wrap;gap:5px;margin:2px 0 10px"></div>
         <button class="pri" onclick="addArg()">+ Add argument</button>
       </div>
     </div>
@@ -484,7 +562,8 @@
     <p class="lede">The distance d_Ω(A,B) is induced from the hashcloud and the hashtag sets H_A, H_B. The paper presents several valid instances; the chosen one drives neighborhoods, extensions and attack weakening.</p>
     <h3>Select distance function</h3>
     <div class="dgrid">
-      <div class="dopt sel" data-fn="non_intersection" onclick="selectDist('non_intersection',this)"><strong>Non-intersection (max)</strong><span>max d_G(α,β) over non-shared hashtags. Default in the 2026 paper examples.</span></div>
+      <div class="dopt sel" data-fn="maxlink" onclick="selectDist('maxlink',this)"><strong>Maximal linkage (paper)</strong><span>d(A,B)=max d_G(α,β) over all α∈H_A, β∈H_B for A≠B, and d(A,A)=0. A pseudometric; the instance used in Example 2 of the paper.</span></div>
+      <div class="dopt" data-fn="non_intersection" onclick="selectDist('non_intersection',this)"><strong>Non-intersection (max)</strong><span>max d_G(α,β) over non-shared hashtags. Earlier Studio default; not the paper's definition. Check it with the property verifier.</span></div>
       <div class="dopt" data-fn="geodesic" onclick="selectDist('geodesic',this)"><strong>Geodesic (BFS min)</strong><span>Shortest BFS path between the closest hashtags of A and B.</span></div>
       <div class="dopt" data-fn="hausdorff" onclick="selectDist('hausdorff',this)"><strong>Hausdorff</strong><span>max(max_α min_β d, max_β min_α d). Symmetric between hashtag sets.</span></div>
       <div class="dopt" data-fn="avg_dist" onclick="selectDist('avg_dist',this)"><strong>Average</strong><span>Mean of d_G(α,β) over all pairs α∈H_A, β∈H_B.</span></div>
@@ -492,6 +571,13 @@
       <div class="dopt" data-fn="symmetric_diff" onclick="selectDist('symmetric_diff',this)"><strong>Symmetric difference</strong><span>|H_A △ H_B|. Ignores graph structure.</span></div>
     </div>
     <div class="row"><button class="pri" onclick="computeDistances()">▶ Compute distance matrix</button><button class="ghost sm" onclick="downloadTable('dist-results','distance-matrix')">⤓ CSV</button></div>
+    <div class="row" style="margin-top:10px"><button class="pri" onclick="verifyDistProps()">✓ Verify pseudometric properties</button></div>
+    <div id="dist-props" style="margin-top:12px"></div>
+    <h3 style="margin-top:18px">Compare with a reference matrix</h3>
+    <p class="lede" style="font-size:13px">Paste an n×n matrix (rows in argument order, separated by spaces, commas or tabs), e.g. Table 1 of the paper. Cells that differ from the matrix computed with the selected function are highlighted; the reference matrix is also tested for the pseudometric properties.</p>
+    <textarea id="ref-matrix" rows="7" style="width:100%;font-family:monospace;font-size:12px" placeholder="0 4 5 ..."></textarea>
+    <div class="row"><button class="pri" onclick="compareRefMatrix()">⇄ Compare</button></div>
+    <div id="ref-results" style="margin-top:12px"></div>
     <div id="dist-results" style="margin-top:12px"></div>
   </section>
 
@@ -621,7 +707,7 @@ Strategies:  <span class="hl">singleton</span> · <span class="hl">bipartite</sp
   <!-- ===== VALUATION ===== -->
   <section id="panel-valuation" class="panel">
     <h2><span class="step-no">Step 3</span> Valuation function <em>υ</em></h2>
-    <p class="lede">M_A is the centrality vector of A's hashtags in G_Ω. υ(A^μ) = f(M_A), where f is an aggregation operator. α_A = υ(A^μ) is the argument's initial strength.</p>
+    <p class="lede">M_A is the centrality vector of A's hashtags in G_Ω. υ(A^μ) = f(M_A), where f is an aggregation operator. σ_A = υ(A^μ) is the argument's initial strength.</p>
     <div class="formula">M_A(i) = centrality of hashtag αᵢ in G_Ω
 
 Centralities m(·):  degree · closeness · eigenvector · PageRank
@@ -655,14 +741,30 @@ Operators f(M_A):   sum (coverage) · mean · max (dominant) · min (weakest lin
 
   <!-- ===== LABELING ===== -->
   <section id="panel-labeling" class="panel">
-    <h2><span class="step-no">Step 4</span> Labeling procedure <em>⟨α, δ⟩</em></h2>
-    <p class="lede">Assigns ⟨α_A, δ_A⟩ to each argument. δ_A incorporates the weakening of incoming attacks, attenuated by semantic distance d(A,B) and the threshold ε_A.</p>
-    <div class="formula">If B ∈ N^ε_A  (d ≤ ε_A):   contribution = α_B            (full strength)
-If B ∉ N^ε_A  (d > ε_A):   contribution = α_B / (d − ε_A)  (weakened)
-If d = ∞:                  contribution = 0
-
-Status:  <span class="hl">Unchallenged</span> δ=α · <span class="hl">Weakened</span> 0&lt;δ&lt;α · <span class="hl">Neutralized</span> δ=0</div>
+    <h2><span class="step-no">Step 4</span> Labeling procedure <em>⟨σ, δ⟩</em></h2>
+    <p class="lede">Assigns ⟨σ_A, δ_A⟩ to each argument. δ_A incorporates the attacks of its attackers, each acting with its own final value δ_B, attenuated by semantic distance d(A,B) and the threshold ε_A; a neutralized attacker (δ_B=0) has no effect.</p>
+    <div class="formula">Def. 16 (recursive):   δ_A = σ_A  if A has no attackers;   δ_A = σ_A · ρ(A,B)  otherwise (after unfolding every argument has at most one attacker: the one whose claim contradicts its own),
+ρ(A,B) = ⊙_i Π_j (A^αi, B_k^αj)_i / ⊙_i σ_i^A ,   with   (A^αi, B^αj)_i = ( σ_i^A − σ̃_j^{B} )⁺  if B ∈ N(A),   ( σ_i^A − σ̃_j^{B} / (d(A,B) − ε_A) )⁺  otherwise
+σ̃_j^{B} = σ_j^{B} · δ_B / σ_B   (hashtag j of the attacker B after its own weakening; σ_i^A = value of the i-th hashtag of A)
+attf(A,B) = 1 if d(A,B) ≤ ε_A,   1/(d(A,B) − ε_A + 1) otherwise     (σ_i = normalized centrality of hashtag i)
+ρ = 1 iff the attacker B is neutralized (δ_B = 0). Unattacked arguments and arguments attacked by a non-pair argument: evaluated attackers first. Mutual pairs A⇄B (the only cycles produced by unfolding) reduce to one scalar equation, solved by bisection. (Frameworks loaded directly, without unfolding, may contain other cycles; the tool then falls back to damped fixed-point iteration from δ=σ.)
+Requirements: ⊙, Π fixed, total, associative, commutative, continuous; hashtag values in (0,1]; ⊙, Π monotone and internal (mean, min, max).</div>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin:10px 0">
+      <label style="font-size:10px">Preset<br><select id="lop-preset" onchange="applyLopPreset(this.value)"><option value="minmean">Min · mean · product (paper) — default</option><option value="product">Mean · mean · product</option><option value="strongest">Mean · mean · min (t-norm, not strict)</option><option value="sumres">Mean · mean · sum — counter-example</option><option value="worst">Max · min · product</option><option value="additive">Legacy additive: δ = σ − Σ attf·δ_B</option></select></label>
+      <label style="font-size:10px">Mode<br><select id="lop-mode"><option value="def17">Def. 16 (hashtag level)</option><option value="additive">Additive (argument level)</option></select></label>
+      <label style="font-size:10px">Π over attacker hashtags j<br><select id="lop-pi"></select><br><input id="lop-cu-pi" value="x*y" style="width:110px" title="custom: expression in x,y"></label>
+      <label style="font-size:10px">⊙ over attacked hashtags i<br><select id="lop-od"></select><br><input id="lop-cu-od" value="x*y" style="width:110px" title="custom: expression in x,y"></label>
+      <label style="font-size:10px;display:none" title="Only used for frameworks loaded directly with several attackers per argument">⊗ over attackers (not used after unfolding)<br><select id="lop-ot"></select><br><input id="lop-cu-ot" value="x*y" style="width:110px" title="custom: expression in x,y"></label>
+      <label style="font-size:10px"><input type="checkbox" id="lop-norm"> normalize υ by its maximum (legacy; hashtag values may exceed 1)</label>
+      <label style="font-size:10px"><input type="checkbox" id="lop-clamp" checked> truncate contributions at 0: (σ_i − attf·σ̃_j)⁺</label>
+    </div>
+    <div style="margin-bottom:8px"><button class="ghost sm" onclick="verifyOperators()">✓ Verify operator requirements</button> <button class="ghost sm" onclick="testPropositions()">✓ Test Section-4 propositions</button> <span class="muted" style="font-size:10px">“custom” uses the expression in x, y (e.g. <code>x+y-x*y</code>, <code>Math.max(x,y)</code>).</span></div>
+    <div id="lop-out" style="margin-bottom:12px"></div>
+    <label style="font-size:10px;margin-right:8px">Solver (cycles other than mutual pairs): relaxation λ <input id="lop-relax" type="number" min="0.05" max="1" step="0.05" value="0.5" style="width:60px" title="δ ← (1−λ)·δ + λ·F(δ); λ=1 is plain iteration"></label>
     <button class="pri" onclick="runLabeling()">▶ Run labeling</button>
+    <button class="ghost sm" onclick="showEquations()">∑ Show equations (EQS)</button>
+    <button class="ghost sm" onclick="findSolutions()">⌕ Search other solutions</button>
+    <div id="eqs-out" style="margin-top:10px"></div>
     <span class="dl-row" style="display:inline-flex"><button class="ghost sm" onclick="downloadTable('labeling-out','labels')">⤓ CSV</button></span>
     <div id="labeling-out" style="margin-top:12px"></div>
   </section>
@@ -676,6 +778,22 @@ Weak conflict-free:   S ⊆ A^υ_U ∪ A^υ_W
 Strong-grounded = A^υ_U     ·    Weak-grounded = A^υ_U ∪ A^υ_W</div>
     <button class="pri" onclick="runLHAFExt()">▶ Compute L-HAF extensions</button>
     <div id="lhaf-ext-out" style="margin-top:12px"></div>
+  </section>
+
+  <!-- ===== REPORT ===== -->
+  <section id="panel-report" class="panel">
+    <h2>Run <em>report</em></h2>
+    <p class="lede">Download a PDF with the whole run: the framework, the settings used (distance, thresholds &epsilon;, base strengths &sigma;, operators), the labeling result and the extensions.</p>
+    <div class="rs"><div class="rs-h">What to include</div><div class="rs-b">
+      <label class="rp-opt"><input type="checkbox" id="rp-fw" checked> Framework (topics, arguments, attacks)</label>
+      <label class="rp-opt"><input type="checkbox" id="rp-set" checked> Settings used (distance, &epsilon; per argument, &sigma;, operators)</label>
+      <label class="rp-opt"><input type="checkbox" id="rp-res" checked> Results table (&sigma;, &delta;, status) and extensions</label>
+      <label class="rp-opt"><input type="checkbox" id="rp-con" checked> Per-attack detail (distance, attenuation, weakening)</label>
+      <label class="rp-opt"><input type="checkbox" id="rp-dist" checked> Distance matrix</label>
+      <label class="rp-opt"><input type="checkbox" id="rp-img" checked> Argumentation graph (colored by status)</label>
+      <div style="margin-top:12px"><button class="pri big" onclick="downloadReportPDF()">&#8595; Download PDF report</button></div>
+    </div></div>
+    <div id="rp-preview" style="margin-top:12px"></div>
   </section>
 
   <!-- ===== PROPERTIES ===== -->
@@ -718,6 +836,8 @@ Strong-grounded = A^υ_U     ·    Weak-grounded = A^υ_U ∪ A^υ_W</div>
   </main>
 </div>
 
+<div id="guide"><div class="gh"><b id="g-title">Guided mode</b><button onclick="guideMin()" title="minimize">_</button><button onclick="guideOff()" title="close">✕</button></div><div class="gbar"><i id="g-bar" style="width:0"></i></div><div class="gb" id="g-body"></div><div class="gf" id="g-foot"></div></div>
+<div id="wiz-foot"></div>
 <div class="toast" id="toast"></div>
 <script>
 /* ===================================================================
@@ -750,7 +870,7 @@ class FG {
     this.scale = 1; this.ox = 0; this.oy = 0;
     this.drag = null; this.hover = null; this.sel = null; this.af = null;
     this._events();
-    const ro = new ResizeObserver(() => { this.cv.width = this.cv.parentElement.clientWidth; this.draw(); });
+    const ro = new ResizeObserver(() => { const w0=this.cv.width, w=this.cv.parentElement.clientWidth; if(!w) return; this.cv.width = w; if(!(this.scale>0.001) || !w0 || w0<50){ this._settle(); this.fit(); } else this.draw(); });
     ro.observe(this.cv.parentElement);
     this.cv.width = this.cv.parentElement.clientWidth;
   }
@@ -833,8 +953,8 @@ class FG {
   }
   /* true high-resolution PNG: re-renders vectors at `factor`× into a fresh canvas (no upscaling blur).
      Frames the graph to its own bounds so it fills the image regardless of on-screen zoom. */
-  exportPNG(factor=4){
-    const W=this.cv.width, H=this.cv.height;
+  exportPNG(factor=4,W0,H0){
+    const W=W0||this.cv.width, H=H0||this.cv.height;
     // compute a tight fit to node bounds (independent of current screen pan/zoom)
     let scale=this.scale, ox=this.ox, oy=this.oy;
     if(this.nodes.length){
@@ -938,16 +1058,16 @@ class ArgGraph extends FG {
   constructor() { super('argCanvas',{rep:30000,att:0.014,damp:0.76,minD:120,nodeR:22,rest:200}); this.etaGnd=new Set(); this.zetaGnd=new Set(); }
   refresh(etaG=[], zetaG=[]) {
     this.etaGnd=new Set(etaG); this.zetaGnd=new Set(zetaG);
-    const nodes=S.arguments.map(a=>{const l=S.labels[a.id];const st=argStatuses[a.id];const ci=S.communities[a.id];return{id:a.id,label:a.id,text:a.text,hashtags:a.hashtags,eps:a.eps_manual,concl:S.mu[a.id]||'',st,alpha:l?.alpha,delta:l?.delta,commIdx:ci,commCol:ci!==undefined?COMM[ci%6]:null};});
+    const nodes=S.arguments.map(a=>{const l=S.labels[a.id];const st=argStatuses[a.id];const ci=S.communities[a.id];return{id:a.id,label:a.id,text:a.text,hashtags:a.hashtags,eps:a.eps_manual,concl:S.mu[a.id]||'',members:a.members||null,st,alpha:l?.alpha,delta:l?.delta,commIdx:ci,commCol:ci!==undefined?COMM[ci%6]:null};});
     const edges=S.attacks.map(([f,t])=>({source:f,target:t,mutual:S.attacks.some(([a,b])=>a===t&&b===f)}));
     this.setData(nodes,edges);
   }
   _ah(ctx,x,y,a,col,s){ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-s*Math.cos(a-.4),y-s*Math.sin(a-.4));ctx.lineTo(x-s*Math.cos(a+.4),y-s*Math.sin(a+.4));ctx.closePath();ctx.fill();}
   _arrow(ctx,x1,y1,x2,y2,col,wk,curved,hs=10){
-    const a2=Math.atan2(y2-y1,x2-x1);ctx.strokeStyle=wk?ha(col,0.33):col;ctx.lineWidth=wk?1:2;
-    if(wk)ctx.setLineDash([4,5]);ctx.beginPath();
-    if(curved){const mx=(x1+x2)/2-(y2-y1)*.22,my=(y1+y2)/2+(x2-x1)*.22;ctx.moveTo(x1,y1);ctx.quadraticCurveTo(mx,my,x2,y2);ctx.stroke();ctx.setLineDash([]);const t=.9,ax=(1-t)**2*x1+2*(1-t)*t*mx+t*t*x2,ay=(1-t)**2*y1+2*(1-t)*t*my+t*t*y2;this._ah(ctx,x2,y2,Math.atan2(y2-ay,x2-ax),wk?ha(col,0.33):col,hs);}
-    else{ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.setLineDash([]);this._ah(ctx,x2,y2,a2,wk?ha(col,0.33):col,hs);}
+    const a2=Math.atan2(y2-y1,x2-x1);ctx.strokeStyle=wk?ha(col,0.45):col;ctx.lineWidth=wk?1.3:2.6;
+    ctx.beginPath();
+    if(curved){const mx=(x1+x2)/2-(y2-y1)*.22,my=(y1+y2)/2+(x2-x1)*.22;ctx.moveTo(x1,y1);ctx.quadraticCurveTo(mx,my,x2,y2);ctx.stroke();ctx.setLineDash([]);const t=.9,ax=(1-t)**2*x1+2*(1-t)*t*mx+t*t*x2,ay=(1-t)**2*y1+2*(1-t)*t*my+t*t*y2;this._ah(ctx,x2,y2,Math.atan2(y2-ay,x2-ax),wk?ha(col,0.45):col,hs);}
+    else{ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.setLineDash([]);this._ah(ctx,x2,y2,a2,wk?ha(col,0.45):col,hs);}
   }
   _dE(ctx) {
     const drawn=new Set();
@@ -957,7 +1077,7 @@ class ArgGraph extends FG {
       const x1=a.x+ux*r,y1=a.y+uy*r,x2=b.x-ux*(r+10),y2=b.y-uy*(r+10);
       const pk=[e.source,e.target].sort().join('|');const curved=e.mutual||drawn.has(pk);drawn.add(pk);
       const dist=S.argDist[e.source]?.[e.target]??Infinity;
-      const eps=S.arguments.find(x=>x.id===e.target)?.eps_manual||2;
+      const eps=S.arguments.find(x=>x.id===e.target)?.eps_manual??2;
       const isLHAFActive = Object.keys(S.labels).length > 0;
       const wk=isLHAFActive && dist>eps;
       this._arrow(ctx,x1,y1,x2,y2,PAL.rust,wk,curved,10);
@@ -997,15 +1117,15 @@ class ArgGraph extends FG {
         ctx.font = `600 14px 'Fraunces', serif`;
         ctx.strokeStyle = PAL.paper; ctx.lineWidth = 3.5; ctx.strokeText(n.label, n.x, n.y);
         ctx.fillStyle = sc; ctx.fillText(n.label, n.x, n.y);
-        if (n.concl) {
+        if (n.concl || n.members) {
           ctx.font = `9px 'IBM Plex Mono', monospace`; ctx.fillStyle = PAL.plum;
-          ctx.fillText(n.concl, n.x, n.y + r + 13);
+          ctx.fillText(n.members ? '{' + n.members.join(', ') + '}' : n.concl, n.x, n.y + r + 13);
         }
         if (n.hashtags && n.hashtags.length) {
           ctx.font = `italic 7.5px 'IBM Plex Mono', monospace`;
           ctx.fillStyle = ha(PAL.neut,0.85);
           const tagsText = n.hashtags.map(h => '#' + h).join(' ');
-          const yOffset = n.concl ? 24 : 13;
+          const yOffset = (n.concl || n.members) ? 24 : 13;
           ctx.fillText(tagsText, n.x, n.y + r + yOffset);
         }
       } else {
@@ -1030,7 +1150,7 @@ class ArgGraph extends FG {
       }
     });
   }
-  _onClick(n){const el=document.getElementById('arg-ci');if(n&&el){const l=S.labels[n.id];const ci=S.communities[n.id];const commInfo=ci!==undefined?` · <span style="color:${COMM[ci%6]}">C${ci+1}</span>`:'';el.innerHTML=`<strong style="color:var(--rust)">${n.id}</strong>${l?` · α=${l.alpha.toFixed(3)} δ=${l.delta.toFixed(3)} [${argStatuses[n.id]||'?'}]`:''}${commInfo}`;} }
+  _onClick(n){const el=document.getElementById('arg-ci');if(n&&el){const l=S.labels[n.id];const ci=S.communities[n.id];const commInfo=ci!==undefined?` · <span style="color:${COMM[ci%6]}">C${ci+1}</span>`:'';el.innerHTML=`<strong style="color:var(--rust)">${n.id}</strong>${l?` · σ=${l.alpha.toFixed(3)} δ=${l.delta.toFixed(3)} [${argStatuses[n.id]||'?'}]`:''}${commInfo}`;} }
 }
 
 /* instances + canvas download */
@@ -1080,7 +1200,7 @@ function downloadCanvasPDF(canvasId, fileName, factor){
    =================================================================== */
 const S = {
   hashtags: [], edges: [], arguments: [], attacks: [], subarguments: [],
-  mu: {}, distFn: 'non_intersection', epsMode: 'auto', nbhdMode: 'auto',
+  mu: {}, distFn: 'maxlink', epsMode: 'auto', nbhdMode: 'auto',
   htDist: {}, argDist: {}, neighborhoods: {}, communities: {}, communityList: [],
   metrics: {}, valuations: {}, labels: {}
 };
@@ -1103,6 +1223,7 @@ function showPanel(name){
     if(name==='attacks'){ argG.refresh(); }
     if(name==='io'){ updateExportPreview(); }
     if(name==='examples'){ renderExamples(); }
+    if(name==='arguments'){ renderTagPicker(); }
   },30);
 }
 document.querySelectorAll('.nbtn').forEach(b=>b.addEventListener('click',()=>showPanel(b.dataset.panel)));
@@ -1119,7 +1240,7 @@ function setNbhdMode(m){ S.nbhdMode=m;
 function selectDist(fn,el){ S.distFn=fn; document.querySelectorAll('.dopt').forEach(d=>d.classList.remove('sel')); el.classList.add('sel'); invalidateDist(); }
 
 /* ===== Hashcloud ===== */
-function addHT(){ const n=document.getElementById('ht-name').value.trim().replace(/^#/,''); if(!n||S.hashtags.includes(n))return; S.hashtags.push(n); document.getElementById('ht-name').value=''; invalidateDist(); renderHT(); }
+function addHT(){ const raw=document.getElementById('ht-name').value; const ns=raw.split(',').map(x=>x.trim().replace(/^#/,'')).filter(Boolean); let ch=false; ns.forEach(n=>{ if(!S.hashtags.includes(n)){ S.hashtags.push(n); ch=true; } }); document.getElementById('ht-name').value=''; if(ch){ invalidateDist(); renderHT(); } if(typeof wizRender==='function') wizRender(); }
 function removeHT(n){ S.hashtags=S.hashtags.filter(h=>h!==n); S.edges=S.edges.filter(([a,b])=>a!==n&&b!==n); invalidateDist(); renderHT(); }
 function addRel(){ const a=document.getElementById('rel-a').value,b=document.getElementById('rel-b').value; if(!a||!b||a===b)return; if(S.edges.some(([x,y])=>(x===a&&y===b)||(x===b&&y===a)))return; S.edges.push([a,b]); invalidateDist(); renderHT(); }
 function removeRel(i){ S.edges.splice(i,1); invalidateDist(); renderHT(); }
@@ -1138,15 +1259,16 @@ function renderHT(){
 /* ===== Arguments ===== */
 function addArg(){
   const id=document.getElementById('arg-id').value.trim().toUpperCase();
-  const text=document.getElementById('arg-text').value.trim();
+  let text=document.getElementById('arg-text').value.trim();
   const tags=document.getElementById('arg-tags').value.trim();
   const eps=parseInt(document.getElementById('arg-eps').value)||2;
-  if(!id||!text||!tags)return;
+  if(!id||!tags){ toast('Give the argument an ID and pick at least one hashtag'); return; }
+  if(!text) text='Argument '+id;
   if(S.arguments.find(a=>a.id===id)){ toast('ID already exists'); return; }
   const hashtags=tags.split(',').map(t=>t.trim().replace(/^#/,'')).filter(Boolean);
   S.arguments.push({id,text,hashtags,eps_manual:eps,conclusion:''});
   ['arg-id','arg-text','arg-tags'].forEach(x=>document.getElementById(x).value='');
-  invalidateDist(); renderArgs();
+  invalidateDist(); renderArgs(); if(typeof wizAfterArg==='function') wizAfterArg();
 }
 function removeArg(id){ S.arguments=S.arguments.filter(a=>a.id!==id); S.attacks=S.attacks.filter(([f,t])=>f!==id&&t!==id); delete S.mu[id]; invalidateDist(); renderArgs(); renderAtks(); }
 function renderArgs(){
@@ -1169,7 +1291,7 @@ function renderArgs(){
         <div style="font-size:12px;line-height:1.4">${esc(a.text)}</div>
         <div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:4px">${a.hashtags.map(h=>`<span class="tag t-topic">#${esc(h)}</span>`).join('')}</div>
         ${nbhd?`<div style="font-size:9px;margin-top:3px;color:var(--neut);font-family:var(--mono)">N^ε: {${nbhd.members.join(', ')}}</div>`:''}
-        ${lbl?`<div style="font-size:9px;margin-top:3px;font-family:var(--mono)">α=${lbl.alpha.toFixed(3)} · δ=${lbl.delta.toFixed(3)} <span class="stbadge st-${st}" style="font-size:8px">${st}</span></div>`:''}
+        ${lbl?`<div style="font-size:9px;margin-top:3px;font-family:var(--mono)">σ=${lbl.alpha.toFixed(3)} · δ=${lbl.delta.toFixed(3)} <span class="stbadge st-${st}" style="font-size:8px">${st}</span></div>`:''}
       </div>
       <button class="dan" onclick="removeArg('${a.id}')">✕</button>
     </div></div>`;
@@ -1179,7 +1301,7 @@ function renderArgs(){
 function refreshSels(){ ['atk-from','atk-to','mu-arg','sub-parent'].forEach(id=>{ const s=document.getElementById(id); if(!s)return; const v=s.value; s.innerHTML='<option value="">—</option>'+S.arguments.map(a=>`<option value="${a.id}"${a.id===v?' selected':''}>${a.id}</option>`).join(''); }); }
 
 /* ===== Attacks ===== */
-function addAtk(){ const f=document.getElementById('atk-from').value,t=document.getElementById('atk-to').value; if(!f||!t||f===t)return; if(S.attacks.some(([a,b])=>a===f&&b===t))return; S.attacks.push([f,t]); renderAtks(); }
+function addAtk(){ const f=document.getElementById('atk-from').value,t=document.getElementById('atk-to').value; if(!f||!t){ toast('Choose attacker and target'); return; } if(f===t){ toast('An argument attacking itself is allowed only if you really want it: choose different arguments'); return; } if(S.attacks.some(([a,b])=>a===f&&b===t))return; S.attacks.push([f,t]); renderAtks(); if(typeof wizRender==='function') wizRender(); }
 function removeAtk(f,t){ S.attacks=S.attacks.filter(([a,b])=>!(a===f&&b===t)); renderAtks(); }
 function renderAtks(){
   document.getElementById('atk-count').textContent=S.attacks.length;
@@ -1188,7 +1310,7 @@ function renderAtks(){
   if(!S.attacks.length){ list.innerHTML='<span class="muted">— no attacks —</span>'; argG.refresh(); return; }
   list.innerHTML=S.attacks.map(([f,t])=>{
     const d=S.argDist[f]?(S.argDist[f][t]??Infinity):null;
-    const epsTgt=S.arguments.find(x=>x.id===t)?.eps_manual||2;
+    const epsTgt=S.arguments.find(x=>x.id===t)?.eps_manual??2;
     const wk=d!==null&&d!==Infinity&&d>epsTgt&&Object.keys(S.labels).length>0;
     return `<div class="atki"><span class="tag t-arg">${f}</span>
       <span style="color:var(--rust);font-family:var(--mono);font-weight:700">${wk?'⇢ weakened':'→'}</span>
@@ -1209,6 +1331,7 @@ function argDistFn(A,B){
   if(!HA.length||!HB.length)return Infinity;
   switch(S.distFn){
     case 'non_intersection':{ const dA=HA.filter(h=>!HB.includes(h)),dB=HB.filter(h=>!HA.includes(h)); if(!dA.length&&!dB.length)return 0; if(!dA.length||!dB.length)return 0; let m=0; dA.forEach(a=>dB.forEach(b=>{const d=htd(a,b);if(d===Infinity)m=Infinity;else if(d>m)m=d;})); return m; }
+    case 'maxlink':{ /* Paper (revised): maximal linkage, pseudometric. d(A,A)=0 is handled above */ let m=0; HA.forEach(a=>HB.forEach(b=>{const d=htd(a,b); if(d>m)m=d;})); return m; }
     case 'geodesic':{ let mn=Infinity; HA.forEach(a=>HB.forEach(b=>{const d=htd(a,b);if(d<mn)mn=d;})); return mn; }
     case 'hausdorff':{ const mA=Math.max(...HA.map(a=>Math.min(...HB.map(b=>htd(a,b))))); const mB=Math.max(...HB.map(b=>Math.min(...HA.map(a=>htd(a,b))))); return Math.max(mA,mB); }
     case 'avg_dist':{ let sum=0,cnt=0; HA.forEach(a=>HB.forEach(b=>{const d=htd(a,b);if(d<Infinity){sum+=d;cnt++;}})); return cnt?sum/cnt:Infinity; }
@@ -1217,12 +1340,73 @@ function argDistFn(A,B){
     default: return Infinity;
   }
 }
+
+/* ===== Distance property verification (pseudometric) ===== */
+function distMatrix(fn){ const save=S.distFn; S.distFn=fn; bfsHT(); const M={}; S.arguments.forEach(A=>{ M[A.id]={}; S.arguments.forEach(B=>{ M[A.id][B.id]=argDistFn(A,B); }); }); S.distFn=save; return M; }
+function checkDistProps(M){
+  const ids=Object.keys(M); const r={n:ids.length,inf:0,neg:[],diag:[],asym:[],tri:[],zero:[],nonint:[]};
+  const htOf=id=>{ const a=S.arguments.find(x=>x.id===id); return a?[...a.hashtags].sort().join('|'):null; };
+  ids.forEach(A=>ids.forEach(B=>{ const d=M[A][B];
+    if(d===Infinity){ r.inf++; return; }
+    if(d<0) r.neg.push([A,B,d]);
+    if(!Number.isInteger(d)) r.nonint.push([A,B,d]);
+    if(A===B&&d!==0) r.diag.push([A,d]);
+    if(A<B&&d!==M[B][A]) r.asym.push([A,B,d,M[B][A]]);
+    if(A<B&&d===0) r.zero.push([A,B,htOf(A)!==null&&htOf(A)===htOf(B)]);
+  }));
+  ids.forEach(A=>ids.forEach(B=>ids.forEach(C=>{ if(A===B||B===C||A===C)return; const ab=M[A][B],ac=M[A][C],cb=M[C][B]; if([ab,ac,cb].includes(Infinity))return; if(ab>ac+cb+1e-9) r.tri.push([A,B,C,ab,ac,cb]); })));
+  r.pseudo=!r.neg.length&&!r.diag.length&&!r.asym.length&&!r.tri.length;
+  r.metric=r.pseudo&&!r.zero.length;
+  return r;
+}
+function propRow(label,ok,detail){ return `<tr><td>${label}</td><td style="font-weight:700;color:var(--${ok?'teal-d':'rust-d'})">${ok?'✓':'✗'}</td><td>${detail||''}</td></tr>`; }
+function verifyDistProps(){
+  if(!S.arguments.length){ document.getElementById('dist-props').innerHTML='<span class="muted">No arguments</span>'; return; }
+  const names={ maxlink:'Maximal linkage (paper)', non_intersection:'Non-intersection (max)', geodesic:'Geodesic (BFS)', hausdorff:'Hausdorff', avg_dist:'Average', min_dist:'Minimum', symmetric_diff:'Symmetric difference' };
+  const M=distMatrix(S.distFn), r=checkDistProps(M);
+  const lim=a=>a.slice(0,6).map(x=>x.join(', ')).join(' · ')+(a.length>6?` … (+${a.length-6})`:'');
+  let h=`<div class="rs"><div class="rs-h">Properties of d_Ω · ${names[S.distFn]}</div><div class="rs-b" style="padding:0"><table class="data"><tr><th>Property</th><th></th><th>Detail</th></tr>`;
+  h+=propRow('Non-negativity d(A,B) ≥ 0',!r.neg.length,lim(r.neg));
+  h+=propRow('d(A,A) = 0',!r.diag.length,r.diag.length?'violations (A, d): '+lim(r.diag):'');
+  h+=propRow('Symmetry d(A,B) = d(B,A)',!r.asym.length,lim(r.asym));
+  h+=propRow('Triangle inequality d(A,C) ≤ d(A,B)+d(B,C)',!r.tri.length,r.tri.length?`${r.tri.length} violating triples (A,C,B,d(A,C),d(A,B),d(B,C)): `+lim(r.tri):'');
+  h+=propRow('Integer-valued (needed for the attenuation factor ρ)',!r.nonint.length,lim(r.nonint));
+  h+=`<tr><td>Identity of indiscernibles (not required)</td><td>${r.zero.length?'–':'✓'}</td><td>${r.zero.length?`${r.zero.length} pairs A≠B with d=0 (of them, with identical hashtag sets: ${r.zero.filter(z=>z[2]).length}): `+r.zero.slice(0,8).map(z=>z[0]+'–'+z[1]).join(', '):''}</td></tr>`;
+  h+=`</table></div></div><div class="def"><strong>Verdict:</strong> ${r.pseudo?(r.metric?'pseudometric ✓ (and a metric)':'pseudometric ✓ (not a metric: distinct arguments at distance 0)'):'<span style="color:var(--rust-d)">NOT a pseudometric</span>'}${r.inf?` · ${r.inf} infinite distances (disconnected hashcloud; skipped in the triangle test)`:''}</div>`;
+  // comparison of all functions
+  h+=`<div class="rs" style="margin-top:12px"><div class="rs-h">All distance functions on this framework</div><div class="rs-b" style="padding:0"><table class="data"><tr><th>Function</th><th>d(A,A)=0</th><th>Symmetric</th><th>Triangle</th><th>Integer</th><th>d=0 for A≠B</th><th>Pseudometric</th></tr>`;
+  Object.keys(names).forEach(fn=>{ const q=checkDistProps(distMatrix(fn)); const c=(ok,t)=>`<td style="color:var(--${ok?'teal-d':'rust-d'});font-weight:700">${ok?'✓':'✗ '+t}</td>`;
+    h+=`<tr><td class="arg">${names[fn]}${fn===S.distFn?' ◀':''}</td>${c(!q.diag.length,q.diag.length)}${c(!q.asym.length,q.asym.length)}${c(!q.tri.length,q.tri.length)}${c(!q.nonint.length,q.nonint.length)}<td>${q.zero.length}</td>${c(q.pseudo,'')}</tr>`; });
+  h+=`</table></div></div>`;
+  S.distFn===S.distFn; bfsHT();
+  document.getElementById('dist-props').innerHTML=h;
+}
+function parseRefMatrix(txt,ids){
+  const rows=txt.trim().split(/\n+/).map(l=>l.trim().split(/[\s,;\t]+/).filter(x=>x!=='').map(Number));
+  if(rows.length!==ids.length||rows.some(r=>r.length!==ids.length||r.some(isNaN))) return null;
+  const M={}; ids.forEach((A,i)=>{ M[A]={}; ids.forEach((B,j)=>{ M[A][B]=rows[i][j]; }); }); return M;
+}
+function compareRefMatrix(){
+  const out=document.getElementById('ref-results'); const ids=S.arguments.map(a=>a.id);
+  if(!ids.length){ out.innerHTML='<span class="muted">No arguments</span>'; return; }
+  const R=parseRefMatrix(document.getElementById('ref-matrix').value,ids);
+  if(!R){ out.innerHTML=`<span style="color:var(--rust-d)">The pasted matrix must be ${ids.length}×${ids.length} numbers (argument order: ${ids.join(', ')}).</span>`; return; }
+  const M=distMatrix(S.distFn); const diff=[];
+  let h=`<div class="rs"><div class="rs-h">Reference vs computed · ${S.distFn}</div><div class="rs-b" style="padding:0"><div class="scroll-x" style="border:none;box-shadow:none;margin:0"><table class="data"><tr><th></th>${ids.map(i=>`<th>${i}</th>`).join('')}</tr>`;
+  ids.forEach(A=>{ h+=`<tr><td class="arg">${A}</td>`; ids.forEach(B=>{ const p=R[A][B],c=M[A][B]; if(p!==c){ h+=`<td style="background:#f8d7d3;color:#8a1f11;font-weight:700">${fmtD(p)}→${fmtD(c)}</td>`; if(A<B)diff.push([A,B,p,c]); } else h+=`<td>${fmtD(c)}</td>`; }); h+='</tr>'; });
+  h+=`</table></div></div></div>`;
+  const rr=checkDistProps(R);
+  h+=`<div class="def"><strong>${diff.length}</strong> unordered pairs differ (reference→computed): ${diff.map(d=>`${d[0]}–${d[1]} (${d[2]}→${d[3]})`).join(', ')||'none'}.<br><strong>Reference matrix as a pseudometric:</strong> diagonal ${rr.diag.length?'✗':'✓'} · symmetry ${rr.asym.length?'✗ ('+rr.asym.length+')':'✓'} · triangle ${rr.tri.length?'✗ ('+rr.tri.length+' triples, e.g. d('+rr.tri[0].slice(0,2).join(',')+')='+rr.tri[0][3]+' &gt; d('+rr.tri[0][0]+','+rr.tri[0][2]+')+d('+rr.tri[0][2]+','+rr.tri[0][1]+')='+(rr.tri[0][4]+rr.tri[0][5])+')':'✓'}.</div>`;
+  out.innerHTML=h;
+}
+function syncDistUI(){ document.querySelectorAll('.dopt').forEach(d=>d.classList.toggle('sel',d.dataset.fn===S.distFn)); }
+
 function buildArgDist(){ bfsHT(); S.arguments.forEach(A=>{ S.argDist[A.id]={}; S.arguments.forEach(B=>{ S.argDist[A.id][B.id]=argDistFn(A,B); }); }); }
 function computeDistances(){
   buildArgDist();
   const ids=S.arguments.map(a=>a.id);
   if(!ids.length){ document.getElementById('dist-results').innerHTML='<span class="muted">No arguments</span>'; return; }
-  const names={ non_intersection:'Non-intersection (max)', geodesic:'Geodesic (BFS)', hausdorff:'Hausdorff', avg_dist:'Average', min_dist:'Minimum', symmetric_diff:'Symmetric difference' };
+  const names={ maxlink:'Maximal linkage (paper)', non_intersection:'Non-intersection (max)', geodesic:'Geodesic (BFS)', hausdorff:'Hausdorff', avg_dist:'Average', min_dist:'Minimum', symmetric_diff:'Symmetric difference' };
   let html=`<div class="rs"><div class="rs-h">Matrix d_Ω · distance: ${names[S.distFn]}</div><div class="rs-b" style="padding:0"><div class="scroll-x" style="border:none;box-shadow:none;margin:0"><table class="data"><tr><th></th>${ids.map(id=>`<th>${id}</th>`).join('')}</tr>`;
   ids.forEach(A=>{ html+=`<tr><td class="arg">${A}</td>`; ids.forEach(B=>{ const d=S.argDist[A][B]; html+=`<td class="${distCls(d)}">${fmtD(d)}</td>`; }); html+='</tr>'; });
   html+=`</table></div></div></div>`;
@@ -1304,7 +1488,7 @@ function computeNeighborhoods(){
   if(!S.arguments.length){ document.getElementById('nbhd-results').innerHTML='<span class="muted">No arguments</span>'; return; }
   buildArgDist(); S.neighborhoods={};
   S.arguments.forEach(arg=>{
-    const eps=S.nbhdMode==='auto'?getAutoEps(arg):(arg.eps_manual||2);
+    const eps=S.nbhdMode==='auto'?getAutoEps(arg):(arg.eps_manual??2);
     const members=S.arguments.filter(B=>(S.argDist[arg.id]?.[B.id]??Infinity)<=eps).map(B=>B.id);
     S.neighborhoods[arg.id]={eps,members};
   });
@@ -1318,14 +1502,7 @@ function computeNeighborhoods(){
         <td style="color:var(--blue-d);font-weight:700">${n.members.length}</td></tr>`;
     }).join('')}</table></div></div>`;
   html+=`<div class="def">T^s_Ω (min radius) = ${Ts} · T^g_Ω (max radius) = ${Tg}<br> if ε = T^s_Ω then ε-admissible ⟹ η-admissible; if S is η-admissible then S is ε-admissible with ε = T^g_Ω.</div>`;
-  if(S.nbhdMode==='manual'){
-    html+=`<div class="rs"><div class="rs-h">Edit ε_A manually</div><div class="rs-b"><div style="display:flex;flex-wrap:wrap;gap:10px">
-    ${S.arguments.map(arg=>`<div style="display:flex;flex-direction:column;gap:3px;align-items:center;background:var(--paper);padding:8px;border:1.5px solid var(--line)">
-      <div style="font-family:var(--serif);font-weight:700">${arg.id}</div>
-      <input type="number" value="${arg.eps_manual||2}" min="0" max="20" style="width:55px;text-align:center" onchange="S.arguments.find(a=>a.id==='${arg.id}').eps_manual=parseInt(this.value)">
-      <label>ε</label></div>`).join('')}
-    </div><div style="margin-top:10px"><button class="pri" onclick="computeNeighborhoods()">↺ Recompute</button></div></div></div>`;
-  }
+  if(typeof thresholdEditorHTML==='function') html=thresholdEditorHTML()+html;
   document.getElementById('nbhd-results').innerHTML=html;
   renderArgs();
 }
@@ -1341,7 +1518,7 @@ function computeCommunities(){
   const commMap={}; argIds.forEach(id=>{const r=find(id);if(!commMap[r])commMap[r]=[];commMap[r].push(id);});
   S.communityList=Object.values(commMap); S.communities={};
   S.communityList.forEach((comm,i)=>comm.forEach(id=>S.communities[id]=i));
-  let html=`<div class="rs"><div class="rs-h">Communities C_Ω (Def. 17) · ${S.communityList.length} detected</div><div class="rs-b">
+  let html=`<div class="rs"><div class="rs-h">Communities C_Ω · ${S.communityList.length} detected</div><div class="rs-b">
     ${S.communityList.map((comm,i)=>`<div class="comm" style="border-left-color:${COMMCOLS[i%6]}">
       <strong style="color:${COMMCOLS[i%6]};font-family:var(--mono)">C${i+1}</strong>
       <span class="muted" style="margin-left:8px">${comm.length===1?'singleton community':comm.length+' arguments'}</span>
@@ -1473,19 +1650,61 @@ function renderSubs(){
 }
 
 /* ===== Aggregation ===== */
+function contra(a,b){ return a==='~'+b||b==='~'+a; }
+function unitsOf(){ /* units of the unfolded HAF: every argument (it stays with its claim) and every subargument */
+  const U=[];
+  S.arguments.forEach(a=>{ const subs=S.subarguments.filter(s=>s.parent===a.id); if(!subs.length) U.push({id:a.id,parent:a.id,conclusion:S.mu[a.id]||('_'+a.id),hashtags:a.hashtags,isSub:false}); else { if(S.mu[a.id]) U.push({id:a.id,parent:a.id,conclusion:S.mu[a.id],hashtags:a.hashtags,isSub:false,isParent:true}); subs.forEach(s=>U.push({id:s.id,parent:a.id,conclusion:s.conclusion,hashtags:s.hashtags,isSub:true})); } });
+  return U;
+}
+function attacksPlus(units){ /* original attacks lifted to units, kept only where conclusions contradict */
+  const P=[];
+  S.attacks.forEach(([x,y])=>{ units.filter(u=>u.parent===x).forEach(u=>units.filter(v=>v.parent===y).forEach(v=>{ if(contra(u.conclusion,v.conclusion)&&!P.some(([p,q,xx,yy])=>p===u.id&&q===v.id)) P.push([u.id,v.id,x,y]); })); });
+  return P;
+}
 function runAgg(){
-  const groups={};
-  S.arguments.forEach(a=>{ const hasSubs=S.subarguments.some(s=>s.parent===a.id); if(!hasSubs){ const c=S.mu[a.id]||('_'+a.id); if(!groups[c])groups[c]=[]; groups[c].push({id:a.id,hashtags:a.hashtags,fromArg:true}); } });
-  S.subarguments.forEach(s=>{ const c=s.conclusion; if(!groups[c])groups[c]=[]; groups[c].push({id:s.id,hashtags:s.hashtags,parent:s.parent,fromArg:false}); });
-  const aggregated=Object.entries(groups).map(([conc,items])=>({conclusion:conc,members:items.map(i=>i.id),hashtags:[...new Set(items.flatMap(i=>i.hashtags))],fromArgs:items.filter(i=>i.fromArg).map(i=>i.id),fromSubs:items.filter(i=>!i.fromArg).map(i=>i.id)}));
+  const units=unitsOf(); const groups={};
+  units.forEach(u=>{ if(!groups[u.conclusion])groups[u.conclusion]=[]; groups[u.conclusion].push(u); });
+  const aggregated=Object.entries(groups).map(([conc,items])=>({conclusion:conc,members:items.map(i=>i.id),hashtags:[...new Set(items.flatMap(i=>i.hashtags))],fromArgs:items.filter(i=>!i.isSub).map(i=>i.id),fromSubs:items.filter(i=>i.isSub).map(i=>i.id)}));
   S._aggregated=aggregated;
-  const aggAtks=[];
-  aggregated.forEach(gA=>aggregated.forEach(gB=>{ if(gA.conclusion===gB.conclusion)return; if(gA.conclusion==='~'+gB.conclusion||gB.conclusion==='~'+gA.conclusion){ if(!aggAtks.some(([a,b])=>a===gA.conclusion&&b===gB.conclusion))aggAtks.push([gA.conclusion,gB.conclusion]); } }));
-  let html=`<div class="rs"><div class="rs-h">Ω* — aggregated arguments (${aggregated.length} groups)</div><div class="rs-b" style="padding:0"><div class="scroll-x" style="border:none;box-shadow:none;margin:0"><table class="data"><tr><th>Conclusion γ</th><th>Members A^γ</th><th>H_X = ⋃ H_Y</th><th>Origin</th></tr>
+  const grp={}; units.forEach(u=>{ grp[u.id]=u.conclusion; });
+  const plus=attacksPlus(units); S._attacksPlus=plus;
+  const aggAtks=[]; plus.forEach(([u,v])=>{ const a=grp[u],b=grp[v]; if(!aggAtks.some(([p,q])=>p===a&&q===b)) aggAtks.push([a,b]); });
+  S._aggAttacks=aggAtks;
+  const droppedOrig=S.attacks.filter(([x,y])=>!plus.some(p=>p[2]===x&&p[3]===y));
+  let html=`<div class="rs"><div class="rs-h">Units (arguments without subarguments, and subarguments) and their conclusions</div><div class="rs-b" style="padding:0"><div class="scroll-x" style="border:none;box-shadow:none;margin:0"><table class="data"><tr><th>Unit</th><th>Parent</th><th>Conclusion</th><th>Hashtags</th></tr>
+    ${units.map(u=>`<tr><td class="arg">${u.id}</td><td class="muted">${u.isSub?u.parent:'—'}</td><td><span class="tag t-plum">${esc(u.conclusion)}</span></td><td>${u.hashtags.map(h=>'<span class="tag t-topic">#'+esc(h)+'</span>').join('')}</td></tr>`).join('')}</table></div></div></div>`;
+  html+=`<div class="rs"><div class="rs-h">Attacks⁺ — original attacks lifted to units (kept only where conclusions contradict)</div><div class="rs-b">${plus.length?plus.map(([u,v,x,y])=>'<div class="atki"><span class="tag t-arg">'+u+'</span><span style="color:var(--rust);font-family:var(--mono)">→⁺</span><span class="tag t-arg">'+v+'</span><span class="muted">from '+x+'→'+y+'</span></div>').join(''):'<span class="muted">none</span>'}${droppedOrig.length?'<div class="muted" style="margin-top:6px">Original attacks that disappear (no contradictory pair of conclusions): '+droppedOrig.map(([x,y])=>x+'→'+y).join(', ')+'</div>':''}</div></div>`;
+  html+=`<div class="rs"><div class="rs-h">Ω* — aggregated arguments (${aggregated.length} groups)</div><div class="rs-b" style="padding:0"><div class="scroll-x" style="border:none;box-shadow:none;margin:0"><table class="data"><tr><th>Conclusion γ</th><th>Members A^γ</th><th>H_X = ⋃ H_Y</th><th>Origin</th></tr>
     ${aggregated.map(g=>`<tr><td><span class="tag t-plum">${esc(g.conclusion)}</span></td><td>${g.members.map(m=>'<span class="eb u">'+m+'</span>').join('')}</td><td>${g.hashtags.map(h=>'<span class="tag t-topic">#'+esc(h)+'</span>').join('')}</td><td class="muted">${g.fromArgs.length?'args:'+g.fromArgs.join('+'):''}${g.fromSubs.length?' subs:'+g.fromSubs.join('+'):''}</td></tr>`).join('')}</table></div></div></div>`;
-  html+=`<div class="rs"><div class="rs-h">Inherited attacks* </div><div class="rs-b">${aggAtks.length?aggAtks.map(([a,b])=>'<div class="atki"><span class="tag t-plum">'+esc(a)+'</span><span style="color:var(--rust);font-family:var(--mono)">→*</span><span class="tag t-plum">'+esc(b)+'</span></div>').join(''):'<span class="muted">No attacks in Ω*</span>'}</div></div>`;
-  html+=`<div class="def gold"> attack inheritance ✓ · no artifactual attacks ✓ · cycle preservation ✓</div>`;
+  html+=`<div class="rs"><div class="rs-h">Attacks* in Ω* (each conflict is resolved once, at the aggregated level)</div><div class="rs-b">${aggAtks.length?aggAtks.map(([a,b])=>'<div class="atki"><span class="tag t-plum">'+esc(a)+'</span><span style="color:var(--rust);font-family:var(--mono)">→*</span><span class="tag t-plum">'+esc(b)+'</span></div>').join(''):'<span class="muted">No attacks in Ω*</span>'}</div></div>`;
+  html+=`<div class="def gold"> attack inheritance ✓ · no artifactual attacks ✓ · every attack of Ω* joins contradictory conclusions ✓</div>`;
+  html+=`<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap"><button class="pri" onclick="unfoldToLHAF()">⇥ Unfold: use Ω* as the working L-HAF</button>${S.rawHAF?'<button onclick="backToHAF()">↩ Back to the original HAF</button>':''}</div><div class="muted" style="margin-top:6px">${S.rawHAF?'Currently working on the unfolded L-HAF Ω*.':'Unfolding replaces arguments, attacks and conclusions by those of Ω*, so that distances, neighborhoods, valuation and labeling (next steps) run on the aggregated framework.'}</div>`;
   document.getElementById('agg-out').innerHTML=html;
+}
+function unfoldToLHAF(){
+  if(S.rawHAF){ toast('Already unfolded'); return; }
+  runAgg(); const G=S._aggregated, A=S._aggAttacks; if(!G.length)return;
+  S.rawHAF=JSON.parse(JSON.stringify({arguments:S.arguments,attacks:S.attacks,subarguments:S.subarguments,mu:S.mu}));
+  { const U0=unitsOf(), grp0={}; U0.forEach(u=>{ grp0[u.id]=u.conclusion; }); const idO=c=>c.replace(/^~/,'¬'); S.occ={};
+    G.forEach(g=>{ const X=idO(g.conclusion); S.occ[X]=[]; g.members.forEach(m=>{ const u=U0.find(x=>x.id===m); if(!u) return;
+        u.hashtags.forEach(h=>{ const rel=u.isParent?[...new Set(U0.filter(w=>w.isSub&&w.parent===u.id&&w.hashtags.includes(h)).map(w=>idO(grp0[w.id])))]:[]; if(!rel.includes(X)) rel.push(X); S.occ[X].push({h,rel}); }); }); }); }
+  const idOf=c=>c.replace(/^~/,'¬'); const mu={};
+  S.arguments=G.map(g=>{ mu[idOf(g.conclusion)]=g.conclusion; return {id:idOf(g.conclusion),text:'Aggregated argument for '+g.conclusion+' (members: '+g.members.join(', ')+')',hashtags:g.hashtags,eps_manual:2,conclusion:g.conclusion,members:g.members}; });
+  S.attacks=A.map(([a,b])=>[idOf(a),idOf(b)]); S.subarguments=[]; S.mu=mu; S._aggregated=null;
+  if(S.epsAfterUnfold!=null){ S.nbhdMode='manual'; S.arguments.forEach(x=>{ x.eps_manual=S.epsAfterUnfold; }); }
+  S.valuations={}; S.labels={}; argStatuses={};
+  invalidateDist(); renderArgs(); renderAtks(); renderMu(); renderSubs();
+  bfsHT(); buildArgDist(); computeMetricsInternal(); computeNeighborhoods(); computeCommunities();
+  setTimeout(()=>{htG.refresh();argG.refresh();},60);
+  document.getElementById('agg-out').innerHTML+='<div class="def">Unfolded: the working framework is now Ω* ('+S.arguments.length+' arguments, '+S.attacks.length+' attacks).</div>';
+  toast('Unfolded to Ω*');
+}
+function backToHAF(){
+  if(!S.rawHAF)return; const r=S.rawHAF; S.rawHAF=null;
+  S.arguments=r.arguments; S.attacks=r.attacks; S.subarguments=r.subarguments; S.mu=r.mu; S.occ=null; S.valuations={}; S.labels={}; argStatuses={};
+  invalidateDist(); renderArgs(); renderAtks(); renderMu(); renderSubs();
+  bfsHT(); buildArgDist(); computeMetricsInternal(); computeNeighborhoods(); computeCommunities();
+  setTimeout(()=>{htG.refresh();argG.refresh();},60); runAgg(); toast('Original HAF restored');
 }
 
 /* ===== Centralities & valuation ===== */
@@ -1510,8 +1729,9 @@ function runValuation(){
   S.valuations={};
   const argsToValue=S._aggregated&&S._aggregated.length?S._aggregated.map(g=>({id:g.conclusion,hashtags:g.hashtags})):S.arguments;
   const allVals={}; argsToValue.forEach(a=>{ const M=a.hashtags.map(h=>getC(h)); allVals[a.id]={M,v:agg(M)}; });
-  const maxV=Math.max(0.001,...Object.values(allVals).map(x=>x.v));
+  const maxV=(typeof LOP!=='undefined'&&LOP.norm)?Math.max(0.001,...Object.values(allVals).map(x=>x.v)):1;
   S.arguments.forEach(a=>{ if(allVals[a.id])S.valuations[a.id]=Math.max(0.001,allVals[a.id].v/maxV); else if(S.mu[a.id]&&allVals[S.mu[a.id]])S.valuations[a.id]=Math.max(0.001,allVals[S.mu[a.id]].v/maxV); else{ const M=a.hashtags.map(h=>getC(h)); S.valuations[a.id]=Math.max(0.001,agg(M)/maxV); } });
+  S.hashVals={}; S.arguments.forEach(a=>{ S.hashVals[a.id]=a.hashtags.map(h=>getC(h)/maxV); });
   const cN={degree:'Norm. degree',closeness:'Closeness',eigenvector:'Eigenvector',pagerank:'PageRank'}, aN={sum:'Sum',mean:'Mean',max:'Max',min:'Min'};
   document.getElementById('valuation-preview').innerHTML=`<h3>υ(A^μ) · ${cN[cfn]} / ${aN[afn]}</h3>${S.arguments.map(a=>{ const v=S.valuations[a.id]||0,pct=Math.round(v*100); return `<div style="margin-bottom:7px"><div style="display:flex;justify-content:space-between;font-size:9px;font-family:var(--mono)"><span style="color:var(--gold-d);font-weight:600">${a.id}</span><span>${v.toFixed(4)}</span></div><div class="vbar"><div class="vfill" style="width:${pct}%;background:var(--gold)"></div></div></div>`; }).join('')}`;
   let html=`<div class="rs"><div class="rs-h">Vectors M_A and valuations υ · centrality: ${cN[cfn]} · operator: ${aN[afn]}</div><div class="rs-b" style="padding:0"><div class="scroll-x" style="border:none;box-shadow:none;margin:0"><table class="data">
@@ -1529,39 +1749,208 @@ function runValuation(){
 }
 
 /* ===== Labeling ===== */
+
+/* ===== Labeling operators (Def. 16):  δ_A = ⊗_k ⊙_i ⊙_i (σ_i^A − attf·δ_B)⁺ ===== */
+const LOP={norm:false,mode:'def17',pi:'min',od:'mean',ot:'product',clamp:true,cu:{pi:'x*y',od:'x*y',ot:'x*y'}};
+const LOP_PRESETS={
+  product:{mode:'def17',pi:'mean',od:'mean',ot:'product',clamp:true},
+  strongest:{mode:'def17',pi:'mean',od:'mean',ot:'min',clamp:true},
+  sumres:{mode:'def17',pi:'mean',od:'mean',ot:'sum',clamp:true},
+  minmean:{mode:'def17',pi:'min',od:'mean',ot:'product',clamp:true},
+  worst:{mode:'def17',pi:'max',od:'min',ot:'product',clamp:true},
+  additive:{mode:'additive',pi:'mean',od:'mean',ot:'sum',clamp:true}
+};
+function opBin(key,which){
+  switch(key){ case 'sum':return (x,y)=>x+y; case 'product':return (x,y)=>x*y; case 'min':return (x,y)=>Math.min(x,y); case 'max':return (x,y)=>Math.max(x,y);
+    case 'custom': try{ return new Function('x','y','return ('+LOP.cu[which]+');'); }catch(e){ return null; } }
+  return null;
+}
+function foldOp(key,which,arr){
+  if(!arr.length)return 0;
+  if(key==='mean')return arr.reduce((s,x)=>s+x,0)/arr.length;
+  const f=opBin(key,which)||((x,y)=>x+y); return arr.reduce((a,b)=>f(a,b));
+}
+function deltaFromEps(sA,eps,sigma){ const D=foldOp(LOP.od,'od',sA); const sg=(sigma===undefined)?D:sigma; return sg*foldOp(LOP.od,'od',eps)/D; }
+function deltaDef17(sA,attackers,sigma){
+  /* attackers: [{vals: hashtag values of B, theta: delta_B/sigma_B (fraction of B that survives), attf}] ; sigma = υ(A) (defaults to ⊙ of hashtag values) */
+  const D=foldOp(LOP.od,'od',sA); const sg=(sigma===undefined)?D:sigma;
+  if(!attackers.length) return {delta:sg,rho:[]};
+  const rho=attackers.map(at=>{ const p=sA.map(si=>foldOp(LOP.pi,'pi',at.vals.map(sj=>{ const v=si-at.attf*at.theta*sj; return LOP.clamp?Math.max(0,v):v; }))); return foldOp(LOP.od,'od',p)/D; });
+  const d=sg*foldOp(LOP.ot,'ot',rho); return {delta:d,rho};
+}
+function readLop(){
+  const g=id=>document.getElementById(id); if(!g('lop-pi'))return;
+  LOP.norm=g('lop-norm').checked; LOP.pi=g('lop-pi').value; LOP.od=g('lop-od').value; LOP.ot=g('lop-ot').value; LOP.clamp=g('lop-clamp').checked; LOP.mode=g('lop-mode').value;
+  LOP.cu.pi=g('lop-cu-pi').value; LOP.cu.od=g('lop-cu-od').value; LOP.cu.ot=g('lop-cu-ot').value;
+}
+function syncLopUI(){
+  const g=id=>document.getElementById(id); if(!g('lop-pi'))return;
+  g('lop-norm').checked=LOP.norm; g('lop-pi').value=LOP.pi; g('lop-od').value=LOP.od; g('lop-ot').value=LOP.ot; g('lop-clamp').checked=LOP.clamp; g('lop-mode').value=LOP.mode;
+  g('lop-cu-pi').value=LOP.cu.pi; g('lop-cu-od').value=LOP.cu.od; g('lop-cu-ot').value=LOP.cu.ot;
+}
+function applyLopPreset(k){ if(!LOP_PRESETS[k])return; Object.assign(LOP,LOP_PRESETS[k]); syncLopUI(); }
+/* quiet check of the operator requirements of Section 4 (used to warn when labeling runs) */
+function operatorWarnings(){
+  readLop(); const bad=[]; const N=400, U=()=>0.01+0.99*Math.random();
+  [['Π','pi'],['⊙','od'],['⊗','ot']].forEach(([lab,w])=>{
+    const key=LOP[w]; if(key==='mean') return;
+    const f=opBin(key,w); if(!f){ bad.push(lab+': expression does not parse'); return; }
+    let tot=true,com=true,aso=true;
+    for(let n=0;n<N;n++){ const x=U(),y=U(),z=U(); let a,b,c,d; try{ a=f(x,y); b=f(y,x); c=f(f(x,y),z); d=f(x,f(y,z)); }catch(e){ tot=false; break; }
+      if(![a,b,c,d].every(v=>typeof v==='number'&&isFinite(v))){ tot=false; break; }
+      if(Math.abs(a-b)>1e-9)com=false; if(Math.abs(c-d)>1e-9)aso=false; }
+    if(!tot)bad.push(lab+' is not total'); if(!com)bad.push(lab+' is not commutative'); if(!aso)bad.push(lab+' is not associative');
+  });
+  { let neut=true,mono=true,strict=true,incl=true,monoM=true; const f2=(a,b)=>foldOp(LOP.ot,'ot',[a,b]);
+    for(let n=0;n<N;n++){ const x=U(),y=U(),y2=Math.min(1,y+0.3*Math.random()),z=U();
+      if(Math.abs(f2(x,1)-x)>1e-9)neut=false; if(f2(x,y2)<f2(x,y)-1e-12)mono=false; if(y<0.999&&!(f2(x,y)<x-1e-12))strict=false;
+      ['pi','od'].forEach(w=>{ const m=foldOp(LOP[w],w,[x,y,z]); if(m<Math.min(x,y,z)-1e-9||m>Math.max(x,y,z)+1e-9)incl=false; if(foldOp(LOP[w],w,[x,y2,z])<m-1e-9)monoM=false; }); }
+    if(!neut)bad.push('⊗ has no neutral element 1'); if(!mono)bad.push('⊗ is not monotone'); if(!strict)bad.push('⊗ is not strict (⊗(x,y) &lt; x for x &gt; 0, y &lt; 1)');
+    if(!incl)bad.push('Π or ⊙ is not internal'); if(!monoM)bad.push('Π or ⊙ is not monotone'); }
+  return bad;
+}
+function verifyOperators(){
+  readLop(); const rows=[]; const N=3000, rnd=()=>Math.random()*2-1;
+  [['Π (over attacker hashtags j)','pi'],['⊙ (over attacked hashtags i)','od'],['⊗ (over attackers k)','ot']].forEach(([lab,w])=>{
+    const key=LOP[w];
+    if(key==='mean'){ rows.push(`<tr><td>${lab}</td><td>mean</td><td>✓ total</td><td>✓ commutative</td><td style="color:var(--rust-d)">✗ not associative as a binary operator (it is applied to the whole set, so the result is order-independent)</td></tr>`); return; }
+    const f=opBin(key,w); if(!f){ rows.push(`<tr><td>${lab}</td><td>custom</td><td colspan="3" style="color:var(--rust-d)">✗ expression does not parse</td></tr>`); return; }
+    let tot=true,com=true,aso=true,cx='',ax='';
+    for(let n=0;n<N;n++){ const x=rnd(),y=rnd(),z=rnd(); let a,b,c,d;
+      try{ a=f(x,y); b=f(y,x); c=f(f(x,y),z); d=f(x,f(y,z)); }catch(e){ tot=false; break; }
+      if(![a,b,c,d].every(v=>typeof v==='number'&&isFinite(v))){ tot=false; break; }
+      if(com&&Math.abs(a-b)>1e-9*Math.max(1,Math.abs(a))){ com=false; cx=`f(${x.toFixed(3)},${y.toFixed(3)})=${a.toFixed(4)} ≠ f(${y.toFixed(3)},${x.toFixed(3)})=${b.toFixed(4)}`; }
+      if(aso&&Math.abs(c-d)>1e-9*Math.max(1,Math.abs(c))){ aso=false; ax=`f(f(x,y),z)=${c.toFixed(4)} ≠ f(x,f(y,z))=${d.toFixed(4)} with x=${x.toFixed(3)},y=${y.toFixed(3)},z=${z.toFixed(3)}`; }
+    }
+    const ok=(b,t,ce)=>b?`<td style="color:var(--teal-d)">✓ ${t}</td>`:`<td style="color:var(--rust-d)">✗ ${t}<br><span style="font-size:9px">${ce}</span></td>`;
+    rows.push(`<tr><td>${lab}</td><td>${key}</td>${ok(tot,'total','')}${ok(com,'commutative',cx)}${ok(aso,'associative',ax)}</tr>`);
+  });
+  const ax=[]; const U=()=>Math.random();
+  { const fo=(k,w,a)=>foldOp(k,w,a); let neut=true,mono=true,leMin=true,strict=true,incl=true,monoM=true;
+    for(let n=0;n<3000;n++){ const x=0.01+0.99*U(), y=0.01+0.99*U(), y2=Math.min(1,y+0.3*U()), z=0.01+0.99*U();
+      const f2=(a,b)=>fo(LOP.ot,'ot',[a,b]);
+      if(Math.abs(f2(x,1)-x)>1e-9)neut=false;
+      if(f2(x,y2)<f2(x,y)-1e-12)mono=false;
+      if(f2(x,y)>Math.min(x,y)+1e-12)leMin=false;
+      if(y<0.999 && !(f2(x,y)<x-1e-12))strict=false;
+      [['pi'],['od']].forEach(([w])=>{ const a=[x,y,z]; const m=fo(LOP[w],w,a); if(m<Math.min(...a)-1e-9||m>Math.max(...a)+1e-9)incl=false; const a2=[x,y2,z]; if(fo(LOP[w],w,a2)<m-1e-9)monoM=false; });
+    }
+    const R=(b,t)=>`<tr><td>${t}</td><td style="color:${b?'var(--teal-d)':'var(--rust-d)'}">${b?'✓':'✗'}</td></tr>`;
+    ax.push(R(neut,'⊗: neutral element 1 on [0,1]'),R(mono,'⊗: monotone'),R(leMin,'⊗(x,y) ≤ min(x,y) on [0,1]'),R(strict,'⊗ strict: ⊗(x,y) < x whenever x>0, y<1'),R(incl,'Π, ⊙: internal (min ≤ op ≤ max)'),R(monoM,'Π, ⊙: monotone'));
+  }
+  document.getElementById('lop-out').innerHTML=`<div class="rs"><div class="rs-h">Extra properties used in Section 4</div><div class="rs-b" style="padding:0"><table class="data">${ax.join('')}</table></div></div>`+`<div class="rs"><div class="rs-h">Operator requirements (fixed · total · associative · commutative) — randomized check on ${N} triples in [−1,1]</div><div class="rs-b" style="padding:0"><table class="data"><tr><th>Position</th><th>Operator</th><th>Total</th><th>Commutative</th><th>Associative</th></tr>${rows.join('')}</table></div></div>`;
+}
+function testPropositions(){
+  readLop(); const T=4000, R=()=>0.05+Math.random()*0.95, pick=a=>a[Math.floor(Math.random()*a.length)];
+  const attfs=[1,1,0.5,1/3,0.25];
+  const gen=()=>{ const m=1+Math.floor(Math.random()*3); const sA=Array.from({length:m},R); const n=1; const mk=()=>({vals:Array.from({length:1+Math.floor(Math.random()*3)},R),theta:Math.random()<0.25?0:Math.random(),attf:pick(attfs)}); return {sA,ats:Array.from({length:n},mk),mk}; };
+  const tests={ 'Prop. 3: unattacked ⟹ δ = σ':0,'Prop. 4: δ ≤ σ':0,'Prop. 4: δ < σ iff the attacker is not neutralized (δ_B > 0)':0,'Non-negativity: δ ≥ 0':0,'Prop. 6: attacked ≤ unattacked with the same hashtags (strict if the attacker is not neutralized)':0,'Monotony: a stronger attacker (larger δ_B/σ_B) never gives a higher δ':0 };
+  const ex={}; const fail=(k,info)=>{ tests[k]++; if(!ex[k])ex[k]=info; };
+  for(let t=0;t<T;t++){
+    const {sA,ats,mk}=gen(); const sig=foldOp(LOP.od,'od',sA); const d=deltaDef17(sA,ats,sig).delta; const dUn=deltaDef17(sA,[],sig).delta;
+    if(Math.abs(dUn-sig)>1e-12) fail('Prop. 3: unattacked ⟹ δ = σ',`σ=${sig.toFixed(3)}, δ=${dUn.toFixed(3)}`);
+    if(!(d<=sig+1e-12)) fail('Prop. 4: δ ≤ σ',`σ=${sig.toFixed(3)}, δ=${d.toFixed(3)}`);
+    const some=ats[0].theta>0; if(some!==(d<sig-1e-12)) fail('Prop. 4: δ < σ iff the attacker is not neutralized (δ_B > 0)',`σ=${sig.toFixed(3)}, δ=${d.toFixed(3)}, δ_B/σ_B=${ats[0].theta.toFixed(2)}`);
+    if(!(d>=-1e-12)) fail('Non-negativity: δ ≥ 0',`δ=${d.toFixed(3)}`);
+    if(!(d<=dUn+1e-12) || (some && !(d<dUn-1e-12))) fail('Prop. 6: attacked ≤ unattacked with the same hashtags (strict if the attacker is not neutralized)',`δ=${d.toFixed(3)} vs ${dUn.toFixed(3)}`);
+    const st={vals:ats[0].vals,theta:Math.min(1,ats[0].theta+Math.random()*(1-ats[0].theta)),attf:ats[0].attf}; const d5=deltaDef17(sA,[st],sig).delta;
+    if(!(d5<=d+1e-12)) fail('Monotony: a stronger attacker (larger δ_B/σ_B) never gives a higher δ',`δ=${d.toFixed(3)} → ${d5.toFixed(3)}`);
+  }
+  const rows=Object.keys(tests).map(k=>`<tr><td>${k}</td><td style="color:${tests[k]?'var(--rust-d)':'var(--teal-d)'}">${tests[k]?'✗ fails in '+tests[k]+' / '+T:'✓ holds in '+T+' / '+T}</td><td style="font-size:9px">${ex[k]||''}</td></tr>`).join('');
+  document.getElementById('lop-out').innerHTML=`<div class="rs"><div class="rs-h">Properties of Section 4 (Def. 16, hashtag level, one attacker per argument) under the selected operators — ${T} random cases (σ = ⊙ of hashtag values)</div><div class="rs-b" style="padding:0"><table class="data"><tr><th>Property</th><th>Result</th><th>First counterexample</th></tr>${rows}</table></div></div>`;
+}
+
+(function(){ const fill=()=>{ ['lop-pi','lop-od','lop-ot'].forEach(id=>{ const e=document.getElementById(id); if(e&&!e.options.length){ e.innerHTML=['mean','sum','product','min','max','custom'].map(o=>`<option value="${o}">${o}</option>`).join(''); } }); syncLopUI(); }; if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',fill); else fill(); })();
+function fmtN(x){ return (Math.abs(x)<1e-9?'0':(+x).toFixed(3)); }
+function showEquations(){
+  if(!S.eqsys){ runLabeling(); }
+  const E=S.eqsys; if(!E){ return; } readLop();
+  const rows=S.arguments.map(arg=>{ const a=arg.id, L=S.labels[a], I=E.info[a]; const sA=(S.hashVals&&S.hashVals[a])||[L.alpha]; const D=foldOp(LOP.od,'od',sA);
+    if(!I.atk.length) return `<tr><td class="arg">${a}</td><td style="font-family:var(--mono);font-size:10px">δ_${a} = σ_${a} = ${fmtN(L.alpha)}</td><td>${fmtN(L.delta)}</td><td>${fmtN(L.alpha)}</td></tr>`;
+    const terms=I.atk.map(b=>{ const vb=(S.hashVals&&S.hashVals[b])||[S.labels[b].alpha]; const sB=S.labels[b].alpha; const at=E.attfOf(a,b);
+      return `${LOP.od}_i ${LOP.pi}_j ( s_i − ${fmtN(at)}·(v_j/${fmtN(sB)})·δ_${b} )⁺ / ${fmtN(D)}  <span style="color:var(--muted)">[s_i∈{${sA.map(fmtN).join(', ')}}, v_j∈{${vb.map(fmtN).join(', ')}}]</span>`; });
+    const rhs=E.update(a);
+    return `<tr><td class="arg">${a}</td><td style="font-family:var(--mono);font-size:10px">δ_${a} = ${fmtN(L.alpha)} · ${terms.length>1?LOP.ot+'( '+terms.map(t=>'<br>&nbsp;&nbsp;'+t).join(' ,')+' )':'<br>&nbsp;&nbsp;'+terms[0]}</td><td>${fmtN(L.delta)}</td><td>${fmtN(rhs)}</td></tr>`; });
+  const res=Math.max(...S.arguments.map(x=>Math.abs(E.update(x.id)-S.labels[x.id].delta)));
+  document.getElementById('eqs-out').innerHTML=`<div class="rs"><div class="rs-h">System of equations EQS generated by Def. 16 (one equation per argument; ρ written out with the current numbers)</div><div class="rs-b" style="padding:0"><div class="scroll-x" style="border:none;box-shadow:none;margin:0"><table class="data"><tr><th>Arg</th><th>Equation</th><th>δ (current)</th><th>RHS(δ)</th></tr>${rows.join('')}</table></div></div></div><div class="def">Residual max|RHS(δ) − δ| = ${res.toExponential(1)} ${res<1e-9?'✓ δ solves EQS':'✗ not a solution'}${S.cyclic&&S.cyclic.pairs&&S.cyclic.pairs.length?' · mutual pairs solved by bisection: '+S.cyclic.pairs.map(p=>'{'+p.a+', '+p.b+'} ('+p.evals+' evaluations)').join(', '):''}${S.cyclic&&S.cyclic.rest.length?' · cyclic part {'+S.cyclic.rest.join(', ')+'} solved with relaxation λ='+S.cyclic.lam+' ('+S.cyclic.iters+' iterations)':(S.cyclic&&S.cyclic.pairs&&S.cyclic.pairs.length?'':' · acyclic: exact, unique')}</div>`;
+}
+function findSolutions(){
+  if(!S.eqsys) runLabeling(); const E=S.eqsys; if(!E) return;
+  const ids=S.arguments.map(a=>a.id), saved={}; ids.forEach(a=>saved[a]=S.labels[a].delta);
+  const iterate=(start,lam)=>{ ids.forEach(a=>S.labels[a].delta=start[a]); let res=1;
+    for(let k=0;k<4000;k++){ const nd={}; ids.forEach(a=>nd[a]=E.update(a)); res=Math.max(...ids.map(a=>Math.abs(nd[a]-S.labels[a].delta))); ids.forEach(a=>S.labels[a].delta=(1-lam)*S.labels[a].delta+lam*nd[a]); if(res<1e-12) break; }
+    const sol={}; ids.forEach(a=>sol[a]=S.labels[a].delta); return {sol,ok:res<1e-9}; };
+  const starts=[]; starts.push(Object.fromEntries(ids.map(a=>[a,S.labels[a].alpha]))); starts.push(Object.fromEntries(ids.map(a=>[a,0])));
+  for(let k=0;k<60;k++) starts.push(Object.fromEntries(ids.map(a=>[a,Math.random()*S.labels[a].alpha])));
+  const found=[]; let failed=0;
+  starts.forEach(st=>{ const {sol,ok}=iterate(st,0.5); if(!ok){ failed++; return; } if(!found.some(f=>ids.every(a=>Math.abs(f.sol[a]-sol[a])<1e-6))) found.push({sol,n:1}); else found.find(f=>ids.every(a=>Math.abs(f.sol[a]-sol[a])<1e-6)).n++; });
+  ids.forEach(a=>S.labels[a].delta=saved[a]);
+  const rows=found.map((f,i)=>`<tr><td>${i+1}</td><td style="font-family:var(--mono);font-size:10px">${ids.map(a=>a+'='+fmtN(f.sol[a])).join(' · ')}</td><td>${f.n}</td></tr>`).join('');
+  document.getElementById('eqs-out').innerHTML=`<div class="rs"><div class="rs-h">Solutions of EQS found from ${starts.length} starting points (δ=σ, δ=0 and random)</div><div class="rs-b" style="padding:0"><table class="data"><tr><th>#</th><th>δ</th><th>starts reaching it</th></tr>${rows}</table></div></div><div class="def">${found.length>1?'⚠ EQS has more than one solution (found '+found.length+'): the labeling of Section 3 is not unique for this framework; the one shown above is reached from δ=σ.':'✓ a single solution was found'}${failed?' · '+failed+' starts did not converge (slow convergence, typically in degenerate/tied cases)':''}</div>`;
+}
 function runLabeling(){
   if(!Object.keys(S.valuations).length){ toast('Run valuation first (Step 3)'); return; }
-  buildArgDist(); if(!Object.keys(S.neighborhoods).length)computeNeighborhoods();
-  S.labels={}; argStatuses={};
+  buildArgDist(); if(!Object.keys(S.neighborhoods).length)computeNeighborhoods(); readLop();
+  S.labels={}; argStatuses={}; 
   S.arguments.forEach(a=>{ S.labels[a.id]={alpha:S.valuations[a.id]||0.01,delta:S.valuations[a.id]||0.01,contributions:[]}; });
-  S.arguments.forEach(arg=>{
-    const alpha=S.labels[arg.id].alpha;
-    const eps=S.nbhdMode==='auto'?getAutoEps(arg):(arg.eps_manual||2);
-    const inNbhd=new Set(S.neighborhoods[arg.id]?.members||[]);
-    const attackers=S.attacks.filter(([,t])=>t===arg.id).map(([f])=>f);
-    if(!attackers.length){ S.labels[arg.id].delta=alpha; return; }
-    let delta=alpha; const contributions=[];
-    attackers.forEach(bId=>{ const alphaB=S.labels[bId]?.alpha||0.01; const d=S.argDist[arg.id]?.[bId]??Infinity; const inNb=inNbhd.has(bId);
-      const weakening=(d<=eps)?alphaB:(d===Infinity?0:alphaB/(d-eps)); delta-=weakening; contributions.push({attacker:bId,d,inNb,alphaB,weakening}); });
-    S.labels[arg.id].delta=Math.max(0,Math.min(alpha,delta)); S.labels[arg.id].contributions=contributions;
-  });
-  S.arguments.forEach(a=>{ const {alpha,delta}=S.labels[a.id]; argStatuses[a.id]=Math.abs(delta-alpha)<0.0001?'U':delta>0?'W':'N'; });
+  const info={};
+  S.arguments.forEach(arg=>{ const eps=S.nbhdMode==='auto'?getAutoEps(arg):(arg.eps_manual??2); const inN=new Set(S.neighborhoods[arg.id]?.members||[]);
+    const atk=S.attacks.filter(([,t])=>t===arg.id).map(([f])=>f);
+    info[arg.id]={atk,eps,inN}; });
+  const attfOf=(a,b)=>{ const d=S.argDist[a]?.[b]??Infinity; return (d<=info[a].eps)?1:(d===Infinity?0:1/(d-info[a].eps+1)); };
+  const reach=a=>{ const H=S.arguments.find(x=>x.id===a).hashtags; const oc=S.occ&&S.occ[a]; return H.map(h=>{ const o=oc&&oc.filter(x=>x.h===h); return (o&&o.length)?o:[{h,rel:[a]}]; }); };
+  const depsOf=a=>{ const D=new Set(); reach(a).forEach(os=>os.forEach(o=>o.rel.forEach(Y=>(info[Y]?info[Y].atk:[]).forEach(B=>D.add(B))))); return [...D]; };
+  const epsOf=a=>{ const sA=(S.hashVals&&S.hashVals[a])||[S.labels[a].alpha]; const R=reach(a);
+    return sA.map((v,k)=>{ let best=-Infinity; R[k].forEach(o=>{ const vals=[]; o.rel.forEach(Y=>(info[Y]?info[Y].atk:[]).forEach(B=>{ const th=S.labels[B].delta/S.labels[B].alpha, at=attfOf(Y,B), vb=(S.hashVals&&S.hashVals[B])||[S.labels[B].alpha]; vb.forEach(sj=>{ const x=v-at*th*sj; vals.push(LOP.clamp?Math.max(0,x):x); }); }));
+        const e=vals.length?foldOp(LOP.pi,'pi',vals):v; best=Math.max(best,e); }); return best; }); };
+  const update=a=>{ const L=S.labels[a], I=info[a]; if(LOP.mode!=='additive'&&S.occ){ return deltaFromEps((S.hashVals&&S.hashVals[a])||[L.alpha],epsOf(a),L.alpha); } if(!I.atk.length) return L.alpha;
+    if(LOP.mode==='additive'){ let dl=L.alpha; I.atk.forEach(b=>{ dl-=attfOf(a,b)*S.labels[b].delta; }); return Math.max(0,Math.min(L.alpha,dl)); }
+    const ats=I.atk.map(b=>({vals:(S.hashVals&&S.hashVals[b])||[S.labels[b].alpha],theta:S.labels[b].delta/S.labels[b].alpha,attf:attfOf(a,b)}));
+    return deltaDef17((S.hashVals&&S.hashVals[a])||[L.alpha],ats,L.alpha).delta; };
+  /* topological evaluation (Kahn); the remaining arguments (cycles and what depends on them) are solved as a system */
+  const deps={}; S.arguments.forEach(a=>{ deps[a.id]=(S.occ&&LOP.mode!=='additive')?depsOf(a.id):[...new Set(info[a.id].atk)]; });
+  const indeg={}, out={}; S.arguments.forEach(a=>{ indeg[a.id]=deps[a.id].filter(b=>b!==a.id).length+(deps[a.id].includes(a.id)?1:0); out[a.id]=[]; });
+  S.arguments.forEach(a=>{ deps[a.id].forEach(b=>{ if(b!==a.id&&out[b]) out[b].push(a.id); }); });
+  const q=S.arguments.filter(a=>indeg[a.id]===0).map(a=>a.id), done=new Set(); const pairs=[];
+  const release=a=>{ if(done.has(a)) return; done.add(a); out[a].forEach(c=>{ if(done.has(c)) return; indeg[c]--; if(indeg[c]===0) q.push(c); }); };
+  /* mutual pairs (A attacked only by B and B attacked only by A): scalar equation theta = h(theta) solved by bisection (Proposition on the structure of the conflicts) */
+  const pairOf=a=>{ const A=[...new Set(info[a].atk)]; if(A.length!==1||A[0]===a||done.has(A[0])) return null; const b=A[0]; const B=[...new Set(info[b].atk)]; if(!(B.length===1&&B[0]===a)) return null; if(deps[a].includes(a)||deps[b].includes(b)) return null; return deps[a].concat(deps[b]).every(x=>x===a||x===b||done.has(x))?b:null; };
+  const solvePair=(a,b)=>{ const La=S.labels[a], g=th=>{ La.delta=th*La.alpha; S.labels[b].delta=update(b); return update(a)/La.alpha-th; };
+    let lo=0,hi=1,ev=0,th=0.5; for(let k=0;k<60;k++){ th=(lo+hi)/2; const v=g(th); ev++; if(Math.abs(v)<1e-13) break; if(v>0) lo=th; else hi=th; }
+    g(th); La.delta=th*La.alpha; S.labels[b].delta=update(b); pairs.push({a,b,evals:ev}); };
+  for(let progress=true;progress;){ progress=false;
+    while(q.length){ const a=q.shift(); if(done.has(a)) continue; S.labels[a].delta=update(a); release(a); progress=true; }
+    if(LOP.mode!=='additive'){ for(const a of S.arguments.map(x=>x.id)){ if(done.has(a)) continue; const b=pairOf(a); if(b){ solvePair(a,b); release(a); release(b); progress=true; } } } }
+  const rest=S.arguments.map(a=>a.id).filter(a=>!done.has(a)); let iters=0,res=0,conv=true; const LAM=Math.min(1,Math.max(0.05,parseFloat((document.getElementById('lop-relax')||{}).value)||0.5));
+  if(rest.length){ rest.forEach(a=>{ S.labels[a].delta=S.labels[a].alpha; });
+    for(iters=1;iters<=20000;iters++){ const nd={}; rest.forEach(a=>{ nd[a]=update(a); }); res=Math.max(...rest.map(a=>Math.abs(nd[a]-S.labels[a].delta))); rest.forEach(a=>{ S.labels[a].delta=(1-LAM)*S.labels[a].delta+LAM*nd[a]; }); if(res<1e-12) break; }
+    conv=res<1e-9; }
+  S.arguments.forEach(arg=>{ const I=info[arg.id]; S.labels[arg.id].contributions=I.atk.map(bId=>{ const d=S.argDist[arg.id]?.[bId]??Infinity; const attf=attfOf(arg.id,bId); const dB=S.labels[bId].delta; const aA=S.labels[arg.id].alpha;
+      const sA0=(S.hashVals&&S.hashVals[arg.id])||[aA]; const D=foldOp(LOP.od,'od',sA0); const sA=sA0; const vb=(S.hashVals&&S.hashVals[bId])||[S.labels[bId].alpha]; const th=dB/S.labels[bId].alpha; const rho=foldOp(LOP.od,'od',sA.map(si=>foldOp(LOP.pi,'pi',vb.map(sj=>{const v=si-attf*th*sj; return LOP.clamp?Math.max(0,v):v;}))))/D;
+      return {attacker:bId,d,inNb:I.inN.has(bId),dB,rho,attf,weakening:attf*dB}; }); });
+  S.cyclic={rest,iters,res,conv,lam:LAM,pairs}; S.eqsys={info,update,attfOf};
+  S.arguments.forEach(a=>{ const {alpha,delta}=S.labels[a.id]; argStatuses[a.id]=Math.abs(delta-alpha)<0.0001?'U':delta>1e-9?'W':'N'; });
   const maxA=Math.max(...S.arguments.map(a=>S.labels[a.id]?.alpha||0),0.01);
-  let html=`<div class="rs"><div class="rs-h">Labels ⟨α_A, δ_A⟩ — </div><div class="rs-b" style="padding:0"><div class="scroll-x" style="border:none;box-shadow:none;margin:0"><table class="data">
-    <tr><th>Arg</th><th>α_A = υ(A)</th><th>δ_A</th><th>Status</th><th>Attackers & weakening</th></tr>
+  let html=`<div class="rs"><div class="rs-h">Labels ⟨σ_A, δ_A⟩ — </div><div class="rs-b" style="padding:0"><div class="scroll-x" style="border:none;box-shadow:none;margin:0"><table class="data">
+    <tr><th>Arg</th><th>σ_A = υ(A)</th><th>δ_A</th><th>Status</th><th>Attacker (δ_B, ρ)</th></tr>
     ${S.arguments.map(a=>{ const l=S.labels[a.id],st=argStatuses[a.id]; const aPct=Math.round((l.alpha/maxA)*100),dPct=Math.round((l.delta/maxA)*100); const stName={U:'Unchallenged',W:'Weakened',N:'Neutralized'}[st];
       const scv=st==='U'?'var(--st-strong)':st==='W'?'var(--st-weak)':'var(--st-neut)';
       return `<tr><td class="arg">${a.id}</td>
         <td><span style="font-size:9px">${l.alpha.toFixed(4)}</span><div class="vbar" style="width:60px"><div class="vfill" style="width:${aPct}%;background:var(--blue)"></div></div></td>
         <td><span style="font-size:9px;color:${scv}">${l.delta.toFixed(4)}</span><div class="vbar" style="width:60px"><div class="vfill" style="width:${dPct}%;background:${scv}"></div></div></td>
         <td><span class="stbadge st-${st}">${st}</span> <span class="muted">${stName}</span></td>
-        <td style="font-size:9px">${(l.contributions||[]).map(c=>{ const col=c.d<=(S.neighborhoods[a.id]?.eps||2)?'var(--teal-d)':'var(--rust-d)'; return `<span style="color:${col};font-family:var(--mono)">${c.attacker}(d=${c.d===Infinity?'∞':c.d},${c.inNb?'∈N':'∉N'},−${c.weakening.toFixed(3)}) </span>`; }).join('')}</td></tr>`;
+        <td style="font-size:9px">${(l.contributions||[]).map(c=>{ const col=c.d<=(S.neighborhoods[a.id]?.eps||2)?'var(--teal-d)':'var(--rust-d)'; return `<span style="color:${col};font-family:var(--mono)">${c.attacker}(d=${c.d===Infinity?'∞':c.d},${c.inNb?'∈N':'∉N'},δ_B=${c.dB.toFixed(3)},ρ=${c.rho.toFixed(3)}) </span>`; }).join('')}${linkedVia(a.id)}</td></tr>`;
     }).join('')}</table></div></div></div>`;
-  html+=`<div class="def"> no attackers ⟹ δ=α ✓ · with attackers ⟹ δ≤α ✓ · (directionality): influence follows attack direction ✓</div>`;
+  { const bad=S.arguments.filter(a=>S.labels[a.id].delta>S.labels[a.id].alpha+1e-9).map(a=>a.id); html+=`<div class="def">Operators: Π=${LOP.pi} · ⊙=${LOP.od} ${S.arguments.some(a=>(S.labels[a.id].contributions||[]).length>1)?' · ⊗='+LOP.ot:''}${LOP.mode==='additive'?' (legacy additive mode)':''} · contributions truncated at 0: ${LOP.clamp?'yes':'no'} · δ≤σ: ${bad.length?'✗ violated by '+bad.join(', '):'✓'} · ${S.cyclic.pairs&&S.cyclic.pairs.length?'mutual pairs '+S.cyclic.pairs.map(p=>'{'+p.a+', '+p.b+'}').join(', ')+' solved by bisection ('+S.cyclic.pairs.map(p=>p.evals).join('+')+' evaluations)':''}${S.cyclic.rest.length?('cyclic part {'+S.cyclic.rest.join(', ')+'} solved by damped iteration: '+S.cyclic.iters+' iterations, residual '+S.cyclic.res.toExponential(1)+(S.cyclic.conv?' ✓':' ✗ not converged')):''+(S.cyclic.pairs&&S.cyclic.pairs.length?' · no further cycles':'acyclic: evaluated in topological order (unique solution)')}</div>`; }
+  if(LOP.mode!=='additive'){ const ow=operatorWarnings(); if(ow.length) html+=`<div class="def" style="border-left-color:var(--rust)"><strong>⚠ Operator requirements of Section 4 violated:</strong> ${ow.join('; ')}. The properties proven in the paper are not guaranteed for this choice (use “Verify operator requirements” for details).</div>`; }
   document.getElementById('labeling-out').innerHTML=html;
   renderArgs(); argG.refresh();
 }
 
+function linkedVia(a){ const oc=(S.occ&&S.occ[a])||[]; const seen=new Set(), out=[];
+  oc.forEach(o=>o.rel.forEach(Y=>{ if(Y===a) return; S.attacks.filter(([,t])=>t===Y).forEach(([B])=>{ const k=B+'|'+Y; if(!seen.has(k)){ seen.add(k); out.push(`<span style="color:var(--plum);font-family:var(--mono)">${B} via ${Y} (δ_B=${S.labels[B].delta.toFixed(3)}) </span>`); } }); }));
+  if(out.length) out.push(`<span style="font-family:var(--mono)">· overall ρ=${(S.labels[a].delta/S.labels[a].alpha).toFixed(3)} (all attacks)</span>`);
+  return out.join(''); }
 /* ===== L-HAF extensions ===== */
 function runLHAFExt(){
   if(!Object.keys(S.labels).length)runLabeling();
@@ -1601,7 +1990,7 @@ function importJSON(){
   try{
     const d=JSON.parse(document.getElementById('import-json').value);
     S.hashtags=d.hashtags||[]; S.edges=d.edges||[];
-    S.arguments=(d.arguments||[]).map(a=>({...a,eps_manual:a.eps||2}));
+    S.arguments=(d.arguments||[]).map(a=>({...a,eps_manual:a.eps??2}));
     S.attacks=d.attacks||[]; S.subarguments=d.subarguments||[];
     S.mu={}; Object.assign(S.mu,d.mu||{}); S.distFn=d.distFn||S.distFn;
     invalidateDist(); renderHT(); renderArgs(); renderAtks(); renderMu(); renderSubs(); bfsHT(); buildArgDist();
@@ -1624,14 +2013,20 @@ function downloadTable(divId,fileName){
 }
 
 function loadEx(d){
+  S.rawHAF=null;
+  S.exTitle=d.title||'';
   S.hashtags=d.hashtags; S.edges=d.edges;
-  S.arguments=(d.arguments||[]).map(a=>({...a,eps_manual:a.eps||2}));
+  S.arguments=(d.arguments||[]).map(a=>({...a,eps_manual:a.eps??2}));
   S.attacks=d.attacks||[]; S.subarguments=d.subarguments||[]; S.mu={}; Object.assign(S.mu,d.mu||{});
-  S.distFn=d.distFn||'non_intersection';
+  S.distFn=d.distFn||'non_intersection'; syncDistUI();
+  { const ta=document.getElementById('ref-matrix'); if(ta) ta.value=d.expected?d.expected.map(r=>r.join(' ')).join('\n'):''; const o1=document.getElementById('ref-results'); if(o1)o1.innerHTML=''; const o2=document.getElementById('dist-props'); if(o2)o2.innerHTML=''; }
   invalidateDist(); renderHT(); renderArgs(); renderAtks(); renderMu(); renderSubs();
   bfsHT(); buildArgDist(); computeMetricsInternal(); computeNeighborhoods(); computeCommunities();
   setTimeout(()=>{htG.refresh();argG.refresh();},60);
   toast('Loaded: '+(d.title||'example'));
+  S.exampleEps=Object.fromEntries((d.arguments||[]).filter(a=>a.eps!=null).map(a=>[a.id,a.eps])); S.epsAfterUnfold=(d.epsAfterUnfold!=null)?d.epsAfterUnfold:null;
+  if(d.epsMode==='manual'){ S.nbhdMode='manual'; setNbhdMode('manual'); computeNeighborhoods(); }
+  if(window._wizReady&&isGuided()){ W.done=new Set(); W.builder=false; S.valuations={}; S.labels={}; wizGo(1); }
 }
 </script>
 
@@ -1642,6 +2037,63 @@ function loadEx(d){
    only titles, descriptions and argument prose are in English.
    =================================================================== */
 const EXAMPLES = {
+
+  paper_ex2: {
+    title: 'Paper Example 2 (HAF, 12 arguments)',
+    domain: 'Paper reproduction',
+    desc: 'Example 2 of the paper: twelve hashtagged arguments over a 25-hashtag cloud (hashtag aN = #αN). Loaded with maximal linkage; the reference matrix of Table 1 is preloaded in Distances → Compare. Radii ε=3 are a placeholder (the paper does not fix them here).',
+    meta: '25 hashtags · 45 relations · 12 args · 13 attacks',
+    distFn: 'maxlink',
+    hashtags: ["a1", "a2", "a3", "a4", "a5", "a6", "a7", "a8", "a9", "a10", "a11", "a12", "a13", "a14", "a15", "a16", "a17", "a18", "a19", "a20", "a21", "a22", "a23", "a24", "a25"],
+    edges: [["a8", "a7"], ["a8", "a11"], ["a8", "a1"], ["a7", "a1"], ["a7", "a2"], ["a7", "a20"], ["a11", "a1"], ["a11", "a10"], ["a11", "a22"], ["a1", "a2"], ["a1", "a10"], ["a1", "a19"], ["a2", "a19"], ["a10", "a19"], ["a20", "a4"], ["a20", "a5"], ["a20", "a6"], ["a6", "a4"], ["a4", "a5"], ["a6", "a9"], ["a4", "a9"], ["a5", "a9"], ["a5", "a19"], ["a19", "a21"], ["a19", "a17"], ["a19", "a3"], ["a19", "a18"], ["a21", "a22"], ["a22", "a24"], ["a21", "a25"], ["a24", "a25"], ["a9", "a17"], ["a17", "a3"], ["a3", "a18"], ["a18", "a25"], ["a17", "a12"], ["a12", "a23"], ["a23", "a13"], ["a13", "a18"], ["a13", "a14"], ["a18", "a14"], ["a14", "a16"], ["a14", "a15"], ["a15", "a16"], ["a25", "a16"]],
+    arguments: [
+      {id:'A',text:'Argument A of Example 2 (hashtags α1, α2, α3, α4)',hashtags:["a1", "a2", "a3", "a4"],eps:3},
+      {id:'B',text:'Argument B of Example 2 (hashtags α4, α5, α6)',hashtags:["a4", "a5", "a6"],eps:3},
+      {id:'C',text:'Argument C of Example 2 (hashtags α14, α15, α16)',hashtags:["a14", "a15", "a16"],eps:3},
+      {id:'D',text:'Argument D of Example 2 (hashtags α17, α3, α18)',hashtags:["a17", "a3", "a18"],eps:3},
+      {id:'E',text:'Argument E of Example 2 (hashtags α7, α8, α9)',hashtags:["a7", "a8", "a9"],eps:3},
+      {id:'F',text:'Argument F of Example 2 (hashtags α10, α11)',hashtags:["a10", "a11"],eps:3},
+      {id:'G',text:'Argument G of Example 2 (hashtags α12, α2, α13, α10)',hashtags:["a12", "a2", "a13", "a10"],eps:3},
+      {id:'H',text:'Argument H of Example 2 (hashtags α15, α24, α25, α21)',hashtags:["a15", "a24", "a25", "a21"],eps:3},
+      {id:'I',text:'Argument I of Example 2 (hashtags α21, α22, α23)',hashtags:["a21", "a22", "a23"],eps:3},
+      {id:'J',text:'Argument J of Example 2 (hashtags α12, α13, α1)',hashtags:["a12", "a13", "a1"],eps:3},
+      {id:'K',text:'Argument K of Example 2 (hashtags α9, α20, α4)',hashtags:["a9", "a20", "a4"],eps:3},
+      {id:'L',text:'Argument L of Example 2 (hashtags α18, α19, α17)',hashtags:["a18", "a19", "a17"],eps:3}
+    ],
+    attacks: [["A", "B"], ["B", "E"], ["E", "F"], ["D", "A"], ["C", "A"], ["D", "C"], ["C", "D"], ["K", "I"], ["I", "H"], ["H", "F"], ["L", "J"], ["J", "G"], ["G", "F"]],
+    mu: {"A": "P1", "B": "P2", "C": "P3", "D": "P4", "E": "P5", "F": "P6", "G": "P7", "H": "P8", "I": "P9", "J": "P10", "K": "P11", "L": "P12"},
+    expected: [[0, 4, 5, 3, 3, 4, 4, 5, 4, 4, 3, 3], [4, 0, 6, 4, 3, 4, 5, 6, 5, 5, 1, 4], [5, 6, 0, 4, 5, 5, 4, 3, 4, 5, 5, 4], [3, 4, 4, 0, 3, 3, 3, 4, 3, 3, 3, 2], [3, 3, 5, 3, 0, 4, 4, 5, 5, 4, 4, 3], [4, 4, 5, 3, 4, 0, 4, 5, 5, 4, 4, 3], [4, 5, 4, 3, 4, 4, 0, 5, 4, 3, 4, 3], [5, 6, 3, 4, 5, 5, 5, 0, 4, 3, 4, 3], [4, 5, 4, 3, 5, 5, 4, 4, 0, 4, 5, 3], [4, 5, 5, 3, 4, 4, 3, 3, 4, 0, 4, 3], [3, 1, 5, 3, 4, 4, 4, 4, 5, 4, 0, 3], [3, 4, 4, 2, 3, 3, 3, 3, 3, 3, 3, 0]]
+  },
+
+  paper_ex3: {
+    title: 'Paper labeling example (Example 2 with claims)',
+    epsAfterUnfold: 3,
+    domain: 'Paper reproduction',
+    desc: 'Example 2 of the paper with claims and sub-arguments: I, H, J and G are split into two units each; the other arguments carry one claim. Aggregation yields fourteen arguments: two mutual conflicts (p/¬p, q/¬q) and five one-way attacks (r over ¬r, s over ¬s, u over ¬u, c over ¬c, d over ¬d); the decomposed arguments stay with their claims, and an attack on a subargument is transmitted to the same hashtags of its decomposed argument. Radii ε=3.',
+    meta: '25 hashtags · 12 args · 8 subargs · 13 attacks',
+    distFn: 'maxlink',
+    hashtags: ["a1", "a2", "a3", "a4", "a5", "a6", "a7", "a8", "a9", "a10", "a11", "a12", "a13", "a14", "a15", "a16", "a17", "a18", "a19", "a20", "a21", "a22", "a23", "a24", "a25"],
+    edges: [["a8", "a7"], ["a8", "a11"], ["a8", "a1"], ["a7", "a1"], ["a7", "a2"], ["a7", "a20"], ["a11", "a1"], ["a11", "a10"], ["a11", "a22"], ["a1", "a2"], ["a1", "a10"], ["a1", "a19"], ["a2", "a19"], ["a10", "a19"], ["a20", "a4"], ["a20", "a5"], ["a20", "a6"], ["a6", "a4"], ["a4", "a5"], ["a6", "a9"], ["a4", "a9"], ["a5", "a9"], ["a5", "a19"], ["a19", "a21"], ["a19", "a17"], ["a19", "a3"], ["a19", "a18"], ["a21", "a22"], ["a22", "a24"], ["a21", "a25"], ["a24", "a25"], ["a9", "a17"], ["a17", "a3"], ["a3", "a18"], ["a18", "a25"], ["a17", "a12"], ["a12", "a23"], ["a23", "a13"], ["a13", "a18"], ["a13", "a14"], ["a18", "a14"], ["a14", "a16"], ["a14", "a15"], ["a15", "a16"], ["a25", "a16"]],
+    arguments: [
+      {id:'A',text:'Argument A of Example 2 (hashtags α1, α2, α3, α4)',hashtags:["a1", "a2", "a3", "a4"],eps:3},
+      {id:'B',text:'Argument B of Example 2 (hashtags α4, α5, α6)',hashtags:["a4", "a5", "a6"],eps:3},
+      {id:'C',text:'Argument C of Example 2 (hashtags α14, α15, α16)',hashtags:["a14", "a15", "a16"],eps:3},
+      {id:'D',text:'Argument D of Example 2 (hashtags α17, α3, α18)',hashtags:["a17", "a3", "a18"],eps:3},
+      {id:'E',text:'Argument E of Example 2 (hashtags α7, α8, α9)',hashtags:["a7", "a8", "a9"],eps:3},
+      {id:'F',text:'Argument F of Example 2 (hashtags α10, α11)',hashtags:["a10", "a11"],eps:3},
+      {id:'G',text:'Argument G of Example 2 (hashtags α12, α2, α13, α10)',hashtags:["a12", "a2", "a13", "a10"],eps:3},
+      {id:'H',text:'Argument H of Example 2 (hashtags α15, α24, α25, α21)',hashtags:["a15", "a24", "a25", "a21"],eps:3},
+      {id:'I',text:'Argument I of Example 2 (hashtags α21, α22, α23)',hashtags:["a21", "a22", "a23"],eps:3},
+      {id:'J',text:'Argument J of Example 2 (hashtags α12, α13, α1)',hashtags:["a12", "a13", "a1"],eps:3},
+      {id:'K',text:'Argument K of Example 2 (hashtags α9, α20, α4)',hashtags:["a9", "a20", "a4"],eps:3},
+      {id:'L',text:'Argument L of Example 2 (hashtags α18, α19, α17)',hashtags:["a18", "a19", "a17"],eps:3}
+    ],
+    attacks: [["A", "B"], ["B", "E"], ["E", "F"], ["D", "A"], ["C", "A"], ["D", "C"], ["C", "D"], ["K", "I"], ["I", "H"], ["H", "F"], ["L", "J"], ["J", "G"], ["G", "F"]],
+    mu: {"A":"p","B":"~p","C":"q","D":"~q","E":"p","F":"~p","G":"~d","H":"~c","I":"c","J":"d","K":"r","L":"r"},
+    subarguments: [{"parent":"I","id":"I1","conclusion":"~r","hashtags":["a22","a23"]},{"parent":"I","id":"I2","conclusion":"s","hashtags":["a21"]},{"parent":"H","id":"H1","conclusion":"~s","hashtags":["a15","a21"]},{"parent":"H","id":"H2","conclusion":"p","hashtags":["a24","a25"]},{"parent":"J","id":"J1","conclusion":"~r","hashtags":["a1"]},{"parent":"J","id":"J2","conclusion":"u","hashtags":["a12","a13"]},{"parent":"G","id":"G1","conclusion":"~u","hashtags":["a12","a13"]},{"parent":"G","id":"G2","conclusion":"p","hashtags":["a2","a10"]}]
+  },
+
+  apt_full: {"title": "APT Ransomware Defense — full case study", "domain": "Cybersecurity", "desc": "Full worked case of Section 5: 13 raw arguments over a 35-hashtag cloud, manual subargument extraction (R3, R5), conclusions, aggregation into Ω*, unfolding, valuation and labeling.", "meta": "35 hashtags · 62 relations · 13 args · 4 subargs · 14 attacks", "distFn": "maxlink", "hashtags": ["malware", "ransomware", "phishing", "exploit", "zeroday", "vulnerability", "c2", "lateral_movement", "perimeter", "internal_network", "segmentation", "zerotrust", "cloud", "server", "endpoint", "authentication", "mfa", "identity", "privileged_access", "edr", "siem", "monitoring", "threat_intel", "incident", "response", "forensics", "playbook", "recovery", "backup", "encryption", "regulation", "compliance", "gdpr", "nis2", "audit"], "edges": [["malware", "ransomware"], ["malware", "phishing"], ["malware", "c2"], ["malware", "exploit"], ["malware", "threat_intel"], ["ransomware", "encryption"], ["ransomware", "backup"], ["phishing", "identity"], ["phishing", "authentication"], ["exploit", "zeroday"], ["exploit", "vulnerability"], ["zeroday", "vulnerability"], ["zeroday", "perimeter"], ["vulnerability", "endpoint"], ["vulnerability", "server"], ["c2", "encryption"], ["c2", "lateral_movement"], ["c2", "monitoring"], ["lateral_movement", "internal_network"], ["lateral_movement", "privileged_access"], ["lateral_movement", "segmentation"], ["perimeter", "internal_network"], ["perimeter", "zerotrust"], ["perimeter", "cloud"], ["internal_network", "segmentation"], ["internal_network", "server"], ["internal_network", "endpoint"], ["segmentation", "zerotrust"], ["cloud", "server"], ["cloud", "encryption"], ["server", "endpoint"], ["authentication", "mfa"], ["authentication", "identity"], ["authentication", "privileged_access"], ["authentication", "zerotrust"], ["identity", "privileged_access"], ["mfa", "identity"], ["edr", "endpoint"], ["edr", "siem"], ["edr", "monitoring"], ["siem", "monitoring"], ["siem", "threat_intel"], ["monitoring", "incident"], ["threat_intel", "incident"], ["incident", "response"], ["incident", "forensics"], ["incident", "recovery"], ["response", "playbook"], ["response", "recovery"], ["response", "forensics"], ["playbook", "recovery"], ["backup", "recovery"], ["backup", "encryption"], ["regulation", "compliance"], ["regulation", "gdpr"], ["regulation", "nis2"], ["compliance", "audit"], ["compliance", "gdpr"], ["compliance", "nis2"], ["nis2", "incident"], ["audit", "monitoring"], ["regulation", "incident"]], "arguments": [{"id": "R1", "text": "APT ransomware crews gain initial access mainly through spear-phishing of help-desk and finance staff", "hashtags": ["phishing", "malware", "ransomware", "identity"]}, {"id": "R2", "text": "Phishing-resistant MFA neutralizes credential theft, so phishing is not decisive", "hashtags": ["mfa", "authentication", "identity"]}, {"id": "R3", "text": "Zero-day exploits on edge devices give initial access and, once inside, evade perimeter and endpoint controls", "hashtags": ["exploit", "zeroday", "vulnerability", "perimeter", "endpoint"]}, {"id": "R4", "text": "Network segmentation confines intruders after the first compromise", "hashtags": ["segmentation", "internal_network", "perimeter", "zerotrust"]}, {"id": "R5", "text": "Stolen privileged credentials let attackers cross segments, and encrypted C2 hides the traffic", "hashtags": ["privileged_access", "lateral_movement", "c2", "encryption"]}, {"id": "R6", "text": "Immutable air-gapped backups make paying the ransom unnecessary", "hashtags": ["backup", "recovery", "ransomware", "encryption"]}, {"id": "R7", "text": "A backup without a forensic check can restore the implant together with the data", "hashtags": ["recovery", "incident", "forensics"]}, {"id": "R8", "text": "Rehearsed response playbooks, not backups, determine the recovery time", "hashtags": ["playbook", "response", "incident", "recovery"]}, {"id": "R9", "text": "NIS2 and GDPR impose controls, audits and breach notification that raise the security baseline", "hashtags": ["nis2", "gdpr", "compliance", "audit", "regulation"]}, {"id": "R10", "text": "Audit-driven compliance is box-ticking and did not stop the latest APT campaigns", "hashtags": ["audit", "compliance", "threat_intel", "incident"]}, {"id": "R11", "text": "EDR/XDR with SIEM correlation detects APT activity in real time", "hashtags": ["edr", "endpoint", "siem", "monitoring", "threat_intel"]}, {"id": "R12", "text": "Sharing threat intelligence within the sector lets EDR and SIEM detect APT activity earlier", "hashtags": ["threat_intel", "siem", "monitoring", "incident"]}, {"id": "R13", "text": "Zero trust and least privilege reduce the blast radius of a compromised account, so segmentation contains the intrusion", "hashtags": ["zerotrust", "authentication", "privileged_access", "segmentation"]}], "attacks": [["R1", "R2"], ["R2", "R1"], ["R3", "R1"], ["R3", "R11"], ["R11", "R3"], ["R3", "R12"], ["R12", "R3"], ["R5", "R4"], ["R5", "R13"], ["R5", "R11"], ["R6", "R7"], ["R7", "R6"], ["R8", "R6"], ["R10", "R9"]], "mu": {"R1": "P1", "R2": "~P1", "R4": "P2", "R6": "P3", "R7": "~P3", "R8": "~P3", "R9": "P4", "R10": "~P4", "R11": "P5", "R12": "P5", "R13": "P2"}, "subarguments": [{"parent": "R3", "id": "R3.1", "conclusion": "~P1", "hashtags": ["exploit", "zeroday", "vulnerability"]}, {"parent": "R3", "id": "R3.2", "conclusion": "~P5", "hashtags": ["perimeter", "endpoint"]}, {"parent": "R5", "id": "R5.1", "conclusion": "~P2", "hashtags": ["privileged_access", "lateral_movement"]}, {"parent": "R5", "id": "R5.2", "conclusion": "~P5", "hashtags": ["c2", "encryption"]}]},
 
   apt_ransomware: {
     title: 'APT Ransomware Defense',
@@ -1925,6 +2377,7 @@ const EXAMPLES = {
 
 function renderExamples() {
   const centerMap = {
+    paper_ex2: { central: ['A','B'], mid: ['D','L'], far: ['C','H'] },
     apt_ransomware: { central: ['A','B','D'], mid: ['F','H','I'], far: ['K'] },
     zero_trust: { central: ['Z1','Z2','Z3'], mid: ['Z5','Z7','Z12'], far: ['Z10','Z11'] },
     climate_debate: { central: ['CC1','CC2','CC3'], mid: ['CC4','CC5','CC7','CC9'], far: ['CC10','CC11','CC14'] },
@@ -1967,5 +2420,333 @@ loadEx(EXAMPLES.paper_motivador);
 showPanel('hashcloud');
 </script>
 
+<script>
+/* ===================================================================
+   Thresholds ε  +  Guided (step-by-step) mode
+   =================================================================== */
+function effEps(arg){ return S.nbhdMode==='auto'?getAutoEps(arg):(arg.eps_manual??2); }
+function thresholdEditorHTML(){
+  const mx=Math.max(1,...S.arguments.map(a=>{const r=S.argDist[a.id]||{};const v=Object.values(r).filter(x=>isFinite(x));return v.length?Math.max(...v):1;}));
+  const cur=S.arguments.length?effEps(S.arguments[0]):2;
+  return `<div class="rs"><div class="rs-h">Thresholds ε_A — choose them here (changes recompute everything downstream)</div><div class="rs-b">
+   <div class="epsbox">
+     <span><b>Mode:</b> ${S.nbhdMode==='auto'?'AUTO (from topological metrics)':'MANUAL (your values)'}</span>
+     <button class="ghost sm" onclick="setNbhdMode('auto');afterEpsChange()">Auto</button>
+     <button class="ghost sm" onclick="setNbhdMode('manual');afterEpsChange()">Manual</button>
+     ${S.exampleEps&&Object.keys(S.exampleEps).length?`<button class="ghost sm" onclick="useExampleEps()">Example values</button>`:''}
+     <span>&nbsp;All arguments ε =</span>
+     <input type="range" min="0" max="${Math.ceil(mx)}" step="1" value="${cur}" style="--q:${Math.min(1,cur/Math.ceil(mx))}" oninput="this.style.setProperty('--q',(this.value-this.min)/(this.max-this.min));document.getElementById('eps-all-v').textContent=this.value" onchange="setAllEps(parseInt(this.value))">
+     <b id="eps-all-v">${cur}</b>
+     <span class="muted">(max distance in this framework: ${mx})</span>
+   </div>
+   <div style="display:flex;flex-wrap:wrap;gap:8px">
+   ${S.arguments.map(arg=>`<div class="epscell"><div style="font-family:var(--serif);font-weight:700">${arg.id}</div>
+     <input type="number" min="0" max="20" value="${effEps(arg)}" onchange="setEps('${arg.id}',parseInt(this.value))"><label>ε</label></div>`).join('')}
+   </div>
+   <div class="muted" style="margin-top:8px">ε_A = distance up to which an attacker is "close" (attf = 1). Beyond it the attack is weakened as 1/(d − ε_A + 1). Editing any value switches to manual mode.</div>
+  </div></div>`;
+}
+function useExampleEps(){ if(!S.exampleEps) return; S.arguments.forEach(a=>{ if(S.exampleEps[a.id]!=null) a.eps_manual=S.exampleEps[a.id]; }); setNbhdMode('manual'); afterEpsChange(); }
+function toManual(){ if(S.nbhdMode==='auto'){ S.arguments.forEach(a=>{ a.eps_manual=getAutoEps(a); }); setNbhdMode('manual'); } }
+function setEps(id,v){ toManual(); const a=S.arguments.find(x=>x.id===id); if(a&&isFinite(v)) a.eps_manual=Math.max(0,v); afterEpsChange(); }
+function setAllEps(v){ toManual(); S.arguments.forEach(a=>{ a.eps_manual=Math.max(0,v); }); afterEpsChange(); }
+function afterEpsChange(){ 
+  const hadLab=Object.keys(S.labels||{}).length>0, hadExt=!!document.querySelector('#lhaf-ext-out *');
+  computeNeighborhoods(); try{computeCommunities();}catch(e){}
+  if(hadLab && Object.keys(S.valuations||{}).length){ try{runLabeling();}catch(e){} if(hadExt){ try{runLHAFExt();}catch(e){} } }
+  try{argG.refresh();}catch(e){}
+  if(typeof wizRender==='function') wizRender();
+}
+
+/* ---------- guided steps ---------- */
+const G={on:false,i:0,done:new Set()};
+const lab=()=>Object.keys(S.labels||{}).length>0;
+function nowLine(t){ return `<div class="gnow">${t}</div>`; }
+function statusCounts(){ const c={U:0,W:0,N:0}; S.arguments.forEach(a=>{ const l=S.labels[a.id]; if(!l) return; const s=l.alpha, d=l.delta; if(d<=1e-9) c.N++; else if(d<s-1e-9) c.W++; else c.U++; }); return c; }
+const GSTEPS=[
+ {p:'hashcloud',t:'Hashcloud',
+  txt:'The hashcloud Ω is a graph whose nodes are hashtags and whose edges say which hashtags are semantically related. Everything else (distances, thresholds, strengths) is built from it.',
+  now:()=>`Now: <b>${S.hashtags.length}</b> hashtags, <b>${S.edges.length}</b> relations.`, todo:'Add or remove hashtags/relations if you want to change the semantic space.'},
+ {p:'arguments',t:'Arguments',
+  txt:'Each argument A carries a set of hashtags H_A. These are the semantic "labels" that situate A in the hashcloud.',
+  now:()=>`Now: <b>${S.arguments.length}</b> arguments (${S.arguments.map(a=>a.id).join(', ')}).`, todo:'Edit an argument\'s hashtags to move it in the semantic space.'},
+ {p:'attacks',t:'Attacks',
+  txt:'The attack relation is given, and it is NOT restricted by distance. What distance changes is how strongly a far attacker can hurt (weakening).',
+  now:()=>`Now: <b>${S.attacks.length}</b> attacks: ${S.attacks.map(([a,b])=>a+'→'+b).join(', ')}.`, todo:'Add/remove attacks; a cycle will be solved later as a system of equations.'},
+ {p:'distances',t:'Distance d_Ω',
+  txt:'Choose how the distance between two arguments is computed from their hashtag sets (the paper uses maximal linkage). Then compute the matrix.',
+  now:()=>`Now: distance function = <b>${S.distFn}</b>.`, todo:'Click a distance option, then press the button below.',
+  act:{l:'▶ Compute distance matrix',f:()=>{computeDistances();}}},
+ {p:'neighborhoods',t:'Thresholds ε',
+  txt:'ε_A is the threshold of each argument. An attacker at distance d ≤ ε_A attacks at full strength (attf = 1); farther attackers are attenuated by 1/(d − ε_A + 1). <b>Pick ε globally or per argument</b> in the table on the page — everything recomputes at once.',
+  now:()=>`Now: ${S.arguments.map(a=>a.id+'='+effEps(a)).join(', ')} (${S.nbhdMode==='auto'?'auto from metrics':'manual'}).`, todo:'Try changing a threshold and watch the neighborhoods change.',
+  act:{l:'▶ Compute neighborhoods',f:()=>{computeNeighborhoods();}}, ctrl:true},
+ {p:'conclusions',t:'Conclusions μ',
+  txt:'Each argument supports a conclusion; this is used for the η/ζ extensions and for the induced attacks between subarguments.',
+  now:()=>`Now: ${Object.keys(S.mu||{}).length}/${S.arguments.length} arguments have a conclusion.`, todo:'Assign conclusions if the example has none (optional for the labeling).'},
+ {p:'subargs',t:'Subarguments',
+  txt:'Each argument is split into subarguments with disjoint hashtags. Singleton is the default (one per hashtag).',
+  now:()=>`Now: ${Object.keys(S.subarguments||{}).length||'no'} subargument groups.`, todo:'Generate subarguments.',
+  act:{l:'▶ Generate subarguments',f:()=>{runAutoSub();}}},
+ {p:'valuation',t:'Base strength σ',
+  txt:'σ_A is the base strength of A, aggregated from the hashtags\' centrality in the hashcloud. Without attacks, δ_A = σ_A.',
+  now:()=>Object.keys(S.valuations||{}).length?`Now: ${S.arguments.map(a=>a.id+'='+(+(S.valuations[a.id]||0)).toFixed(3)).join(', ')}.`:'Not computed yet.', todo:'Press the button to compute σ.',
+  act:{l:'▶ Compute υ (σ)',f:()=>{runValuation();}}},
+ {p:'labeling',t:'Labeling δ',
+  txt:'δ_A weakens σ_A by the <i>final</i> values δ_B of its attackers, each attenuated by attf(A,B). Acyclic graphs are evaluated topologically; cycles give a system of equations (EQS) solved by the built-in solver. A neutralized attacker (δ_B = 0) has no effect.',
+  now:()=>{ if(!lab()) return 'Not computed yet.'; const c=statusCounts(); return `Now: <b>${c.U}</b> unchallenged, <b>${c.W}</b> weakened, <b>${c.N}</b> neutralized.`+(S.cyclic&&S.cyclic.rest&&S.cyclic.rest.length?` Cyclic part solved in ${S.cyclic.iters} iterations (${S.cyclic.conv?'converged':'NOT converged'}).`:''); },
+  todo:'Run the labeling, then look at the equations it solved.',
+  act:{l:'▶ Run labeling',f:()=>{ if(!Object.keys(S.valuations).length) runValuation(); runLabeling(); }}, act2:{l:'∑ Show equations',f:()=>{ if(!lab()) runLabeling(); showEquations(); }}},
+ {p:'extensions-lhaf',t:'L-HAF extensions',
+  txt:'Statuses: Unchallenged (δ=σ), Weakened (0<δ<σ), Neutralized (δ=0). The grounded extension is the unchallenged set; the preferred one adds the weakened ones.',
+  now:()=>lab()?(()=>{const c=statusCounts();return `Now: U=${c.U}, W=${c.W}, N=${c.N}.`;})():'Run the labeling first.', todo:'Compute the extensions.',
+  act:{l:'▶ Compute L-HAF extensions',f:()=>{ if(!lab()){ if(!Object.keys(S.valuations).length) runValuation(); runLabeling(); } runLHAFExt(); }}},
+ {p:'properties',t:'Properties',
+  txt:'Last, check the formal properties (Section 4) against the current framework.',
+  now:()=>'', todo:'Verify properties.', act:{l:'▶ Verify properties',f:()=>{checkProps();}}}
+];
+window._guideReady=true;
+function guideOn(i){ G.on=true; G.i=(i==null)?G.i:i; document.getElementById('guide').classList.add('on'); document.getElementById('guide').classList.remove('min'); guideGo(G.i); }
+function guideOff(){ G.on=false; document.getElementById('guide').classList.remove('on'); document.getElementById('guide-btn').classList.remove('active'); }
+function guideToggle(){ G.on?guideOff():guideOn(G.i); }
+function guideMin(){ document.getElementById('guide').classList.toggle('min'); }
+function guideGo(i){ G.i=Math.max(0,Math.min(GSTEPS.length-1,i)); const s=GSTEPS[G.i]; showPanel(s.p); guideRender(); }
+function guideNext(){ G.done.add(G.i); guideGo(G.i+1); }
+function guideRun(k){ const s=GSTEPS[G.i]; const a=k===2?s.act2:s.act; try{a.f();}catch(e){ toast('Error: '+e.message); } G.done.add(G.i); guideRender(); }
+function guideRender(){
+  if(!G.on) return; const s=GSTEPS[G.i], n=GSTEPS.length;
+  document.getElementById('guide-btn').classList.add('active');
+  document.getElementById('g-title').textContent='Guided · step '+(G.i+1)+' / '+n;
+  document.getElementById('g-bar').style.width=((G.i+1)/n*100)+'%';
+  let ctrl='';
+  if(s.ctrl){ const cur=S.arguments.length?effEps(S.arguments[0]):2; ctrl=`<div class="epsbox" style="margin:8px 0"><span>All ε =</span><input type="range" min="0" max="8" step="1" value="${cur}" oninput="document.getElementById('g-eps-v').textContent=this.value" onchange="setAllEps(parseInt(this.value))"><b id="g-eps-v">${cur}</b><button class="ghost sm" onclick="setNbhdMode('auto');afterEpsChange()">Auto</button></div>`; }
+  document.getElementById('g-body').innerHTML=
+   `<div class="dots">${GSTEPS.map((x,j)=>`<span class="${j===G.i?'cur':(G.done.has(j)?'dn':'')}" title="${x.t}" onclick="guideGo(${j})">${j+1}</span>`).join('')}</div>
+    <h4>${s.t}</h4><div>${s.txt}</div>${s.now&&s.now()?nowLine(s.now()):''}${ctrl}<div class="muted"><b>To do:</b> ${s.todo}</div>`;
+  document.getElementById('g-foot').innerHTML=
+   `<button class="ghost sm" onclick="guideGo(G.i-1)" ${G.i===0?'disabled':''}>◀ Back</button>`+
+   (s.act?`<button class="pri" onclick="guideRun(1)">${s.act.l}</button>`:'')+(s.act2?`<button class="ghost sm" onclick="guideRun(2)">${s.act2.l}</button>`:'')+
+   `<span class="sp"></span><button class="pri" onclick="guideNext()" ${G.i===n-1?'disabled':''}>Next ▶</button>`;
+}
+</script>
+<script>
+/* ===================================================================
+   Wizard (guided) mode — default experience
+   =================================================================== */
+const W={i:0,done:new Set(),builder:false};
+function isGuided(){ return document.body.classList.contains('guided'); }
+const _rl=a=>a.length?a.join(', '):'—';
+function stCounts(){ return statusCounts(); }
+function argStatusOf(id){ const l=S.labels[id]; if(!l) return ''; return l.delta<=1e-9?'N':(l.delta<l.alpha-1e-9?'W':'U'); }
+function summaryTable(){
+  if(!lab()) return '';
+  const nm={U:'Unchallenged',W:'Weakened',N:'Neutralized'}, col={U:'var(--st-strong)',W:'var(--st-weak)',N:'var(--st-neut)'};
+  return '<table class="sm"><tr><th>Arg</th><th>σ</th><th>δ</th><th>Status</th></tr>'+S.arguments.map(a=>{ const l=S.labels[a.id], s=argStatusOf(a.id); return `<tr><td><b>${a.id}</b></td><td>${l.alpha.toFixed(3)}</td><td>${l.delta.toFixed(3)}</td><td style="color:${col[s]};font-weight:700">${nm[s]}</td></tr>`; }).join('')+'</table>';
+}
+function safe(f){ try{ f(); }catch(e){ toast('Error: '+e.message); console.error(e); } }
+const WZ=[
+ {p:'start',t:'Start',txt:'Choose how to begin.',txtB:'',now:()=>'',todo:''},
+ {p:'hashcloud',t:'Semantic map',
+  txt:'This is the <b>hashcloud</b>: every node is a topic (hashtag) and a line means two topics are related. Distances between arguments are measured on this map, so it decides how strongly distant attacks are weakened.',
+  txtB:'Start by drawing your <b>semantic map</b>. Type topics (several at once, separated by commas, e.g. <i>malware, exploit, network</i>) and press <b>Add</b>. Then link related topics with <b>From → To</b> and <b>Link</b>. Topics that are closer on the map are more related.',
+  now:()=>`Now: <b>${S.hashtags.length}</b> topics and <b>${S.edges.length}</b> relations.`,
+  todo:'You can edit the map here, or just press Next.', todoB:'Add at least 2 topics and 1 relation, then press Next.',
+  check:()=> (S.hashtags.length<2||S.edges.length<1)?'Add at least 2 topics and 1 relation between them.':''},
+ {p:'arguments',t:'Arguments',
+  txt:'Each <b>argument</b> has an ID, a text and a set of hashtags — its position on the map. Arguments whose hashtags are close are semantically close.',
+  txtB:'Now create your <b>arguments</b>: give an ID (suggested automatically), a short text, and <b>click the hashtags</b> that describe it. Press <b>Add argument</b> for each one.',
+  now:()=>`Now: <b>${S.arguments.length}</b> arguments: ${_rl(S.arguments.map(a=>a.id))}.`,
+  todo:'Review them, or press Next.', todoB:'Add at least 2 arguments.',
+  check:()=> S.arguments.length<2?'Add at least 2 arguments.':''},
+ {p:'attacks',t:'Attacks',
+  txt:'Here is <b>who attacks whom</b>. Attacks are not restricted by distance; distance only <i>weakens</i> them later.',
+  txtB:'Choose <b>who attacks whom</b>: pick the attacker and the target, then press <b>Attack</b>. Attacks are not restricted by distance; distance will only weaken them.',
+  now:()=>`Now: <b>${S.attacks.length}</b> attacks: ${_rl(S.attacks.map(([a,b])=>a+'→'+b))}.`,
+  todo:'Press Next to measure distances.', todoB:'Add at least 1 attack.',
+  check:()=> S.attacks.length<1?'Add at least 1 attack.':'',
+  enter:()=>{ if(window.argG) setTimeout(()=>argG.refresh(),60); }},
+ {p:'distances',t:'Distances',
+  txt:'The distance d(A,B) says how far two arguments are on the map. <b>Pick a formula</b> below (the paper uses <i>maximal linkage</i>); the matrix updates by itself.',
+  now:()=>`Distance function: <b>${S.distFn}</b>.`, todo:'Keep the default or choose another, then press Next.',
+  enter:()=>safe(()=>computeDistances()), acts:[{l:'↺ Recompute matrix',f:()=>safe(()=>computeDistances())}]},
+ {p:'neighborhoods',t:'Thresholds ε',
+  txt:'Each argument A has a <b>threshold ε<sub>A</sub></b>. An attacker at distance d ≤ ε<sub>A</sub> attacks at full strength; a farther one is weakened by <b>1/(d − ε<sub>A</sub> + 1)</b>. <b>Set ε for all arguments at once (slider) or one by one</b> in the table below; everything recomputes.',
+  now:()=>`Now: ${S.arguments.map(a=>a.id+'='+effEps(a)).join(', ')} (${S.nbhdMode==='auto'?'automatic, from the map':'manual'}).`,
+  todo:'Try different values and watch how the neighborhoods change.',
+  enter:()=>safe(()=>{ computeDistances(); computeNeighborhoods(); computeCommunities(); }),
+  acts:[{l:'Use automatic ε',f:()=>{ setNbhdMode('auto'); afterEpsChange(); }}]},
+ {p:'valuation',t:'Base strengths σ',
+  txt:'<b>σ<sub>A</sub></b> is the base strength of A before any attack: it comes from how central its hashtags are on the map. Arguments without attackers keep δ = σ.',
+  now:()=>Object.keys(S.valuations||{}).length?`σ: ${S.arguments.map(a=>a.id+'='+(+(S.valuations[a.id]||0)).toFixed(3)).join(', ')}.`:'',
+  todo:'Optionally change the centrality or the aggregator and press Recompute.',
+  enter:()=>safe(()=>runValuation()), acts:[{l:'↺ Recompute σ',f:()=>safe(()=>runValuation())}]},
+ {p:'labeling',t:'Labeling δ',
+  txt:'Now the attacks act. <b>δ<sub>A</sub></b> weakens σ<sub>A</sub> using the <i>final</i> values of its attackers, attenuated by distance (ε above). A neutralized attacker (δ = 0) has no effect. Acyclic graphs are evaluated in order; cycles are solved as a system of equations.',
+  now:()=>{ if(!lab()) return ''; const c=statusCounts(); return `Result: <b>${c.U}</b> unchallenged, <b>${c.W}</b> weakened, <b>${c.N}</b> neutralized.`+(S.cyclic&&S.cyclic.rest&&S.cyclic.rest.length?` Cyclic part: ${S.cyclic.iters} iterations (${S.cyclic.conv?'converged':'NOT converged'}).`:''); },
+  todo:'Look at the table, or press <b>Show equations</b> to see what was solved. Operators are under “Advanced”.',
+  enter:()=>safe(()=>{ if(!Object.keys(S.valuations).length) runValuation(); runLabeling(); }),
+  acts:[{l:'↺ Run again',f:()=>safe(()=>runLabeling())},{l:'∑ Show equations',f:()=>safe(()=>showEquations())}], summary:true},
+ {p:'extensions-lhaf',t:'Results',
+  txt:'<b>Final result.</b> Unchallenged (δ = σ), weakened (0 < δ < σ) and neutralized (δ = 0) arguments. The grounded extension is the unchallenged set; the preferred one adds the weakened ones.',
+  now:()=>{ if(!lab()) return ''; const c=statusCounts(); return `U=${c.U} · W=${c.W} · N=${c.N}`; },
+  todo:'Change something? Use <b>Back</b> (e.g. thresholds ε) and the result updates. For the full toolbox open Expert mode.',
+  enter:()=>safe(()=>{ if(!Object.keys(S.valuations).length) runValuation(); if(!lab()) runLabeling(); runLHAFExt(); }),
+  acts:[{l:'☑ Verify properties',f:()=>{ setGuided(false); showPanel('properties'); safe(()=>checkProps()); }}], summary:true},
+ {p:'report',t:'PDF report',
+  txt:'<b>Save your work.</b> Download a PDF with the whole run: the framework you built, the settings you chose, the labeling result and the extensions. Choose what to include below.',
+  now:()=>{ if(!lab()) return ''; const c=statusCounts(); return `Ready: ${S.arguments.length} arguments, ${S.attacks.length} attacks. U=${c.U} · W=${c.W} · N=${c.N}.`; },
+  todo:'Press <b>Download PDF report</b>. You can also go Back and change anything first.',
+  enter:()=>safe(()=>{ if(!Object.keys(S.valuations).length) runValuation(); if(!lab()) runLabeling(); runLHAFExt(); if(window.argG) setTimeout(()=>argG.refresh(),60); }),
+  acts:[{l:'↓ Download PDF',f:()=>downloadReportPDF()}], last:true}
+];
+
+/* ===== PDF report ===== */
+async function downloadReportPDF(){
+  const ns=window.jspdf||window.jsPDF; const JsPDF=ns?(ns.jsPDF||ns):null;
+  if(!JsPDF){ toast('PDF library not loaded (needs internet)'); return; }
+  if(!S.arguments.length){ toast('Nothing to report yet'); return; }
+  try{
+    if(!Object.keys(S.valuations).length) runValuation();
+    if(!lab()) runLabeling();
+    const on=id=>{ const e=document.getElementById(id); return !e||e.checked; };
+    const G={'σ':'sigma','δ':'delta','ε':'eps','η':'eta','ζ':'zeta','υ':'upsilon','ρ':'rho','μ':'mu','Δ':'Delta','Σ':'Sigma','→':'->','←':'<-','∅':'{}','≤':'<=','≥':'>=','—':'-','–':'-','−':'-','·':'.','×':'x','∞':'inf','’':"'",'“':'"','”':'"','⊆':'<=','…':'...'};
+    const t=x=>String(x==null?'':x).replace(/[^\x00-\xff]/g,c=>G[c]!==undefined?G[c]:'?');
+    const pdf=new JsPDF({unit:'pt',format:'a4'}); const PW=pdf.internal.pageSize.getWidth(), PH=pdf.internal.pageSize.getHeight(), M=40, CW=PW-2*M;
+    let y=M;
+    const need=h=>{ if(y+h>PH-M){ pdf.addPage(); y=M; } };
+    const COL={U:[31,94,87],W:[138,97,28],N:[168,66,31]}, NM={U:'Unchallenged',W:'Weakened',N:'Neutralized'};
+    const H1=x=>{ need(90); pdf.setFont('helvetica','bold'); pdf.setFontSize(13); pdf.setTextColor(168,66,31); pdf.text(t(x),M,y+10); pdf.setDrawColor(26,23,20); pdf.setLineWidth(1); pdf.line(M,y+15,PW-M,y+15); y+=30; pdf.setTextColor(26,23,20); };
+    const P=(x,sz,bold)=>{ pdf.setFont('helvetica',bold?'bold':'normal'); pdf.setFontSize(sz||10); pdf.setTextColor(26,23,20); const L=pdf.splitTextToSize(t(x),CW); L.forEach(l=>{ need((sz||10)+4); pdf.text(l,M,y+(sz||10)); y+=(sz||10)+4; }); };
+    const table=(head,rows,widths,colorCol)=>{ need(60); const sum=widths.reduce((a,b)=>a+b,0), w=widths.map(x=>x/sum*CW); const row=(cells,hd,color)=>{ pdf.setFont('helvetica',hd?'bold':'normal'); pdf.setFontSize(9);
+        const lines=cells.map((c,k)=>pdf.splitTextToSize(t(c),w[k]-8)); const h=Math.max(...lines.map(l=>l.length))*11+6; need(h);
+        if(hd){ pdf.setFillColor(236,227,211); pdf.rect(M,y,CW,h,'F'); }
+        let x=M; lines.forEach((l,k)=>{ if(!hd&&colorCol===k&&color){ pdf.setTextColor(...color); pdf.setFont('helvetica','bold'); } else { pdf.setTextColor(26,23,20); pdf.setFont('helvetica',hd?'bold':'normal'); } pdf.text(l,x+4,y+10); x+=w[k]; });
+        pdf.setDrawColor(201,184,150); pdf.setLineWidth(.4); pdf.line(M,y+h,M+CW,y+h); y+=h; };
+      row(head,true); rows.forEach(r=>row(r.cells||r,false,r.color)); y+=10; };
+    const f3=x=>(+x).toFixed(3);
+
+    /* title */
+    pdf.setFont('helvetica','bold'); pdf.setFontSize(22); pdf.setTextColor(26,23,20); pdf.text('L-HAF Studio',M,y+18); const tw=pdf.getTextWidth('L-HAF Studio');
+    pdf.setFont('helvetica','italic'); pdf.setTextColor(168,66,31); pdf.text('run report',M+tw+8,y+18); y+=30;
+    pdf.setFont('helvetica','normal'); pdf.setFontSize(9); pdf.setTextColor(110,100,85);
+    pdf.text(t((S.exTitle?S.exTitle+'  |  ':'')+new Date().toLocaleString()),M,y+8); y+=22; pdf.setTextColor(26,23,20);
+    const c=statusCounts();
+    P(`${S.arguments.length} arguments, ${S.attacks.length} attacks, ${S.hashtags.length} topics, ${S.edges.length} relations.  Unchallenged: ${c.U}  |  Weakened: ${c.W}  |  Neutralized: ${c.N}.`,10);
+    y+=6;
+
+    if(on('rp-fw')){
+      H1('1. Framework');
+      P('Topics (hashtags): '+(S.hashtags.map(h=>'#'+h).join(', ')||'-'),9);
+      y+=4;
+      table(['Arg','Text','Hashtags'],S.arguments.map(a=>[a.id,a.text||'',(a.hashtags||[]).map(h=>'#'+h).join(' ')]),[8,52,40]);
+      P('Attacks: '+(S.attacks.map(([a,b])=>a+' -> '+b).join(',  ')||'-'),9); y+=6;
+    }
+    if(on('rp-set')){
+      H1('2. Settings used');
+      const cf=document.getElementById('centrality-fn'), af=document.getElementById('agg-fn');
+      P(`Distance between arguments: ${S.distFn}.`,9);
+      P(`Base strengths sigma: centrality = ${cf?cf.value:'-'}, aggregator = ${af?af.value:'-'}.`,9);
+      P(`Operators (Def. 16): Pi = ${LOP.pi}, aggregation over hashtags = ${LOP.od}, ${LOP.clamp?'contributions truncated at 0':''}.`,9);
+      P(`Thresholds eps: ${S.nbhdMode==='auto'?'automatic, from the semantic map':'manual'}.`,9); y+=4;
+      table(['Arg','eps','sigma','Attackers'],S.arguments.map(a=>[a.id,effEps(a),f3(S.valuations[a.id]||0),S.attacks.filter(([x,z])=>z===a.id).map(([x])=>x).join(', ')||'none']),[10,15,20,55]);
+    }
+    if(on('rp-res')){
+      H1('3. Results');
+      table(['Arg','sigma','delta','Status'],S.arguments.map(a=>{ const l=S.labels[a.id], st=argStatusOf(a.id); return {cells:[a.id,f3(l.alpha),f3(l.delta),NM[st]],color:COL[st]}; }),[12,22,22,44],3);
+      const U=[],Wk=[],N=[]; S.arguments.forEach(a=>{ const st=argStatusOf(a.id); (st==='U'?U:st==='W'?Wk:N).push(a.id); });
+      table(['Extension','Arguments','|E|'],[['Strong-grounded (U)','{'+U.join(', ')+'}',U.length],['Weak-grounded (U + W)','{'+[...U,...Wk].join(', ')+'}',U.length+Wk.length],['Neutralized (N)','{'+N.join(', ')+'}',N.length]],[30,60,10]);
+      if(S.cyclic&&S.cyclic.rest&&S.cyclic.rest.length) P(`Cyclic part (${S.cyclic.rest.join(', ')}) solved as a system of equations: ${S.cyclic.iters} iterations, ${S.cyclic.conv?'converged':'NOT converged'}. With cycles the system may have several solutions; the one reported is the one reached starting from delta = sigma.`,9);
+    }
+    if(on('rp-con')){
+      const rows=[]; S.arguments.forEach(a=>{ const l=S.labels[a.id]; (l.contributions||[]).forEach(k=>rows.push([a.id,k.attacker,fmtD(k.d),k.inNb?'inside':'outside',f3(k.attf),f3(k.dB),f3(k.rho)])); });
+      if(rows.length){ H1('4. Attack detail'); P('For each attack B -> A: distance d(A,B), whether B is inside the neighborhood of A, attenuation factor, delta of the attacker and the resulting factor rho (rho = 1 means the attacker is neutralized).',9); y+=2;
+        table(['Target A','Attacker B','d','B in N(A)','attenuation','delta_B','rho'],rows,[12,14,10,16,16,16,16]); }
+    }
+    if(on('rp-dist')){
+      const ids=S.arguments.map(a=>a.id); if(ids.length&&Object.keys(S.argDist).length){ H1('5. Distance matrix'); 
+        table(['d',...ids],ids.map(A=>[A,...ids.map(B=>fmtD(S.argDist[A]?.[B]??Infinity))]),[8,...ids.map(()=>Math.max(5,84/ids.length))]); }
+    }
+    if(on('rp-img')&&typeof argG!=='undefined'&&argG.nodes.length){
+      if(on('rp-img')){} const was=document.querySelector('.panel.active'); const wasId=was?was.id.replace('panel-',''):'report'; showPanel('attacks'); await new Promise(r=>setTimeout(r,350)); argG.fit(); await new Promise(r=>setTimeout(r,100)); const cw=900, ch=640; const url=argG.exportPNG(2.5,cw,ch); const w=CW, h=Math.min(w*ch/cw,PH-2*M-40);
+      pdf.addPage(); y=M; H1('Argumentation graph'); pdf.addImage(url,'PNG',M,y,w*(h/(w*ch/cw)),h); y+=h+8; showPanel(wasId);
+      P('Node colors: teal = unchallenged, gold = weakened, rust = neutralized. Thin, light edges are attacks attenuated by distance (attf < 1); thick edges act at full strength.',8);
+    }
+    const n=pdf.getNumberOfPages(); for(let i=1;i<=n;i++){ pdf.setPage(i); pdf.setFont('helvetica','normal'); pdf.setFontSize(8); pdf.setTextColor(130,120,105); pdf.text('L-HAF Studio - page '+i+' of '+n,PW/2,PH-18,{align:'center'}); }
+    pdf.save('LHAF_report'+(S.exTitle?'_'+S.exTitle.replace(/[^A-Za-z0-9]+/g,'_').slice(0,40):'')+'.pdf');
+    toast('Saved the PDF report');
+  }catch(e){ console.error(e); toast('PDF failed: '+e.message); }
+}
+function wizGo(i){ W.i=Math.max(0,Math.min(WZ.length-1,i)); const s=WZ[W.i]; showPanel(s.p); if(s.enter) s.enter(); wizRender(); window.scrollTo(0,0); const m=document.getElementById('main'); if(m) m.scrollTop=0; }
+function wizNext(){ const s=WZ[W.i]; const msg=s.check?s.check():''; if(msg){ toast(msg); const b=document.getElementById('wiz-next'); if(b){ b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); } return; } W.done.add(W.i); wizGo(W.i+1); }
+function wizBack(){ wizGo(W.i-1); }
+function wizAct(k){ WZ[W.i].acts[k].f(); W.done.add(W.i); wizRender(); }
+function wizRender(){
+  if(!isGuided()||!window._wizReady) return; const s=WZ[W.i], n=WZ.length;
+  document.getElementById('wiz-bar').innerHTML=WZ.map((x,j)=>`<div class="chip ${j===W.i?'cur':(W.done.has(j)?'dn':'')}" onclick="wizJump(${j})"><b>${j===0?'⌂':j}</b>${x.t}</div>`).join('');
+  const intro=document.getElementById('wiz-intro');
+  if(W.i===0){ intro.style.display='none'; } else {
+    intro.style.display='';
+    const txt=(W.builder&&s.txtB)?s.txtB:s.txt, todo=(W.builder&&s.todoB)?s.todoB:s.todo, nowT=s.now?s.now():'', chk=(W.builder&&s.check)?s.check():'';
+    intro.innerHTML=`<div class="k">Step ${W.i} of ${n-1}</div><h2>${s.t}</h2><p>${txt}</p>${nowT?`<div class="now">${nowT}</div>`:''}${chk?`<div class="warn">⚠ ${chk}</div>`:''}<div class="todo"><b>To do:</b> ${todo}</div>${s.summary?summaryTable():''}`;
+  }
+  const foot=document.getElementById('wiz-foot');
+  if(W.i===0){ foot.innerHTML='<span class="muted">Pick an option above to begin.</span>'; return; }
+  const nxt=WZ[W.i+1];
+  foot.innerHTML=`<button class="ghost" onclick="wizBack()">◀ Back</button>`+(s.acts||[]).map((a,k)=>`<button class="ghost" onclick="wizAct(${k})">${a.l}</button>`).join('')+`<span class="sp"></span>`+
+    (s.last?`<button class="ghost" onclick="setGuided(false)">Open expert mode</button><button class="pri big" onclick="wizBuild()">New framework</button>`:`<button class="pri big" id="wiz-next" onclick="wizNext()">Next: ${nxt.t} ▶</button>`);
+}
+function wizJump(j){ if(j===0){ wizGo(0); return; } if(j>W.i){ for(let k=W.i;k<j;k++){ const c=WZ[k].check?WZ[k].check():''; if(c){ toast(c); return; } } } wizGo(j); }
+function setGuided(on){ document.body.classList.toggle('guided',on); document.getElementById('mode-btn').textContent=on?'Expert mode':'Guided mode'; if(on){ wizRender(); showPanel(WZ[W.i].p); } else { const cur=document.querySelector('.panel.active'); } window.scrollTo(0,0); }
+function newFramework(){ S.hashtags=[]; S.edges=[]; S.arguments=[]; S.attacks=[]; S.subarguments=[]; S.mu={}; S.valuations={}; S.labels={}; S.nbhdMode='auto'; invalidateDist(); renderHT(); renderArgs(); renderAtks(); renderMu(); renderSubs(); const r=document.getElementById('lhaf-ext-out'); if(r) r.innerHTML=''; ['arg-id','arg-text','arg-tags'].forEach(x=>{const e=document.getElementById(x); if(e) e.value='';}); }
+function wizBuild(){ newFramework(); W.builder=true; W.done=new Set(); wizGo(1); }
+function wizPick(key){ W.builder=false; W.done=new Set(); loadEx(EXAMPLES[key]); }
+function wizImport(inp){ const f=inp.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ document.getElementById('import-json').value=r.result; try{ importJSON(); W.builder=false; W.done=new Set(); wizGo(1); }catch(e){ toast('Invalid JSON: '+e.message); } }; r.readAsText(f); }
+function renderStartExamples(){
+  document.getElementById('start-examples').innerHTML=Object.entries(EXAMPLES).map(([key,ex])=>`<div class="ex-card" onclick="wizPick('${key}')"><div class="ec-h"><div class="ec-domain">${esc(ex.domain||'Example')}</div><div class="ec-title">${esc(ex.title)}</div></div><div class="ec-b"><div class="ec-desc">${esc(ex.desc||'')}</div><div class="ec-meta">${esc(ex.meta||'')}</div></div></div>`).join('');
+}
+/* tag picker + next free ID */
+function nextArgId(){ const used=new Set(S.arguments.map(a=>a.id)); for(const c of 'ABCDEFGHIJKLMNOPQRSTUVWXYZ') if(!used.has(c)) return c; let i=1; while(used.has('A'+i)) i++; return 'A'+i; }
+function renderTagPicker(){
+  const el=document.getElementById('tag-picker'); if(!el) return; const inp=document.getElementById('arg-tags'); const sel=new Set(inp.value.split(',').map(t=>t.trim().replace(/^#/,'')).filter(Boolean));
+  el.innerHTML=S.hashtags.length?S.hashtags.map(h=>`<span class="tagpick ${sel.has(h)?'on':''}" onclick="togglePick('${h.replace(/'/g,"\\'")}')">#${esc(h)}</span>`).join(''):'<span class="muted">Create hashtags first (previous step).</span>';
+  const idf=document.getElementById('arg-id'); if(idf&&(!idf.value||S.arguments.some(a=>a.id===idf.value.trim().toUpperCase()))) idf.value=nextArgId();
+}
+function togglePick(h){ const inp=document.getElementById('arg-tags'); const l=inp.value.split(',').map(t=>t.trim().replace(/^#/,'')).filter(Boolean); const k=l.indexOf(h); if(k>=0) l.splice(k,1); else l.push(h); inp.value=l.join(', '); renderTagPicker(); }
+function wizAfterArg(){ renderTagPicker(); const idf=document.getElementById('arg-id'); if(idf) idf.value=nextArgId(); wizRender(); }
+(function(){ const _rh=renderHT; renderHT=function(){ _rh.apply(this,arguments); renderTagPicker(); if(window._wizReady) wizRender(); };
+  const _ra=renderArgs; renderArgs=function(){ _ra.apply(this,arguments); if(window._wizReady) wizRender(); };
+  const _rt=renderAtks; renderAtks=function(){ _rt.apply(this,arguments); if(window._wizReady) wizRender(); };
+  const _sd=selectDist; selectDist=function(fn,el){ _sd(fn,el); if(isGuided()) safe(()=>computeDistances()); if(window._wizReady) wizRender(); }; })();
+/* tuck the advanced operator controls of the labeling step into a collapsible box */
+(function(){ const first=document.getElementById('lop-preset').closest('div'); const det=document.createElement('details'); det.className='advbox'; det.innerHTML='<summary>Advanced: operators Π, ⊙, presets and cycle solver</summary>'; first.parentNode.insertBefore(det,first);
+  let n=first; while(n){ const nx=n.nextSibling; const has=n.nodeType===1&&(n.querySelector&&n.querySelector('#lop-relax')||n.id==='lop-relax'); det.appendChild(n); if(has) break; n=nx; } })();
+function setMH(){ const h=document.querySelector('header.masthead'); if(h) document.documentElement.style.setProperty('--mh',h.offsetHeight+'px'); }
+window.addEventListener('resize',setMH);
+EXAMPLES.paper_ex2.epsMode='manual'; EXAMPLES.paper_motivador.epsMode='manual';
+EXAMPLES.paper_ex5=Object.assign({},EXAMPLES.paper_ex2,{
+  title:'Paper Examples 5 and 6 (labeling, ε = 3)',
+  domain:'Paper reproduction',
+  desc:'The L-HAF of Examples 5 and 6: the 25-hashtag cloud and 12 arguments of Example 2, with the attack relation of the labeling example and ε = 3 for every argument. Expected result: unchallenged A, D, E, G, K, L; weakened H (0.250) and I (0.083); neutralized B, C, F, J.',
+  meta:'25 hashtags · 45 relations · 12 args · 11 attacks · ε = 3',
+  attacks:[['A','B'],['B','E'],['E','F'],['C','D'],['D','C'],['K','I'],['I','H'],['H','F'],['L','J'],['J','G'],['G','F']],
+  epsMode:'manual'});
+renderStartExamples(); setMH();
+window._wizReady=true; document.body.classList.add('guided'); setGuided(true); W.i=0; showPanel('start'); wizRender();
+</script>
+<script>
+/* keep Greek letters lowercase inside text-transform:uppercase elements (σ must not become Σ) */
+(function(){
+  const RE=/[α-ω]/, SKIP={SCRIPT:1,STYLE:1,TEXTAREA:1,INPUT:1,OPTION:1,CANVAS:1};
+  function wrap(root){
+    const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode(n){ const p=n.parentNode; if(!p||SKIP[p.nodeName]||(p.classList&&p.classList.contains('gr'))||!RE.test(n.nodeValue)) return NodeFilter.FILTER_REJECT; return NodeFilter.FILTER_ACCEPT; }});
+    const list=[]; while(w.nextNode()) list.push(w.currentNode);
+    list.forEach(n=>{ const f=document.createDocumentFragment(); n.nodeValue.split(/([α-ω]+)/).forEach(t=>{ if(!t) return; if(RE.test(t)){ const sp=document.createElement('span'); sp.className='gr'; sp.textContent=t; f.appendChild(sp); } else f.appendChild(document.createTextNode(t)); }); n.parentNode.replaceChild(f,n); });
+  }
+  let busy=false;
+  const mo=new MutationObserver(()=>{ if(busy) return; busy=true; setTimeout(()=>{ try{ wrap(document.body); }catch(e){} busy=false; },30); });
+  function start(){ wrap(document.body); mo.observe(document.body,{childList:true,subtree:true,characterData:true}); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start); else start();
+})();
+</script>
 </body>
 </html>
