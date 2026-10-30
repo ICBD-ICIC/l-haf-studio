@@ -743,20 +743,21 @@ Operators f(M_A):   sum (coverage) · mean · max (dominant) · min (weakest lin
   <section id="panel-labeling" class="panel">
     <h2><span class="step-no">Step 4</span> Labeling procedure <em>⟨σ, δ⟩</em></h2>
     <p class="lede">Assigns ⟨σ_A, δ_A⟩ to each argument. δ_A incorporates the attacks of its attackers, each acting with its own final value δ_B, attenuated by semantic distance d(A,B) and the threshold ε_A; a neutralized attacker (δ_B=0) has no effect.</p>
-    <div class="formula">Def. 16 (recursive):   δ_A = σ_A  if A has no attackers;   δ_A = σ_A · ρ(A,B)  otherwise (after unfolding every argument has at most one attacker: the one whose claim contradicts its own),
-ρ(A,B) = ⊙_i Π_j (A^αi, B_k^αj)_i / ⊙_i σ_i^A ,   with   (A^αi, B^αj)_i = ( σ_i^A − σ̃_j^{B} )⁺  if B ∈ N(A),   ( σ_i^A − σ̃_j^{B} / (d(A,B) − ε_A) )⁺  otherwise
-σ̃_j^{B} = σ_j^{B} · δ_B / σ_B   (hashtag j of the attacker B after its own weakening; σ_i^A = value of the i-th hashtag of A)
-attf(A,B) = 1 if d(A,B) ≤ ε_A,   1/(d(A,B) − ε_A + 1) otherwise     (σ_i = normalized centrality of hashtag i)
-ρ = 1 iff the attacker B is neutralized (δ_B = 0). Unattacked arguments and arguments attacked by a non-pair argument: evaluated attackers first. Mutual pairs A⇄B (the only cycles produced by unfolding) reduce to one scalar equation, solved by bisection. (Frameworks loaded directly, without unfolding, may contain other cycles; the tool then falls back to damped fixed-point iteration from δ=σ.)
-Requirements: ⊙, Π fixed, total, associative, commutative, continuous; hashtag values in (0,1]; ⊙, Π monotone and internal (mean, min, max).</div>
+    <div class="formula">Def. 16 (labeling):   δ_A = (σ_A − κ(A,B)·δ_B)⁺ · θ(A)      (after unfolding every argument is unattacked or has exactly one attacker: the one whose claim contradicts its own; the term κ(A,B)·δ_B is absent if A is unattacked)
+Vitality factor (same definition):   θ(A) = ⊙ over X ∈ sub(A) of  δ_X / σ_X     (δ_X, σ_X = values of the aggregated argument that holds the subargument X; the quotient is 1 when that argument is A itself)
+Def. 15 (attenuation factor):   κ(A,B) = 1 if B ∈ N(A),   1/(d(A,B) − ε_A + 1) otherwise
+ρ(A,B) = (σ_A − κ(A,B)·δ_B)⁺ / σ_A ∈ [0,1] is the fraction of A that survives the attack, so δ_A = σ_A · ρ(A,B) · θ(A);  ρ = 1 iff the attacker is neutralized (δ_B = 0) or A is unattacked.
+Hashtags enter only through the valuation σ_A = υ(A) and through the neighbourhoods N(A) that fix κ: the labeling itself works with the argument values.
+Unattacked arguments and arguments whose attacker is already evaluated are solved in topological order. Mutual pairs A⇄B (the only cycles produced by unfolding) reduce to one scalar equation θ = h(θ), solved by bisection. (Frameworks loaded directly, without unfolding, may contain other cycles; the tool then falls back to damped fixed-point iteration from δ=σ.)
+Requirements: ⊙ fixed, total, associative, commutative, continuous, monotone, internal and strictly monotone (mean, min, max).</div>
     <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin:10px 0">
       <label style="font-size:10px">Preset<br><select id="lop-preset" onchange="applyLopPreset(this.value)"><option value="minmean">Min · mean · product (paper) — default</option><option value="product">Mean · mean · product</option><option value="strongest">Mean · mean · min (t-norm, not strict)</option><option value="sumres">Mean · mean · sum — counter-example</option><option value="worst">Max · min · product</option><option value="additive">Legacy additive: δ = σ − Σ attf·δ_B</option></select></label>
-      <label style="font-size:10px">Mode<br><select id="lop-mode"><option value="def17">Def. 16 (hashtag level)</option><option value="additive">Additive (argument level)</option></select></label>
-      <label style="font-size:10px">Π over attacker hashtags j<br><select id="lop-pi"></select><br><input id="lop-cu-pi" value="x*y" style="width:110px" title="custom: expression in x,y"></label>
+      <label style="font-size:10px;display:none">Mode<br><select id="lop-mode"><option value="def17">Argument level (Def. 16)</option><option value="additive">Additive (argument level)</option></select></label>
+      <label style="font-size:10px;display:none">Π (not used: the labeling works with argument values)<br><select id="lop-pi"></select><br><input id="lop-cu-pi" value="x*y" style="width:110px" title="custom: expression in x,y"></label>
       <label style="font-size:10px">⊙ over attacked hashtags i<br><select id="lop-od"></select><br><input id="lop-cu-od" value="x*y" style="width:110px" title="custom: expression in x,y"></label>
       <label style="font-size:10px;display:none" title="Only used for frameworks loaded directly with several attackers per argument">⊗ over attackers (not used after unfolding)<br><select id="lop-ot"></select><br><input id="lop-cu-ot" value="x*y" style="width:110px" title="custom: expression in x,y"></label>
       <label style="font-size:10px"><input type="checkbox" id="lop-norm"> normalize υ by its maximum (legacy; hashtag values may exceed 1)</label>
-      <label style="font-size:10px"><input type="checkbox" id="lop-clamp" checked> truncate contributions at 0: (σ_i − attf·σ̃_j)⁺</label>
+      <label style="font-size:10px"><input type="checkbox" id="lop-clamp" checked> truncate at 0: (σ_A − κ·δ_B)⁺</label>
     </div>
     <div style="margin-bottom:8px"><button class="ghost sm" onclick="verifyOperators()">✓ Verify operator requirements</button> <button class="ghost sm" onclick="testPropositions()">✓ Test Section-4 propositions</button> <span class="muted" style="font-size:10px">“custom” uses the expression in x, y (e.g. <code>x+y-x*y</code>, <code>Math.max(x,y)</code>).</span></div>
     <div id="lop-out" style="margin-bottom:12px"></div>
@@ -1671,7 +1672,7 @@ function runAgg(){
   const aggAtks=[]; plus.forEach(([u,v])=>{ const a=grp[u],b=grp[v]; if(!aggAtks.some(([p,q])=>p===a&&q===b)) aggAtks.push([a,b]); });
   S._aggAttacks=aggAtks;
   const droppedOrig=S.attacks.filter(([x,y])=>!plus.some(p=>p[2]===x&&p[3]===y));
-  let html=`<div class="rs"><div class="rs-h">Units (arguments without subarguments, and subarguments) and their conclusions</div><div class="rs-b" style="padding:0"><div class="scroll-x" style="border:none;box-shadow:none;margin:0"><table class="data"><tr><th>Unit</th><th>Parent</th><th>Conclusion</th><th>Hashtags</th></tr>
+  let html=`<div class="rs"><div class="rs-h">Units (every argument with a claim, decomposed or not, and every subargument) and their conclusions</div><div class="rs-b" style="padding:0"><div class="scroll-x" style="border:none;box-shadow:none;margin:0"><table class="data"><tr><th>Unit</th><th>Parent</th><th>Conclusion</th><th>Hashtags</th></tr>
     ${units.map(u=>`<tr><td class="arg">${u.id}</td><td class="muted">${u.isSub?u.parent:'—'}</td><td><span class="tag t-plum">${esc(u.conclusion)}</span></td><td>${u.hashtags.map(h=>'<span class="tag t-topic">#'+esc(h)+'</span>').join('')}</td></tr>`).join('')}</table></div></div></div>`;
   html+=`<div class="rs"><div class="rs-h">Attacks⁺ — original attacks lifted to units (kept only where conclusions contradict)</div><div class="rs-b">${plus.length?plus.map(([u,v,x,y])=>'<div class="atki"><span class="tag t-arg">'+u+'</span><span style="color:var(--rust);font-family:var(--mono)">→⁺</span><span class="tag t-arg">'+v+'</span><span class="muted">from '+x+'→'+y+'</span></div>').join(''):'<span class="muted">none</span>'}${droppedOrig.length?'<div class="muted" style="margin-top:6px">Original attacks that disappear (no contradictory pair of conclusions): '+droppedOrig.map(([x,y])=>x+'→'+y).join(', ')+'</div>':''}</div></div>`;
   html+=`<div class="rs"><div class="rs-h">Ω* — aggregated arguments (${aggregated.length} groups)</div><div class="rs-b" style="padding:0"><div class="scroll-x" style="border:none;box-shadow:none;margin:0"><table class="data"><tr><th>Conclusion γ</th><th>Members A^γ</th><th>H_X = ⋃ H_Y</th><th>Origin</th></tr>
@@ -1687,7 +1688,8 @@ function unfoldToLHAF(){
   S.rawHAF=JSON.parse(JSON.stringify({arguments:S.arguments,attacks:S.attacks,subarguments:S.subarguments,mu:S.mu}));
   { const U0=unitsOf(), grp0={}; U0.forEach(u=>{ grp0[u.id]=u.conclusion; }); const idO=c=>c.replace(/^~/,'¬'); S.occ={};
     G.forEach(g=>{ const X=idO(g.conclusion); S.occ[X]=[]; g.members.forEach(m=>{ const u=U0.find(x=>x.id===m); if(!u) return;
-        u.hashtags.forEach(h=>{ const rel=u.isParent?[...new Set(U0.filter(w=>w.isSub&&w.parent===u.id&&w.hashtags.includes(h)).map(w=>idO(grp0[w.id])))]:[]; if(!rel.includes(X)) rel.push(X); S.occ[X].push({h,rel}); }); }); }); }
+        u.hashtags.forEach(h=>{ const rel=u.isParent?[...new Set(U0.filter(w=>w.isSub&&w.parent===u.id&&w.hashtags.includes(h)).map(w=>idO(grp0[w.id])))]:[]; if(!rel.includes(X)) rel.push(X); S.occ[X].push({h,rel}); }); }); });
+    S.memb={}; G.forEach(g=>{ const X=idO(g.conclusion); S.memb[X]=g.members.map(m=>{ const u=U0.find(x=>x.id===m); if(!u||!u.isParent) return []; return [...new Set(U0.filter(w=>w.isSub&&w.parent===u.id).map(w=>idO(grp0[w.id])))].filter(Y=>Y!==X); }); }); }
   const idOf=c=>c.replace(/^~/,'¬'); const mu={};
   S.arguments=G.map(g=>{ mu[idOf(g.conclusion)]=g.conclusion; return {id:idOf(g.conclusion),text:'Aggregated argument for '+g.conclusion+' (members: '+g.members.join(', ')+')',hashtags:g.hashtags,eps_manual:2,conclusion:g.conclusion,members:g.members}; });
   S.attacks=A.map(([a,b])=>[idOf(a),idOf(b)]); S.subarguments=[]; S.mu=mu; S._aggregated=null;
@@ -1701,7 +1703,7 @@ function unfoldToLHAF(){
 }
 function backToHAF(){
   if(!S.rawHAF)return; const r=S.rawHAF; S.rawHAF=null;
-  S.arguments=r.arguments; S.attacks=r.attacks; S.subarguments=r.subarguments; S.mu=r.mu; S.occ=null; S.valuations={}; S.labels={}; argStatuses={};
+  S.arguments=r.arguments; S.attacks=r.attacks; S.subarguments=r.subarguments; S.mu=r.mu; S.occ=null; S.memb=null; S.valuations={}; S.labels={}; argStatuses={};
   invalidateDist(); renderArgs(); renderAtks(); renderMu(); renderSubs();
   bfsHT(); buildArgDist(); computeMetricsInternal(); computeNeighborhoods(); computeCommunities();
   setTimeout(()=>{htG.refresh();argG.refresh();},60); runAgg(); toast('Original HAF restored');
@@ -1750,7 +1752,7 @@ function runValuation(){
 
 /* ===== Labeling ===== */
 
-/* ===== Labeling operators (Def. 16):  δ_A = ⊗_k ⊙_i ⊙_i (σ_i^A − attf·δ_B)⁺ ===== */
+/* ===== Labeling operators (Def. 16):  δ_A = (σ_A − κ(A,B)·δ_B)⁺ · θ(A) ===== */
 const LOP={norm:false,mode:'def17',pi:'min',od:'mean',ot:'product',clamp:true,cu:{pi:'x*y',od:'x*y',ot:'x*y'}};
 const LOP_PRESETS={
   product:{mode:'def17',pi:'mean',od:'mean',ot:'product',clamp:true},
@@ -1841,23 +1843,28 @@ function verifyOperators(){
   document.getElementById('lop-out').innerHTML=`<div class="rs"><div class="rs-h">Extra properties used in Section 4</div><div class="rs-b" style="padding:0"><table class="data">${ax.join('')}</table></div></div>`+`<div class="rs"><div class="rs-h">Operator requirements (fixed · total · associative · commutative) — randomized check on ${N} triples in [−1,1]</div><div class="rs-b" style="padding:0"><table class="data"><tr><th>Position</th><th>Operator</th><th>Total</th><th>Commutative</th><th>Associative</th></tr>${rows.join('')}</table></div></div>`;
 }
 function testPropositions(){
-  readLop(); const T=4000, R=()=>0.05+Math.random()*0.95, pick=a=>a[Math.floor(Math.random()*a.length)];
+  readLop(); const T=4000, R=()=>0.05+Math.random()*0.95;
   const attfs=[1,1,0.5,1/3,0.25];
-  const gen=()=>{ const m=1+Math.floor(Math.random()*3); const sA=Array.from({length:m},R); const n=1; const mk=()=>({vals:Array.from({length:1+Math.floor(Math.random()*3)},R),theta:Math.random()<0.25?0:Math.random(),attf:pick(attfs)}); return {sA,ats:Array.from({length:n},mk),mk}; };
-  const tests={ 'Prop. 3: unattacked ⟹ δ = σ':0,'Prop. 4: δ ≤ σ':0,'Prop. 4: δ < σ iff the attacker is not neutralized (δ_B > 0)':0,'Non-negativity: δ ≥ 0':0,'Prop. 6: attacked ≤ unattacked with the same hashtags (strict if the attacker is not neutralized)':0,'Monotony: a stronger attacker (larger δ_B/σ_B) never gives a higher δ':0 };
+  const clamp=x=>LOP.clamp?Math.max(0,x):x;
+  /* Def. 16 at the level of the values: delta = (sigma - kappa*delta_B)^+ * theta */
+  const lab=(sg,k,dB,ths)=>Math.min(sg,clamp(sg-k*dB))*(ths.length?foldOp(LOP.od,'od',ths):1);
+  const tests={ 'Prop. 9: unattacked and undecomposed ⟹ δ = σ':0,'Prop. 10: δ ≤ σ':0,'Prop. 10: δ < σ iff the attacker is not neutralized (δ_B > 0)':0,'Non-negativity: δ ≥ 0':0,'Prop. 12: attacked ≤ unattacked with the same σ (strict if the attacker is not neutralized)':0,'Monotony: a stronger attacker (larger δ_B) never gives a higher δ':0,'Vitality: every subargument neutralized ⟹ δ = 0':0 };
   const ex={}; const fail=(k,info)=>{ tests[k]++; if(!ex[k])ex[k]=info; };
   for(let t=0;t<T;t++){
-    const {sA,ats,mk}=gen(); const sig=foldOp(LOP.od,'od',sA); const d=deltaDef17(sA,ats,sig).delta; const dUn=deltaDef17(sA,[],sig).delta;
-    if(Math.abs(dUn-sig)>1e-12) fail('Prop. 3: unattacked ⟹ δ = σ',`σ=${sig.toFixed(3)}, δ=${dUn.toFixed(3)}`);
-    if(!(d<=sig+1e-12)) fail('Prop. 4: δ ≤ σ',`σ=${sig.toFixed(3)}, δ=${d.toFixed(3)}`);
-    const some=ats[0].theta>0; if(some!==(d<sig-1e-12)) fail('Prop. 4: δ < σ iff the attacker is not neutralized (δ_B > 0)',`σ=${sig.toFixed(3)}, δ=${d.toFixed(3)}, δ_B/σ_B=${ats[0].theta.toFixed(2)}`);
+    const sg=R(), k=attfs[Math.floor(Math.random()*attfs.length)], dB=Math.random()<0.25?0:R()*R();
+    const ns=Math.floor(Math.random()*3), ths=Array.from({length:ns},()=>Math.random()<0.3?0:Math.random());
+    const d=lab(sg,k,dB,ths), dUn=lab(sg,0,0,ths), dNoSub=lab(sg,0,0,[]);
+    if(Math.abs(dNoSub-sg)>1e-12) fail('Prop. 9: unattacked and undecomposed ⟹ δ = σ',`σ=${sg.toFixed(3)}, δ=${dNoSub.toFixed(3)}`);
+    if(!(d<=sg+1e-12)) fail('Prop. 10: δ ≤ σ',`σ=${sg.toFixed(3)}, δ=${d.toFixed(3)}`);
+    if(!ns){ const some=dB>0; if(some!==(d<sg-1e-12)) fail('Prop. 10: δ < σ iff the attacker is not neutralized (δ_B > 0)',`σ=${sg.toFixed(3)}, δ=${d.toFixed(3)}, δ_B=${dB.toFixed(3)}`); }
     if(!(d>=-1e-12)) fail('Non-negativity: δ ≥ 0',`δ=${d.toFixed(3)}`);
-    if(!(d<=dUn+1e-12) || (some && !(d<dUn-1e-12))) fail('Prop. 6: attacked ≤ unattacked with the same hashtags (strict if the attacker is not neutralized)',`δ=${d.toFixed(3)} vs ${dUn.toFixed(3)}`);
-    const st={vals:ats[0].vals,theta:Math.min(1,ats[0].theta+Math.random()*(1-ats[0].theta)),attf:ats[0].attf}; const d5=deltaDef17(sA,[st],sig).delta;
-    if(!(d5<=d+1e-12)) fail('Monotony: a stronger attacker (larger δ_B/σ_B) never gives a higher δ',`δ=${d.toFixed(3)} → ${d5.toFixed(3)}`);
+    if(!(d<=dUn+1e-12) || (dB>0 && dUn>0 && !(d<dUn-1e-12))) fail('Prop. 12: attacked ≤ unattacked with the same σ (strict if the attacker is not neutralized)',`δ=${d.toFixed(3)} vs ${dUn.toFixed(3)}`);
+    const d5=lab(sg,k,Math.min(1,dB+Math.random()*(1-dB)),ths);
+    if(!(d5<=d+1e-12)) fail('Monotony: a stronger attacker (larger δ_B) never gives a higher δ',`δ=${d.toFixed(3)} → ${d5.toFixed(3)}`);
+    if(ns){ const d6=lab(sg,k,dB,ths.map(()=>0)); if(Math.abs(d6)>1e-12) fail('Vitality: every subargument neutralized ⟹ δ = 0',`δ=${d6.toFixed(3)}`); }
   }
-  const rows=Object.keys(tests).map(k=>`<tr><td>${k}</td><td style="color:${tests[k]?'var(--rust-d)':'var(--teal-d)'}">${tests[k]?'✗ fails in '+tests[k]+' / '+T:'✓ holds in '+T+' / '+T}</td><td style="font-size:9px">${ex[k]||''}</td></tr>`).join('');
-  document.getElementById('lop-out').innerHTML=`<div class="rs"><div class="rs-h">Properties of Section 4 (Def. 16, hashtag level, one attacker per argument) under the selected operators — ${T} random cases (σ = ⊙ of hashtag values)</div><div class="rs-b" style="padding:0"><table class="data"><tr><th>Property</th><th>Result</th><th>First counterexample</th></tr>${rows}</table></div></div>`;
+  const rows=Object.keys(tests).map(k=>`<tr><td>${k}</td><td style="color:${tests[k]?'var(--rust-d)':'var(--teal-d)'}">${tests[k]?'✗ fails in '+tests[k]+' / '+T:'✓ holds in '+T+' / '+T}</td><td style="font-family:var(--mono);font-size:10px">${ex[k]||''}</td></tr>`).join('');
+  document.getElementById('lop-out').innerHTML=`<div class="rs"><div class="rs-h">Properties of Section 4 (Def. 16 on the argument values, one attacker per argument) under the selected operator ⊙ — ${T} random cases</div><div class="rs-b" style="padding:0"><table class="data"><tr><th>Property</th><th>Result</th><th>First counterexample</th></tr>${rows}</table></div></div>`;
 }
 
 (function(){ const fill=()=>{ ['lop-pi','lop-od','lop-ot'].forEach(id=>{ const e=document.getElementById(id); if(e&&!e.options.length){ e.innerHTML=['mean','sum','product','min','max','custom'].map(o=>`<option value="${o}">${o}</option>`).join(''); } }); syncLopUI(); }; if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',fill); else fill(); })();
@@ -1865,14 +1872,14 @@ function fmtN(x){ return (Math.abs(x)<1e-9?'0':(+x).toFixed(3)); }
 function showEquations(){
   if(!S.eqsys){ runLabeling(); }
   const E=S.eqsys; if(!E){ return; } readLop();
-  const rows=S.arguments.map(arg=>{ const a=arg.id, L=S.labels[a], I=E.info[a]; const sA=(S.hashVals&&S.hashVals[a])||[L.alpha]; const D=foldOp(LOP.od,'od',sA);
-    if(!I.atk.length) return `<tr><td class="arg">${a}</td><td style="font-family:var(--mono);font-size:10px">δ_${a} = σ_${a} = ${fmtN(L.alpha)}</td><td>${fmtN(L.delta)}</td><td>${fmtN(L.alpha)}</td></tr>`;
-    const terms=I.atk.map(b=>{ const vb=(S.hashVals&&S.hashVals[b])||[S.labels[b].alpha]; const sB=S.labels[b].alpha; const at=E.attfOf(a,b);
-      return `${LOP.od}_i ${LOP.pi}_j ( s_i − ${fmtN(at)}·(v_j/${fmtN(sB)})·δ_${b} )⁺ / ${fmtN(D)}  <span style="color:var(--muted)">[s_i∈{${sA.map(fmtN).join(', ')}}, v_j∈{${vb.map(fmtN).join(', ')}}]</span>`; });
-    const rhs=E.update(a);
-    return `<tr><td class="arg">${a}</td><td style="font-family:var(--mono);font-size:10px">δ_${a} = ${fmtN(L.alpha)} · ${terms.length>1?LOP.ot+'( '+terms.map(t=>'<br>&nbsp;&nbsp;'+t).join(' ,')+' )':'<br>&nbsp;&nbsp;'+terms[0]}</td><td>${fmtN(L.delta)}</td><td>${fmtN(rhs)}</td></tr>`; });
+  const rows=S.arguments.map(arg=>{ const a=arg.id, L=S.labels[a], I=E.info[a];
+    const M=(S.memb&&S.memb[a])||[]; const parts=[]; M.forEach(Ys=>{ if(!Ys.length){ parts.push('1'); return; } Ys.forEach(Y=>parts.push(`δ_${Y}/σ_${Y}=${fmtN(S.labels[Y].alpha>0?S.labels[Y].delta/S.labels[Y].alpha:0)}`)); });
+    const th=parts.length?`${LOP.od}(${parts.join(', ')})`:'1';
+    const atk=I.atk.length?I.atk.map(B=>`${fmtN(E.attfOf(a,B))}·δ_${B}`).join(' − '):null;
+    const eq=`δ_${a} = ( ${fmtN(L.alpha)}${atk?' − '+atk:''} )⁺ · θ_${a},&nbsp; θ_${a} = ${th} = ${fmtN(E.thetaOf?E.thetaOf(a):1)}`;
+    return `<tr><td class="arg">${a}</td><td style="font-family:var(--mono);font-size:10px">${eq}</td><td>${fmtN(L.delta)}</td><td>${fmtN(E.update(a))}</td></tr>`; });
   const res=Math.max(...S.arguments.map(x=>Math.abs(E.update(x.id)-S.labels[x.id].delta)));
-  document.getElementById('eqs-out').innerHTML=`<div class="rs"><div class="rs-h">System of equations EQS generated by Def. 16 (one equation per argument; ρ written out with the current numbers)</div><div class="rs-b" style="padding:0"><div class="scroll-x" style="border:none;box-shadow:none;margin:0"><table class="data"><tr><th>Arg</th><th>Equation</th><th>δ (current)</th><th>RHS(δ)</th></tr>${rows.join('')}</table></div></div></div><div class="def">Residual max|RHS(δ) − δ| = ${res.toExponential(1)} ${res<1e-9?'✓ δ solves EQS':'✗ not a solution'}${S.cyclic&&S.cyclic.pairs&&S.cyclic.pairs.length?' · mutual pairs solved by bisection: '+S.cyclic.pairs.map(p=>'{'+p.a+', '+p.b+'} ('+p.evals+' evaluations)').join(', '):''}${S.cyclic&&S.cyclic.rest.length?' · cyclic part {'+S.cyclic.rest.join(', ')+'} solved with relaxation λ='+S.cyclic.lam+' ('+S.cyclic.iters+' iterations)':(S.cyclic&&S.cyclic.pairs&&S.cyclic.pairs.length?'':' · acyclic: exact, unique')}</div>`;
+  document.getElementById('eqs-out').innerHTML=`<div class="rs"><div class="rs-h">System of equations EQS generated by Def. 16 (one equation per argument, written out with the current numbers)</div><div class="rs-b" style="padding:0"><div class="scroll-x" style="border:none;box-shadow:none;margin:0"><table class="data"><tr><th>Arg</th><th>Equation</th><th>δ (current)</th><th>RHS(δ)</th></tr>${rows.join('')}</table></div></div></div><div class="def">Residual max|RHS(δ) − δ| = ${res.toExponential(1)} ${res<1e-9?'✓ δ solves EQS':'✗ not a solution'}${S.cyclic&&S.cyclic.pairs&&S.cyclic.pairs.length?' · mutual pairs solved by bisection: '+S.cyclic.pairs.map(p=>'{'+p.a+', '+p.b+'} ('+p.evals+' evaluations)').join(', '):''}${S.cyclic&&S.cyclic.rest.length?' · cyclic part {'+S.cyclic.rest.join(', ')+'} solved with relaxation λ='+S.cyclic.lam+' ('+S.cyclic.iters+' iterations)':(S.cyclic&&S.cyclic.pairs&&S.cyclic.pairs.length?'':' · acyclic: exact, unique')}</div>`;
 }
 function findSolutions(){
   if(!S.eqsys) runLabeling(); const E=S.eqsys; if(!E) return;
@@ -1891,7 +1898,7 @@ function findSolutions(){
 function runLabeling(){
   if(!Object.keys(S.valuations).length){ toast('Run valuation first (Step 3)'); return; }
   buildArgDist(); if(!Object.keys(S.neighborhoods).length)computeNeighborhoods(); readLop();
-  S.labels={}; argStatuses={}; 
+  S.labels={}; argStatuses={}; S.epsCache={}; 
   S.arguments.forEach(a=>{ S.labels[a.id]={alpha:S.valuations[a.id]||0.01,delta:S.valuations[a.id]||0.01,contributions:[]}; });
   const info={};
   S.arguments.forEach(arg=>{ const eps=S.nbhdMode==='auto'?getAutoEps(arg):(arg.eps_manual??2); const inN=new Set(S.neighborhoods[arg.id]?.members||[]);
@@ -1899,16 +1906,24 @@ function runLabeling(){
     info[arg.id]={atk,eps,inN}; });
   const attfOf=(a,b)=>{ const d=S.argDist[a]?.[b]??Infinity; return (d<=info[a].eps)?1:(d===Infinity?0:1/(d-info[a].eps+1)); };
   const reach=a=>{ const H=S.arguments.find(x=>x.id===a).hashtags; const oc=S.occ&&S.occ[a]; return H.map(h=>{ const o=oc&&oc.filter(x=>x.h===h); return (o&&o.length)?o:[{h,rel:[a]}]; }); };
-  const depsOf=a=>{ const D=new Set(); reach(a).forEach(os=>os.forEach(o=>o.rel.forEach(Y=>(info[Y]?info[Y].atk:[]).forEach(B=>D.add(B))))); return [...D]; };
-  const epsOf=a=>{ const sA=(S.hashVals&&S.hashVals[a])||[S.labels[a].alpha]; const R=reach(a);
-    return sA.map((v,k)=>{ let best=-Infinity; R[k].forEach(o=>{ const vals=[]; o.rel.forEach(Y=>(info[Y]?info[Y].atk:[]).forEach(B=>{ const th=S.labels[B].delta/S.labels[B].alpha, at=attfOf(Y,B), vb=(S.hashVals&&S.hashVals[B])||[S.labels[B].alpha]; vb.forEach(sj=>{ const x=v-at*th*sj; vals.push(LOP.clamp?Math.max(0,x):x); }); }));
-        const e=vals.length?foldOp(LOP.pi,'pi',vals):v; best=Math.max(best,e); }); return best; }); };
-  const update=a=>{ const L=S.labels[a], I=info[a]; if(LOP.mode!=='additive'&&S.occ){ return deltaFromEps((S.hashVals&&S.hashVals[a])||[L.alpha],epsOf(a),L.alpha); } if(!I.atk.length) return L.alpha;
-    if(LOP.mode==='additive'){ let dl=L.alpha; I.atk.forEach(b=>{ dl-=attfOf(a,b)*S.labels[b].delta; }); return Math.max(0,Math.min(L.alpha,dl)); }
-    const ats=I.atk.map(b=>({vals:(S.hashVals&&S.hashVals[b])||[S.labels[b].alpha],theta:S.labels[b].delta/S.labels[b].alpha,attf:attfOf(a,b)}));
-    return deltaDef17((S.hashVals&&S.hashVals[a])||[L.alpha],ats,L.alpha).delta; };
+  const relOf=a=>{ const M=(S.memb&&S.memb[a])||[]; return [...new Set(M.flat())].filter(Y=>Y!==a); };
+  const depsOf=a=>{ const D=new Set(); (info[a]?info[a].atk:[]).forEach(B=>D.add(B)); relOf(a).forEach(Y=>D.add(Y)); return [...D]; };
+  
+  /* Def. 16: vitality transmitted by the subarguments. Each member of A keeps the mean of the fractions
+     theta_Y = delta_Y/sigma_Y kept by the arguments that hold its subarguments (1 if it is not decomposed),
+     and theta(A) is the mean over the members: it is the argument that has vitality, not the hashtag. */
+  /* theta(A) = ⊙ over sub(A): every part of A contributes the fraction kept by the argument that holds it,
+     and 1 when that argument is A itself */
+  const thetaOf=a=>{ const M=(S.memb&&S.memb[a])||[]; if(!M.length) return 1;
+    const v=[]; M.forEach(Ys=>{ if(!Ys.length){ v.push(1); return; } Ys.forEach(Y=>{ const L=S.labels[Y]; v.push((L&&L.alpha>0)?L.delta/L.alpha:0); }); });
+    return v.length?foldOp(LOP.od,'od',v):1; };
+  /* Def. 16: delta_A = (sigma_A - kappa(A,B)*delta_B)^+ * theta(A) — only argument values, the attenuation factor
+     and the vitality of the subarguments; hashtags enter through the valuation and the neighbourhoods, not here */
+  const rhoOwn=a=>{ const L=S.labels[a], I=info[a]; if(!I.atk.length) return 1; let dl=L.alpha;
+    I.atk.forEach(b=>{ dl-=attfOf(a,b)*S.labels[b].delta; }); if(LOP.clamp) dl=Math.max(0,dl); return Math.min(L.alpha,dl)/L.alpha; };
+  const update=a=>{ const L=S.labels[a]; return L.alpha*rhoOwn(a)*thetaOf(a); };
   /* topological evaluation (Kahn); the remaining arguments (cycles and what depends on them) are solved as a system */
-  const deps={}; S.arguments.forEach(a=>{ deps[a.id]=(S.occ&&LOP.mode!=='additive')?depsOf(a.id):[...new Set(info[a.id].atk)]; });
+  const deps={}; S.arguments.forEach(a=>{ deps[a.id]=S.memb?depsOf(a.id):[...new Set(info[a.id].atk)]; });
   const indeg={}, out={}; S.arguments.forEach(a=>{ indeg[a.id]=deps[a.id].filter(b=>b!==a.id).length+(deps[a.id].includes(a.id)?1:0); out[a.id]=[]; });
   S.arguments.forEach(a=>{ deps[a.id].forEach(b=>{ if(b!==a.id&&out[b]) out[b].push(a.id); }); });
   const q=S.arguments.filter(a=>indeg[a.id]===0).map(a=>a.id), done=new Set(); const pairs=[];
@@ -1920,15 +1935,15 @@ function runLabeling(){
     g(th); La.delta=th*La.alpha; S.labels[b].delta=update(b); pairs.push({a,b,evals:ev}); };
   for(let progress=true;progress;){ progress=false;
     while(q.length){ const a=q.shift(); if(done.has(a)) continue; S.labels[a].delta=update(a); release(a); progress=true; }
-    if(LOP.mode!=='additive'){ for(const a of S.arguments.map(x=>x.id)){ if(done.has(a)) continue; const b=pairOf(a); if(b){ solvePair(a,b); release(a); release(b); progress=true; } } } }
+    if(true){ for(const a of S.arguments.map(x=>x.id)){ if(done.has(a)) continue; const b=pairOf(a); if(b){ solvePair(a,b); release(a); release(b); progress=true; } } } }
   const rest=S.arguments.map(a=>a.id).filter(a=>!done.has(a)); let iters=0,res=0,conv=true; const LAM=Math.min(1,Math.max(0.05,parseFloat((document.getElementById('lop-relax')||{}).value)||0.5));
   if(rest.length){ rest.forEach(a=>{ S.labels[a].delta=S.labels[a].alpha; });
     for(iters=1;iters<=20000;iters++){ const nd={}; rest.forEach(a=>{ nd[a]=update(a); }); res=Math.max(...rest.map(a=>Math.abs(nd[a]-S.labels[a].delta))); rest.forEach(a=>{ S.labels[a].delta=(1-LAM)*S.labels[a].delta+LAM*nd[a]; }); if(res<1e-12) break; }
     conv=res<1e-9; }
   S.arguments.forEach(arg=>{ const I=info[arg.id]; S.labels[arg.id].contributions=I.atk.map(bId=>{ const d=S.argDist[arg.id]?.[bId]??Infinity; const attf=attfOf(arg.id,bId); const dB=S.labels[bId].delta; const aA=S.labels[arg.id].alpha;
-      const sA0=(S.hashVals&&S.hashVals[arg.id])||[aA]; const D=foldOp(LOP.od,'od',sA0); const sA=sA0; const vb=(S.hashVals&&S.hashVals[bId])||[S.labels[bId].alpha]; const th=dB/S.labels[bId].alpha; const rho=foldOp(LOP.od,'od',sA.map(si=>foldOp(LOP.pi,'pi',vb.map(sj=>{const v=si-attf*th*sj; return LOP.clamp?Math.max(0,v):v;}))))/D;
+      const rho=aA>0?Math.max(0,aA-attf*dB)/aA:0;
       return {attacker:bId,d,inNb:I.inN.has(bId),dB,rho,attf,weakening:attf*dB}; }); });
-  S.cyclic={rest,iters,res,conv,lam:LAM,pairs}; S.eqsys={info,update,attfOf};
+  S.cyclic={rest,iters,res,conv,lam:LAM,pairs}; S.eqsys={info,update,attfOf,rhoOwn,thetaOf};
   S.arguments.forEach(a=>{ const {alpha,delta}=S.labels[a.id]; argStatuses[a.id]=Math.abs(delta-alpha)<0.0001?'U':delta>1e-9?'W':'N'; });
   const maxA=Math.max(...S.arguments.map(a=>S.labels[a.id]?.alpha||0),0.01);
   let html=`<div class="rs"><div class="rs-h">Labels ⟨σ_A, δ_A⟩ — </div><div class="rs-b" style="padding:0"><div class="scroll-x" style="border:none;box-shadow:none;margin:0"><table class="data">
@@ -1941,15 +1956,15 @@ function runLabeling(){
         <td><span class="stbadge st-${st}">${st}</span> <span class="muted">${stName}</span></td>
         <td style="font-size:9px">${(l.contributions||[]).map(c=>{ const col=c.d<=(S.neighborhoods[a.id]?.eps||2)?'var(--teal-d)':'var(--rust-d)'; return `<span style="color:${col};font-family:var(--mono)">${c.attacker}(d=${c.d===Infinity?'∞':c.d},${c.inNb?'∈N':'∉N'},δ_B=${c.dB.toFixed(3)},ρ=${c.rho.toFixed(3)}) </span>`; }).join('')}${linkedVia(a.id)}</td></tr>`;
     }).join('')}</table></div></div></div>`;
-  { const bad=S.arguments.filter(a=>S.labels[a.id].delta>S.labels[a.id].alpha+1e-9).map(a=>a.id); html+=`<div class="def">Operators: Π=${LOP.pi} · ⊙=${LOP.od} ${S.arguments.some(a=>(S.labels[a.id].contributions||[]).length>1)?' · ⊗='+LOP.ot:''}${LOP.mode==='additive'?' (legacy additive mode)':''} · contributions truncated at 0: ${LOP.clamp?'yes':'no'} · δ≤σ: ${bad.length?'✗ violated by '+bad.join(', '):'✓'} · ${S.cyclic.pairs&&S.cyclic.pairs.length?'mutual pairs '+S.cyclic.pairs.map(p=>'{'+p.a+', '+p.b+'}').join(', ')+' solved by bisection ('+S.cyclic.pairs.map(p=>p.evals).join('+')+' evaluations)':''}${S.cyclic.rest.length?('cyclic part {'+S.cyclic.rest.join(', ')+'} solved by damped iteration: '+S.cyclic.iters+' iterations, residual '+S.cyclic.res.toExponential(1)+(S.cyclic.conv?' ✓':' ✗ not converged')):''+(S.cyclic.pairs&&S.cyclic.pairs.length?' · no further cycles':'acyclic: evaluated in topological order (unique solution)')}</div>`; }
+  { const bad=S.arguments.filter(a=>S.labels[a.id].delta>S.labels[a.id].alpha+1e-9).map(a=>a.id); html+=`<div class="def">Operator: ⊙=${LOP.od} ${S.arguments.some(a=>(S.labels[a.id].contributions||[]).length>1)?' · ⊗='+LOP.ot:''}${LOP.mode==='additive'?' (legacy additive mode)':''} · δ truncated at 0: ${LOP.clamp?'yes':'no'} · δ≤σ: ${bad.length?'✗ violated by '+bad.join(', '):'✓'} · ${S.cyclic.pairs&&S.cyclic.pairs.length?'mutual pairs '+S.cyclic.pairs.map(p=>'{'+p.a+', '+p.b+'}').join(', ')+' solved by bisection ('+S.cyclic.pairs.map(p=>p.evals).join('+')+' evaluations)':''}${S.cyclic.rest.length?('cyclic part {'+S.cyclic.rest.join(', ')+'} solved by damped iteration: '+S.cyclic.iters+' iterations, residual '+S.cyclic.res.toExponential(1)+(S.cyclic.conv?' ✓':' ✗ not converged')):''+(S.cyclic.pairs&&S.cyclic.pairs.length?' · no further cycles':'acyclic: evaluated in topological order (unique solution)')}</div>`; }
   if(LOP.mode!=='additive'){ const ow=operatorWarnings(); if(ow.length) html+=`<div class="def" style="border-left-color:var(--rust)"><strong>⚠ Operator requirements of Section 4 violated:</strong> ${ow.join('; ')}. The properties proven in the paper are not guaranteed for this choice (use “Verify operator requirements” for details).</div>`; }
   document.getElementById('labeling-out').innerHTML=html;
   renderArgs(); argG.refresh();
 }
 
 function linkedVia(a){ const oc=(S.occ&&S.occ[a])||[]; const seen=new Set(), out=[];
-  oc.forEach(o=>o.rel.forEach(Y=>{ if(Y===a) return; S.attacks.filter(([,t])=>t===Y).forEach(([B])=>{ const k=B+'|'+Y; if(!seen.has(k)){ seen.add(k); out.push(`<span style="color:var(--plum);font-family:var(--mono)">${B} via ${Y} (δ_B=${S.labels[B].delta.toFixed(3)}) </span>`); } }); }));
-  if(out.length) out.push(`<span style="font-family:var(--mono)">· overall ρ=${(S.labels[a].delta/S.labels[a].alpha).toFixed(3)} (all attacks)</span>`);
+  oc.forEach(o=>o.rel.forEach(Y=>{ if(Y===a||seen.has(Y)) return; seen.add(Y); out.push(`<span style="color:var(--plum);font-family:var(--mono)">weakening via ${Y} (δ_${Y}=${S.labels[Y].delta.toFixed(3)}) </span>`); }));
+  if(out.length) out.push(`<span style="font-family:var(--mono)">· overall ρ=${(S.labels[a].delta/S.labels[a].alpha).toFixed(3)}</span>`);
   return out.join(''); }
 /* ===== L-HAF extensions ===== */
 function runLHAFExt(){
@@ -2066,11 +2081,11 @@ const EXAMPLES = {
   },
 
   paper_ex3: {
-    title: 'Paper labeling example (Example 2 with claims)',
+    title: 'Paper Example 6 — labeling (Example 2 HAF with claims)',
     epsAfterUnfold: 3,
     domain: 'Paper reproduction',
-    desc: 'Example 2 of the paper with claims and sub-arguments: I, H, J and G are split into two units each; the other arguments carry one claim. Aggregation yields fourteen arguments: two mutual conflicts (p/¬p, q/¬q) and five one-way attacks (r over ¬r, s over ¬s, u over ¬u, c over ¬c, d over ¬d); the decomposed arguments stay with their claims, and an attack on a subargument is transmitted to the same hashtags of its decomposed argument. Radii ε=3.',
-    meta: '25 hashtags · 12 args · 8 subargs · 13 attacks',
+    desc: 'Example 2 of the paper with claims and sub-arguments: A is split into A1 (claim v) and A2 (claim w), C into C1 (claim ¬v), D into D1 (claim ¬w), and I, H, J and G into two units each; the other arguments carry one claim. Every attack of the base framework is preserved: C and D attack A at A1 and A2. Aggregation yields eighteen arguments: two mutual conflicts (p/¬p, q/¬q) and seven one-way attacks (¬v over v, ¬w over w, r over ¬r, s over ¬s, u over ¬u, c over ¬c, d over ¬d); the decomposed arguments stay with their claims, and the weakening of a subargument is transmitted to the same hashtags of its decomposed argument. Radii ε=3.',
+    meta: '25 hashtags · 12 args · 12 subargs · 13 attacks',
     distFn: 'maxlink',
     hashtags: ["a1", "a2", "a3", "a4", "a5", "a6", "a7", "a8", "a9", "a10", "a11", "a12", "a13", "a14", "a15", "a16", "a17", "a18", "a19", "a20", "a21", "a22", "a23", "a24", "a25"],
     edges: [["a8", "a7"], ["a8", "a11"], ["a8", "a1"], ["a7", "a1"], ["a7", "a2"], ["a7", "a20"], ["a11", "a1"], ["a11", "a10"], ["a11", "a22"], ["a1", "a2"], ["a1", "a10"], ["a1", "a19"], ["a2", "a19"], ["a10", "a19"], ["a20", "a4"], ["a20", "a5"], ["a20", "a6"], ["a6", "a4"], ["a4", "a5"], ["a6", "a9"], ["a4", "a9"], ["a5", "a9"], ["a5", "a19"], ["a19", "a21"], ["a19", "a17"], ["a19", "a3"], ["a19", "a18"], ["a21", "a22"], ["a22", "a24"], ["a21", "a25"], ["a24", "a25"], ["a9", "a17"], ["a17", "a3"], ["a3", "a18"], ["a18", "a25"], ["a17", "a12"], ["a12", "a23"], ["a23", "a13"], ["a13", "a18"], ["a13", "a14"], ["a18", "a14"], ["a14", "a16"], ["a14", "a15"], ["a15", "a16"], ["a25", "a16"]],
@@ -2090,7 +2105,7 @@ const EXAMPLES = {
     ],
     attacks: [["A", "B"], ["B", "E"], ["E", "F"], ["D", "A"], ["C", "A"], ["D", "C"], ["C", "D"], ["K", "I"], ["I", "H"], ["H", "F"], ["L", "J"], ["J", "G"], ["G", "F"]],
     mu: {"A":"p","B":"~p","C":"q","D":"~q","E":"p","F":"~p","G":"~d","H":"~c","I":"c","J":"d","K":"r","L":"r"},
-    subarguments: [{"parent":"I","id":"I1","conclusion":"~r","hashtags":["a22","a23"]},{"parent":"I","id":"I2","conclusion":"s","hashtags":["a21"]},{"parent":"H","id":"H1","conclusion":"~s","hashtags":["a15","a21"]},{"parent":"H","id":"H2","conclusion":"p","hashtags":["a24","a25"]},{"parent":"J","id":"J1","conclusion":"~r","hashtags":["a1"]},{"parent":"J","id":"J2","conclusion":"u","hashtags":["a12","a13"]},{"parent":"G","id":"G1","conclusion":"~u","hashtags":["a12","a13"]},{"parent":"G","id":"G2","conclusion":"p","hashtags":["a2","a10"]}]
+    subarguments: [{"parent":"A","id":"A1","conclusion":"v","hashtags":["a1","a2","a4"]},{"parent":"A","id":"A2","conclusion":"w","hashtags":["a3"]},{"parent":"C","id":"C1","conclusion":"~v","hashtags":["a14","a15","a16"]},{"parent":"D","id":"D1","conclusion":"~w","hashtags":["a17","a3","a18"]},{"parent":"I","id":"I1","conclusion":"~r","hashtags":["a22","a23"]},{"parent":"I","id":"I2","conclusion":"s","hashtags":["a21"]},{"parent":"H","id":"H1","conclusion":"~s","hashtags":["a15","a21"]},{"parent":"H","id":"H2","conclusion":"p","hashtags":["a24","a25"]},{"parent":"J","id":"J1","conclusion":"~r","hashtags":["a1"]},{"parent":"J","id":"J2","conclusion":"u","hashtags":["a12","a13"]},{"parent":"G","id":"G1","conclusion":"~u","hashtags":["a12","a13"]},{"parent":"G","id":"G2","conclusion":"p","hashtags":["a2","a10"]}]
   },
 
   apt_full: {"title": "APT Ransomware Defense — full case study", "domain": "Cybersecurity", "desc": "Full worked case of Section 5: 13 raw arguments over a 35-hashtag cloud, manual subargument extraction (R3, R5), conclusions, aggregation into Ω*, unfolding, valuation and labeling.", "meta": "35 hashtags · 62 relations · 13 args · 4 subargs · 14 attacks", "distFn": "maxlink", "hashtags": ["malware", "ransomware", "phishing", "exploit", "zeroday", "vulnerability", "c2", "lateral_movement", "perimeter", "internal_network", "segmentation", "zerotrust", "cloud", "server", "endpoint", "authentication", "mfa", "identity", "privileged_access", "edr", "siem", "monitoring", "threat_intel", "incident", "response", "forensics", "playbook", "recovery", "backup", "encryption", "regulation", "compliance", "gdpr", "nis2", "audit"], "edges": [["malware", "ransomware"], ["malware", "phishing"], ["malware", "c2"], ["malware", "exploit"], ["malware", "threat_intel"], ["ransomware", "encryption"], ["ransomware", "backup"], ["phishing", "identity"], ["phishing", "authentication"], ["exploit", "zeroday"], ["exploit", "vulnerability"], ["zeroday", "vulnerability"], ["zeroday", "perimeter"], ["vulnerability", "endpoint"], ["vulnerability", "server"], ["c2", "encryption"], ["c2", "lateral_movement"], ["c2", "monitoring"], ["lateral_movement", "internal_network"], ["lateral_movement", "privileged_access"], ["lateral_movement", "segmentation"], ["perimeter", "internal_network"], ["perimeter", "zerotrust"], ["perimeter", "cloud"], ["internal_network", "segmentation"], ["internal_network", "server"], ["internal_network", "endpoint"], ["segmentation", "zerotrust"], ["cloud", "server"], ["cloud", "encryption"], ["server", "endpoint"], ["authentication", "mfa"], ["authentication", "identity"], ["authentication", "privileged_access"], ["authentication", "zerotrust"], ["identity", "privileged_access"], ["mfa", "identity"], ["edr", "endpoint"], ["edr", "siem"], ["edr", "monitoring"], ["siem", "monitoring"], ["siem", "threat_intel"], ["monitoring", "incident"], ["threat_intel", "incident"], ["incident", "response"], ["incident", "forensics"], ["incident", "recovery"], ["response", "playbook"], ["response", "recovery"], ["response", "forensics"], ["playbook", "recovery"], ["backup", "recovery"], ["backup", "encryption"], ["regulation", "compliance"], ["regulation", "gdpr"], ["regulation", "nis2"], ["compliance", "audit"], ["compliance", "gdpr"], ["compliance", "nis2"], ["nis2", "incident"], ["audit", "monitoring"], ["regulation", "incident"]], "arguments": [{"id": "R1", "text": "APT ransomware crews gain initial access mainly through spear-phishing of help-desk and finance staff", "hashtags": ["phishing", "malware", "ransomware", "identity"]}, {"id": "R2", "text": "Phishing-resistant MFA neutralizes credential theft, so phishing is not decisive", "hashtags": ["mfa", "authentication", "identity"]}, {"id": "R3", "text": "Zero-day exploits on edge devices give initial access and, once inside, evade perimeter and endpoint controls", "hashtags": ["exploit", "zeroday", "vulnerability", "perimeter", "endpoint"]}, {"id": "R4", "text": "Network segmentation confines intruders after the first compromise", "hashtags": ["segmentation", "internal_network", "perimeter", "zerotrust"]}, {"id": "R5", "text": "Stolen privileged credentials let attackers cross segments, and encrypted C2 hides the traffic", "hashtags": ["privileged_access", "lateral_movement", "c2", "encryption"]}, {"id": "R6", "text": "Immutable air-gapped backups make paying the ransom unnecessary", "hashtags": ["backup", "recovery", "ransomware", "encryption"]}, {"id": "R7", "text": "A backup without a forensic check can restore the implant together with the data", "hashtags": ["recovery", "incident", "forensics"]}, {"id": "R8", "text": "Rehearsed response playbooks, not backups, determine the recovery time", "hashtags": ["playbook", "response", "incident", "recovery"]}, {"id": "R9", "text": "NIS2 and GDPR impose controls, audits and breach notification that raise the security baseline", "hashtags": ["nis2", "gdpr", "compliance", "audit", "regulation"]}, {"id": "R10", "text": "Audit-driven compliance is box-ticking and did not stop the latest APT campaigns", "hashtags": ["audit", "compliance", "threat_intel", "incident"]}, {"id": "R11", "text": "EDR/XDR with SIEM correlation detects APT activity in real time", "hashtags": ["edr", "endpoint", "siem", "monitoring", "threat_intel"]}, {"id": "R12", "text": "Sharing threat intelligence within the sector lets EDR and SIEM detect APT activity earlier", "hashtags": ["threat_intel", "siem", "monitoring", "incident"]}, {"id": "R13", "text": "Zero trust and least privilege reduce the blast radius of a compromised account, so segmentation contains the intrusion", "hashtags": ["zerotrust", "authentication", "privileged_access", "segmentation"]}], "attacks": [["R1", "R2"], ["R2", "R1"], ["R3", "R1"], ["R3", "R11"], ["R11", "R3"], ["R3", "R12"], ["R12", "R3"], ["R5", "R4"], ["R5", "R13"], ["R5", "R11"], ["R6", "R7"], ["R7", "R6"], ["R8", "R6"], ["R10", "R9"]], "mu": {"R1": "P1", "R2": "~P1", "R4": "P2", "R6": "P3", "R7": "~P3", "R8": "~P3", "R9": "P4", "R10": "~P4", "R11": "P5", "R12": "P5", "R13": "P2"}, "subarguments": [{"parent": "R3", "id": "R3.1", "conclusion": "~P1", "hashtags": ["exploit", "zeroday", "vulnerability"]}, {"parent": "R3", "id": "R3.2", "conclusion": "~P5", "hashtags": ["perimeter", "endpoint"]}, {"parent": "R5", "id": "R5.1", "conclusion": "~P2", "hashtags": ["privileged_access", "lateral_movement"]}, {"parent": "R5", "id": "R5.2", "conclusion": "~P5", "hashtags": ["c2", "encryption"]}]},
@@ -2646,7 +2661,7 @@ async function downloadReportPDF(){
       const cf=document.getElementById('centrality-fn'), af=document.getElementById('agg-fn');
       P(`Distance between arguments: ${S.distFn}.`,9);
       P(`Base strengths sigma: centrality = ${cf?cf.value:'-'}, aggregator = ${af?af.value:'-'}.`,9);
-      P(`Operators (Def. 16): Pi = ${LOP.pi}, aggregation over hashtags = ${LOP.od}, ${LOP.clamp?'contributions truncated at 0':''}.`,9);
+      P(`Operator (Def. 16): aggregation over subarguments = ${LOP.od}, ${LOP.clamp?'contributions truncated at 0':''}.`,9);
       P(`Thresholds eps: ${S.nbhdMode==='auto'?'automatic, from the semantic map':'manual'}.`,9); y+=4;
       table(['Arg','eps','sigma','Attackers'],S.arguments.map(a=>[a.id,effEps(a),f3(S.valuations[a.id]||0),S.attacks.filter(([x,z])=>z===a.id).map(([x])=>x).join(', ')||'none']),[10,15,20,55]);
     }
